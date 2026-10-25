@@ -1,0 +1,20 @@
+<div class="wws-book" data-section="{{sectionId}}">
+  <div class="wws-pages">
+    {{#if sectionTemplate}}
+    {{> (lookup this "sectionTemplate")}}
+    {{else}}
+    <p class="wws-empty wws-empty-book">{{localize "WITCHWIND_SYSTEMS.NoSections"}}</p>
+    {{/if}}
+  </div>
+
+  {{!-- Oblivion's row of tabs along the bottom of the book, as square slots on the leather. --}}
+  <nav class="wws-tabs" aria-label="{{localize "WITCHWIND_SYSTEMS.Title"}}">
+    {{#each tabs}}
+    <button type="button" class="wws-tab{{#if active}} active{{/if}}" data-action="section" data-section="{{id}}"
+            aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+      <span class="wws-tab-slot"><i class="{{icon}}" inert></i></span>
+      <span class="wws-tab-label">{{localize label}}</span>
+    </button>
+    {{/each}}
+  </nav>
+</div>

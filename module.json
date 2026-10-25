@@ -1,0 +1,33 @@
+{
+  "id": "witchwind-systems",
+  "title": "Witchwind Systems",
+  "description": "Quests, a shared journal, maps with markers and factions in one book, in Witchwind's leather and gold with Oblivion's parchment pages. Quests track and announce themselves as in the Elder Scrolls games; players write notes and place markers too.",
+  "version": "0.1.0",
+  "authors": [
+    { "name": "Hierarchs", "url": "https://github.com/Hierarchs" }
+  ],
+  "url": "https://github.com/Hierarchs/Witchwind-Systems",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "manifest": "https://raw.githubusercontent.com/Hierarchs/Witchwind-Systems/main/module.json",
+  "download": "https://raw.githubusercontent.com/Hierarchs/Witchwind-Systems/main/dist/witchwind-systems.zip",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.369"
+  },
+  "esmodules": [
+    "scripts/witchwind-systems.mjs"
+  ],
+  "styles": [
+    "styles/witchwind-systems.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "persistentStorage": true
+}

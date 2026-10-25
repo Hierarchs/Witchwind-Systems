@@ -1,0 +1,118 @@
+<div class="wws-spread wws-journal">
+
+  {{!-- Left page: the notes --}}
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.journal"}}</h2>
+      {{#if page.canCreate}}
+      <button type="button" class="wws-ink" data-action="noteNew">
+        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.NewShort"}}
+      </button>
+      {{/if}}
+    </header>
+
+    <nav class="wws-filters wws-filters-icons">
+      {{#each page.filters}}
+      <button type="button" class="wws-filter{{#if active}} active{{/if}}" data-action="noteFilter" data-filter="{{id}}"
+              data-tooltip="{{label}}" aria-label="{{localize label}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+        <i class="{{icon}}" inert></i>{{#if count}}<span class="wws-count">{{count}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </nav>
+
+    <label class="wws-search">
+      <i class="fa-solid fa-magnifying-glass" inert></i>
+      <input type="search" data-focus-key="journal" value="{{page.search}}"
+             placeholder="{{localize "WITCHWIND_SYSTEMS.Journal.Search"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Journal.Search"}}">
+    </label>
+
+    <div class="wws-list-scroll">
+      {{#if page.empty}}
+      <p class="wws-empty">{{#if page.search}}{{localize "WITCHWIND_SYSTEMS.Journal.NoMatches"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Journal.Empty"}}{{/if}}</p>
+      {{/if}}
+      <ol class="wws-list">
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row wws-note-row{{#if selected}} selected{{/if}}" data-action="noteSelect" data-id="{{id}}">
+            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="" loading="lazy">{{else}}<i class="{{icon}} wws-row-icon" inert></i>{{/if}}
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{title}}</span>
+              <span class="wws-row-sub"><span class="wws-author" style="--wws-author: {{author.color}}">{{author.name}}</span> · {{dateLabel}}</span>
+            </span>
+            {{#if private}}<i class="fa-solid fa-lock wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Journal.PrivateHint"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    {{#if page.canCreate}}
+    <p class="wws-drop-hint"><i class="fa-solid fa-file-import" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.DropHint"}}</p>
+    {{/if}}
+  </section>
+
+  {{!-- Right page: the chosen note --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.note as |note|}}
+      <article class="wws-entry wws-note">
+        <header class="wws-entry-head">
+          <p class="wws-kicker">
+            <i class="{{note.icon}}" inert></i> {{localize note.kindLabel}}
+            <span class="wws-sep" aria-hidden="true">◆</span>
+            {{#if note.private}}
+            <span><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Private"}}</span>
+            {{else}}
+            <span><i class="fa-solid fa-users" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Shared"}}</span>
+            {{/if}}
+          </p>
+          <h1 class="wws-entry-title">{{note.title}}</h1>
+          <p class="wws-byline">
+            <span class="wws-author" style="--wws-author: {{note.author.color}}">{{note.author.name}}</span>
+            · {{note.dateLabel}}{{#if note.editedLabel}} · {{localize "WITCHWIND_SYSTEMS.Journal.Edited" date=note.editedLabel}}{{/if}}
+          </p>
+        </header>
+
+        {{#if (or note.canEdit note.canShow)}}
+        <div class="wws-actions">
+          {{#if note.canEdit}}
+          <button type="button" class="wws-button" data-action="noteEdit" data-id="{{note.id}}">
+            <i class="fa-solid fa-pen-to-square" inert></i> {{localize "WITCHWIND_SYSTEMS.Edit"}}
+          </button>
+          {{/if}}
+          {{#if note.canShow}}
+          <button type="button" class="wws-button" data-action="noteShow" data-id="{{note.id}}">
+            <i class="fa-solid fa-bullhorn" inert></i> {{localize "WITCHWIND_SYSTEMS.ShowToPlayers"}}
+          </button>
+          {{/if}}
+          {{#if note.canEdit}}
+          <button type="button" class="wws-tool wws-bad" data-action="noteDelete" data-id="{{note.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+            <i class="fa-solid fa-trash" inert></i>
+          </button>
+          {{/if}}
+        </div>
+        {{/if}}
+
+        {{#if note.img}}
+        <figure class="wws-plate wws-plate-note">
+          <button type="button" data-action="noteImage" data-id="{{note.id}}" data-tooltip="WITCHWIND_SYSTEMS.Journal.ViewImage">
+            <img src="{{note.img}}" alt="">
+          </button>
+        </figure>
+        {{/if}}
+
+        {{#if note.body}}
+        <div class="wws-prose">{{{note.body}}}</div>
+        {{else}}
+        {{#unless note.img}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Journal.Blank"}}</p>{{/unless}}
+        {{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page">
+        <i class="fa-solid fa-feather-pointed" inert></i>
+        {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Journal.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Journal.NoneHint"}}{{/if}}
+      </p>
+      {{/with}}
+    </div>
+  </section>
+</div>

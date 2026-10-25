@@ -1,0 +1,3318 @@
+/* -------------------------------------------- */
+/*  Fonts (bundled, Latin; SIL Open Font License, see fonts/OFL-*.txt) */
+/* -------------------------------------------- */
+
+/* The same faces and files as Witchwind Inventory and Witchwind UI, so the three read as one. */
+
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/cinzel-variable-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/alegreya-variable-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/alegreya-italic-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/alegreya-sans-400-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/alegreya-sans-500-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Alegreya Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/alegreya-sans-700-latin.woff2") format("woff2");
+}
+
+/* ============================================ */
+/*  Witchwind Systems                           */
+/* ============================================ */
+
+/*
+ * Witchwind's palette under this module's own names, so it keeps working whether or not Witchwind Inventory
+ * and Witchwind UI are installed.
+ */
+:root {
+  --wws-ground: #16130f;
+  --wws-panel: #1c1813;
+  --wws-slot-bg: #211b15;
+  --wws-raised: #2a231b;
+  --wws-dark: #0f0d0a;
+  --wws-line: #3d3326;
+  --wws-line-strong: #5a4a33;
+  --wws-ink: #e8dcc4;
+  --wws-ink-muted: #a39478;
+  --wws-ink-faint: #8a7d66;
+  --wws-ivory: #efe3c8;
+  --wws-gold: #c9a45c;
+  --wws-gold-bright: #d6b46c;
+  --wws-gold-dim: #8f7442;
+  --wws-gold-glow: rgb(201 164 92 / 40%);
+  --wws-gold-wash: rgb(201 164 92 / 8%);
+  --wws-on-gold: #1a140d;
+  --wws-steel: #1b1712;
+
+  --wws-parch: #e8dbbd;
+  --wws-parch-light: #efe5cb;
+  --wws-parch-deep: #ddcba6;
+  --wws-parch-ink: #2b2116;
+  --wws-parch-muted: #6a5a43;
+  --wws-parch-faint: #8b7a5f;
+  --wws-parch-head: #5a2e14;
+  --wws-parch-rule: rgb(90 62 30 / 30%);
+  --wws-parch-wash: rgb(90 62 30 / 8%);
+  --wws-parch-pick: rgb(143 116 66 / 22%);
+  --wws-parch-button: #f1e6cc;
+
+  --wws-green: #4f8f49;
+  --wws-blue: #3f7fc4;
+  --wws-orange: #c97d24;
+  --wws-red: #c4473a;
+  --wws-purple: #8a62c0;
+  --wws-good: #2f6a22;
+  --wws-bad: #8a2a1a;
+
+  /* Fine brown grain laid over the dark ground, like worn leather. */
+  --wws-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .31 0 0 0 0 .18 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --wws-leather: #120f0b var(--wws-grain);
+
+  /* A softer, larger grain in the paper's own browns. */
+  --wws-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .25 0 0 0 0 .12 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  --wws-paper: var(--wws-paper-grain), radial-gradient(ellipse at 50% 35%, #f0e6cc 0%, var(--wws-parch) 55%, #d6c49c 100%);
+
+  /* The double gold rule under a header: a gold line, a strip of leather, a second gold line. */
+  --wws-double-rule: 0 3px 0 0 #120f0b, 0 4px 0 0 var(--wws-gold-dim);
+
+  /* A panel's own inner rule: a dark band inside its edge, then a thin line. */
+  --wws-inner-rule: inset 0 0 0 3px #120f0b, inset 0 0 0 4px var(--wws-line);
+
+  /* A parchment page's inner rule, in gold. */
+  --wws-page-rule: inset 0 0 0 3px var(--wws-parch), inset 0 0 0 4px var(--wws-gold-dim);
+
+  --wws-font-display: "Cinzel", "Modesto Condensed", serif;
+  --wws-font-body: "Alegreya", Georgia, serif;
+  --wws-font-ui: "Alegreya Sans", "Signika", sans-serif;
+}
+
+/* Rarity frames on reward slots, as Witchwind Inventory frames items. */
+.wws [data-wws-rarity] { --wws-frame: var(--wws-line-strong); --wws-tint: var(--wws-slot-bg); }
+.wws [data-wws-rarity="uncommon"] { --wws-frame: #4f8f49; --wws-tint: #1c2216; }
+.wws [data-wws-rarity="rare"] { --wws-frame: #3f7fc4; --wws-tint: #171e27; }
+.wws [data-wws-rarity="veryRare"] { --wws-frame: #8a62c0; --wws-tint: #1f1828; }
+.wws [data-wws-rarity="legendary"] { --wws-frame: #c97d24; --wws-tint: #2a1c10; }
+.wws [data-wws-rarity="artifact"] { --wws-frame: #c4473a; --wws-tint: #2a1512; }
+
+/* ============================================ */
+/*  Windows                                     */
+/* ============================================ */
+
+/*
+ * The book and its editors are leather windows with the sheets' header: the title in Cinzel over the double
+ * gold rule. Core builds the window from these variables.
+ */
+.wws.application {
+  --background: var(--wws-leather);
+  --color-header-background: var(--wws-leather);
+  --color-border: var(--wws-line-strong);
+  --color-text-primary: var(--wws-ink);
+  --color-text-secondary: var(--wws-ink-muted);
+  --color-text-emphatic: var(--wws-ivory);
+  --color-form-hint: var(--wws-ink-faint);
+  --color-form-label: var(--wws-ink-muted);
+  --color-fieldset-border: var(--wws-line-strong);
+  --color-scrollbar: var(--wws-line-strong);
+  --font-sans: var(--wws-font-ui);
+  --font-body: var(--wws-font-body);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  background: var(--wws-leather);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 10px 30px rgb(0 0 0 / 65%);
+  scrollbar-color: var(--wws-line-strong) transparent;
+}
+
+.wws.application .window-header {
+  background: var(--wws-leather);
+  border-bottom: 1px solid var(--wws-gold-dim);
+  box-shadow: inset 0 -20px 30px -20px rgb(0 0 0 / 55%), var(--wws-double-rule);
+  color: var(--wws-ivory);
+  /* The double rule hangs below the header, so it keeps above the content. */
+  position: relative;
+  z-index: 1;
+}
+
+.wws.application .window-header .window-title {
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wws-ivory);
+  text-shadow: 0 2px 6px rgb(0 0 0 / 90%);
+}
+
+.wws.application .window-header .window-icon {
+  color: var(--wws-gold);
+}
+
+.wws.application .window-header button.header-control {
+  --button-text-color: var(--wws-ink-muted);
+  --button-hover-text-color: var(--wws-gold);
+  --button-background-color: transparent;
+  --button-hover-background-color: transparent;
+  --button-border-color: transparent;
+  --button-hover-border-color: transparent;
+}
+
+.wws.application .window-content {
+  background: none;
+  backdrop-filter: none;
+  color: var(--wws-ink);
+}
+
+.wws.application .window-resize-handle {
+  filter: sepia(1) saturate(0.6) brightness(1.1);
+}
+
+/* ============================================ */
+/*  The book                                    */
+/* ============================================ */
+
+.wws-codex {
+  min-width: 640px;
+  min-height: 480px;
+}
+
+.wws-codex .window-content {
+  padding: 12px 12px 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wws-book {
+  container: wws-book / inline-size;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.wws-pages {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.wws-pages > * {
+  flex: 1;
+  min-height: 0;
+}
+
+/* -------------------------------------------- */
+/*  Tabs along the bottom                       */
+/* -------------------------------------------- */
+
+/* Oblivion's row of section tabs, set as Witchwind's square slots: gold-ringed under the cursor, solid gold when open. */
+.wws-tabs {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 10px 6px 10px;
+}
+
+.wws button.wws-tab {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 78px;
+  cursor: pointer;
+  color: var(--wws-ink-muted);
+}
+
+.wws-tab-slot {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  box-sizing: border-box;
+  background: var(--wws-grain), var(--wws-slot-bg);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 4px rgb(0 0 0 / 55%);
+  font-size: 18px;
+  transition: border-color 140ms ease-out, box-shadow 180ms ease-out, color 140ms ease-out;
+}
+
+.wws-tab-label {
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wws button.wws-tab:hover .wws-tab-slot {
+  background: var(--wws-grain), var(--wws-raised);
+  border-color: var(--wws-gold);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px var(--wws-gold), 0 0 12px var(--wws-gold-glow);
+  color: var(--wws-ink);
+}
+
+.wws button.wws-tab:hover {
+  color: var(--wws-ink);
+}
+
+.wws button.wws-tab.active {
+  color: var(--wws-gold);
+}
+
+.wws button.wws-tab.active .wws-tab-slot {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 0 12px var(--wws-gold-glow);
+  color: var(--wws-on-gold);
+}
+
+.wws button.wws-tab:focus-visible .wws-tab-slot {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------- */
+/*  The open spread                             */
+/* -------------------------------------------- */
+
+/*
+ * Two parchment pages, as Oblivion's journal: the list on the left, the chosen entry on the right, with a soft
+ * fold down the middle and a gold rule just inside the edge, like Witchwind Inventory's item cards.
+ */
+.wws-spread {
+  display: grid;
+  grid-template-columns: minmax(240px, 35%) minmax(0, 1fr);
+  min-height: 0;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-page-rule), inset 0 0 60px rgb(120 84 40 / 35%), 0 6px 18px rgb(0 0 0 / 55%);
+}
+
+.wws-page {
+  --color-text-primary: var(--wws-parch-ink);
+  --color-text-secondary: var(--wws-parch-muted);
+  --color-text-emphatic: var(--wws-parch-head);
+  --content-link-background: rgb(90 62 30 / 8%);
+  --content-link-border-color: var(--wws-parch-rule);
+  --content-link-text-color: var(--wws-parch-head);
+  --content-link-icon-color: var(--wws-parch-muted);
+  --color-scrollbar: var(--wws-gold-dim);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  color: var(--wws-parch-ink);
+  font-family: var(--wws-font-body);
+  scrollbar-color: rgb(143 116 66 / 60%) transparent;
+}
+
+.wws-spread > .wws-page-list {
+  padding: 18px 10px 12px 20px;
+  box-shadow: inset -22px 0 26px -24px rgb(90 62 30 / 55%);
+}
+
+.wws-spread > .wws-page-detail {
+  border-left: 1px solid rgb(90 62 30 / 22%);
+  box-shadow: inset 22px 0 26px -24px rgb(90 62 30 / 55%);
+}
+
+.wws-list-scroll,
+.wws-detail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wws-list-scroll {
+  margin-right: -4px;
+  padding-right: 4px;
+}
+
+.wws-detail-scroll {
+  padding: 22px 30px 28px;
+}
+
+/* -------------------------------------------- */
+/*  Page header and filters                     */
+/* -------------------------------------------- */
+
+.wws-page-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  margin: 0 6px 8px 0;
+  border-bottom: 3px double var(--wws-gold-dim);
+}
+
+.wws-page-head h2 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-parch-head);
+}
+
+.wws-head-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Oblivion's Current, Completed and Recent Updates headings, as small-caps tabs over a gold underline. */
+.wws-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  margin: 0 6px 10px 0;
+}
+
+.wws button.wws-filter {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0 3px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--wws-parch-faint);
+  transition: color 140ms ease-out, border-color 140ms ease-out;
+}
+
+.wws button.wws-filter:hover {
+  color: var(--wws-parch-ink);
+}
+
+.wws button.wws-filter.active {
+  color: var(--wws-parch-head);
+  border-bottom-color: var(--wws-gold-dim);
+}
+
+.wws button.wws-filter:focus-visible {
+  outline: 2px solid var(--wws-gold-dim);
+  outline-offset: 2px;
+}
+
+.wws-count {
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: rgb(90 62 30 / 14%);
+  color: var(--wws-parch-muted);
+  text-align: center;
+}
+
+/* The journal's kinds are icons, so seven of them fit across the page. */
+.wws-filters-icons {
+  gap: 2px;
+}
+
+.wws-filters-icons button.wws-filter {
+  gap: 3px;
+  padding: 4px 4px 5px;
+  font-size: 13px;
+}
+
+.wws-filters-icons .wws-count {
+  min-width: 12px;
+  padding: 0 3px;
+  font-size: 10px;
+}
+
+/* -------------------------------------------- */
+/*  Lists                                       */
+/* -------------------------------------------- */
+
+.wws-group {
+  margin: 12px 0 4px;
+  padding: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-group:first-child {
+  margin-top: 2px;
+}
+
+.wws-list,
+.wws-objectives,
+.wws-log,
+.wws-slots,
+.wws-ladder,
+.wws-quest-links,
+.wws-map-thumbs,
+.wws-tracker-quests,
+.wws-tracker-objectives,
+.wws-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws button.wws-row {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 6px 8px 6px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--wws-parch-ink);
+  transition: background-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.wws button.wws-row:hover {
+  background: var(--wws-parch-wash);
+}
+
+.wws button.wws-row.selected {
+  background: var(--wws-parch-pick);
+  box-shadow: inset 3px 0 0 var(--wws-parch-head);
+}
+
+.wws button.wws-row:focus-visible {
+  outline: 2px solid var(--wws-gold-dim);
+  outline-offset: -2px;
+}
+
+.wws-row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.wws-row-title {
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-row.selected .wws-row-title {
+  color: var(--wws-parch-head);
+}
+
+.wws-row-sub {
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--wws-parch-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-row-mark {
+  flex: none;
+  font-size: 12px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-row-icon {
+  flex: none;
+  width: 18px;
+  text-align: center;
+  color: var(--wws-parch-muted);
+}
+
+.wws-row-date {
+  flex: none;
+  align-self: flex-start;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  color: var(--wws-parch-faint);
+}
+
+.wws-updates .wws-row-sub {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* The diamond: hollow while open, filled once done, like the gold mark on an equipped item. */
+.wws-diamond {
+  flex: none;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  color: var(--wws-parch-head);
+}
+
+.wws-row.selected .wws-diamond {
+  background: currentColor;
+}
+
+.wws-status-completed .wws-diamond { color: var(--wws-good); background: currentColor; }
+.wws-status-failed .wws-diamond { color: var(--wws-bad); }
+
+/* -------------------------------------------- */
+/*  Empty states and hints                      */
+/* -------------------------------------------- */
+
+.wws-empty {
+  margin: 10px 4px;
+  font-family: var(--wws-font-body);
+  font-style: italic;
+  color: var(--wws-parch-muted);
+}
+
+.wws-empty-small {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.wws-empty-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: 100%;
+  margin: 0;
+  padding: 40px 30px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.wws-empty-page > i {
+  font-size: 38px;
+  color: rgb(90 62 30 / 35%);
+}
+
+.wws-empty-book {
+  color: var(--wws-ink-muted);
+  text-align: center;
+  padding: 40px;
+}
+
+/* The map view is leather, not paper. */
+.wws-empty-map {
+  color: var(--wws-ink-muted);
+}
+
+.wws-empty-map > i {
+  color: var(--wws-gold-dim);
+}
+
+.wws-drop-hint {
+  margin: 8px 6px 0 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--wws-parch-rule);
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  color: var(--wws-parch-faint);
+}
+
+.wws-hint {
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--wws-parch-faint);
+}
+
+/* A dragged file over a page that accepts it. */
+.wws .wws-drop-over {
+  outline: 2px dashed var(--wws-gold-dim);
+  outline-offset: -6px;
+  background-color: rgb(201 164 92 / 10%);
+}
+
+/* ============================================ */
+/*  Buttons on the page                         */
+/* ============================================ */
+
+/* Solid ink, like the buttons on Witchwind UI's parchment chat cards. */
+.wws button.wws-ink {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--wws-parch-ink);
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  color: var(--wws-parch-button);
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 140ms ease-out, box-shadow 160ms ease-out;
+}
+
+.wws button.wws-ink:hover {
+  color: var(--wws-gold-bright);
+  box-shadow: 0 0 0 1px var(--wws-gold-dim), 0 0 8px rgb(201 164 92 / 35%);
+}
+
+.wws button.wws-ink.pressed {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+}
+
+/* Outlined in gold, ink inside; pressed ones fill with ink. */
+.wws button.wws-button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: rgb(255 250 235 / 30%);
+  color: var(--wws-parch-ink);
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
+}
+
+.wws button.wws-button:hover {
+  background: rgb(201 164 92 / 18%);
+  border-color: var(--wws-parch-head);
+  color: var(--wws-parch-head);
+}
+
+.wws button.wws-button.pressed {
+  background: var(--wws-parch-ink);
+  border-color: var(--wws-parch-ink);
+  color: var(--wws-gold-bright);
+}
+
+.wws button.wws-button i {
+  font-size: 13px;
+}
+
+/* Square icon buttons. */
+.wws button.wws-tool {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 2px;
+  color: var(--wws-parch-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+
+.wws button.wws-tool:hover:not(:disabled) {
+  background: var(--wws-parch-wash);
+  color: var(--wws-parch-ink);
+}
+
+.wws button.wws-tool:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.wws button.wws-tool.wws-mini {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+}
+
+.wws button.wws-tool.wws-good:hover { color: var(--wws-good); }
+.wws button.wws-tool.wws-bad:hover:not(:disabled) { color: var(--wws-bad); }
+
+.wws button:is(.wws-ink, .wws-button, .wws-tool, .wws-link, .wws-person, .wws-chip, .wws-slot, .wws-check):focus-visible {
+  outline: 2px solid var(--wws-gold-dim);
+  outline-offset: 2px;
+}
+
+/* A plain text link in ink. */
+.wws button.wws-link {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--wws-parch-head);
+  font-family: var(--wws-font-body);
+  font-weight: 600;
+}
+
+.wws button.wws-link:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--wws-gold-dim);
+  text-underline-offset: 3px;
+}
+
+/* ============================================ */
+/*  The chosen entry                            */
+/* ============================================ */
+
+.wws-entry-head {
+  margin-bottom: 12px;
+}
+
+.wws-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0 0 4px;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-sep {
+  font-size: 7px;
+  color: var(--wws-gold-dim);
+}
+
+.wws-status-completed .wws-status-word { color: var(--wws-good); }
+.wws-status-failed .wws-status-word { color: var(--wws-bad); }
+
+.wws-entry-title {
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wws-parch-head);
+}
+
+.wws-status-failed .wws-entry-title {
+  text-decoration: line-through;
+  text-decoration-color: rgb(138 42 26 / 50%);
+  text-decoration-thickness: 2px;
+}
+
+.wws-byline {
+  margin: 4px 0 0;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-parch-muted);
+}
+
+/* Each writer's name in their own user color, darkened to read on the paper. */
+.wws-author {
+  font-weight: 700;
+  color: color-mix(in srgb, var(--wws-author, var(--wws-parch-muted)) 55%, var(--wws-parch-ink));
+}
+
+.wws-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 14px;
+}
+
+.wws-actions:empty {
+  display: none;
+}
+
+/* The GM's tools sit on a faint dashed strip, apart from what players see. */
+.wws-gm-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin: 0 0 16px;
+  padding: 3px 4px 3px 3px;
+  border: 1px dashed rgb(90 62 30 / 35%);
+  border-radius: 3px;
+  background: rgb(43 33 22 / 5%);
+}
+
+.wws-gm-label {
+  margin-right: 6px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  color: var(--wws-gold-bright);
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.wws-gm-gap {
+  flex: 1;
+}
+
+.wws-ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  color: var(--wws-parch-button);
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.wws-ribbon-inline {
+  margin: 0;
+  background: rgb(0 0 0 / 45%);
+  border: 1px solid var(--wws-line-strong);
+  color: var(--wws-ink-muted);
+}
+
+/* A framed picture: the gold rule of an item card around a dark mat. */
+.wws-plate {
+  margin: 0 0 16px;
+  padding: 4px;
+  background: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  box-shadow: 0 3px 10px rgb(60 40 20 / 35%);
+}
+
+.wws-plate img {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border: 1px solid rgb(201 164 92 / 45%);
+}
+
+.wws-plate-note img {
+  max-height: 420px;
+  object-fit: contain;
+  background: #120f0b;
+}
+
+.wws-plate button {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+}
+
+/* Who, where, which faction. */
+.wws-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px 18px;
+  margin: 0 0 16px;
+  padding: 10px 0;
+  border-block: 1px solid var(--wws-parch-rule);
+}
+
+.wws-facts dt {
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-facts dd {
+  margin: 2px 0 0;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+}
+
+.wws button.wws-person {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--wws-parch-ink);
+}
+
+.wws button.wws-person:disabled {
+  cursor: default;
+}
+
+.wws button.wws-person:hover:not(:disabled) span {
+  color: var(--wws-parch-head);
+  text-decoration: underline;
+  text-decoration-color: var(--wws-gold-dim);
+  text-underline-offset: 3px;
+}
+
+.wws-person img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  box-shadow: 0 0 0 2px var(--wws-parch-ink);
+}
+
+/* A section heading with a fading rule after it. */
+.wws-rule-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 8px;
+  padding: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-parch-head);
+}
+
+.wws-rule-head::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--wws-gold-dim), transparent);
+}
+
+/* -------------------------------------------- */
+/*  Text                                        */
+/* -------------------------------------------- */
+
+.wws-prose {
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--wws-parch-ink);
+  overflow-wrap: anywhere;
+}
+
+.wws-prose > :first-child { margin-top: 0; }
+.wws-prose > :last-child { margin-bottom: 0; }
+
+.wws-prose :is(h1, h2, h3, h4, h5) {
+  font-family: var(--wws-font-display);
+  color: var(--wws-parch-head);
+  border-bottom-color: var(--wws-parch-rule);
+}
+
+.wws-prose a:not(.content-link, .inline-roll) {
+  color: var(--wws-parch-head);
+  text-decoration: underline;
+  text-decoration-color: var(--wws-gold-dim);
+}
+
+.wws-prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+.wws-prose blockquote {
+  margin: 10px 0;
+  padding: 2px 14px;
+  border-left: 3px solid var(--wws-gold-dim);
+  background: transparent;
+  font-style: italic;
+  color: var(--wws-parch-muted);
+}
+
+.wws-prose hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--wws-gold-dim) 50%, transparent);
+}
+
+/* -------------------------------------------- */
+/*  Objectives                                  */
+/* -------------------------------------------- */
+
+.wws-objective {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.wws button.wws-check,
+.wws span.wws-check {
+  all: unset;
+  box-sizing: border-box;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 22px;
+}
+
+.wws button.wws-check {
+  cursor: pointer;
+}
+
+.wws-check .wws-diamond {
+  width: 10px;
+  height: 10px;
+  border-width: 2px;
+}
+
+.wws button.wws-check:hover .wws-diamond {
+  box-shadow: 0 0 0 3px rgb(201 164 92 / 35%);
+}
+
+.wws-objective-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-optional {
+  margin-left: 4px;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--wws-parch-faint);
+}
+
+.wws-objective.wws-done .wws-diamond {
+  background: currentColor;
+  color: var(--wws-gold-dim);
+}
+
+.wws-objective.wws-done .wws-objective-text {
+  color: var(--wws-parch-faint);
+}
+
+.wws-objective.wws-failed .wws-diamond {
+  color: var(--wws-bad);
+}
+
+.wws-objective.wws-failed .wws-objective-text {
+  color: var(--wws-parch-faint);
+  text-decoration: line-through;
+  text-decoration-color: rgb(138 42 26 / 60%);
+}
+
+/* What the GM sees that players don't yet: faded, in italics, behind a dashed edge. */
+.wws .wws-is-hidden {
+  opacity: 0.6;
+  font-style: italic;
+  box-shadow: inset 2px 0 0 rgb(90 62 30 / 30%);
+  padding-left: 6px;
+}
+
+.wws-row-tools {
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.wws-objective:is(:hover, :focus-within) .wws-row-tools {
+  opacity: 1;
+}
+
+/* -------------------------------------------- */
+/*  Quest journal                               */
+/* -------------------------------------------- */
+
+/* The newest entry is written in full ink; older ones fade a little, as pages further back in the book. */
+.wws-log-entry {
+  padding: 8px 0 10px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-log-entry:last-child {
+  border-bottom: none;
+}
+
+.wws-log-entry:not(.wws-latest) .wws-prose {
+  color: #4a3c2a;
+  font-size: 15px;
+}
+
+.wws-log-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wws-parch-faint);
+}
+
+/* -------------------------------------------- */
+/*  Reward slots                                */
+/* -------------------------------------------- */
+
+/* Witchwind Inventory's slots, sunk into the page, framed by rarity. */
+.wws-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
+.wws-slots > li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 64px;
+}
+
+.wws button.wws-slot {
+  all: unset;
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  background: var(--wws-tint, var(--wws-slot-bg));
+  border: 2px solid var(--wws-frame, var(--wws-line-strong));
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 5px rgb(60 40 20 / 35%);
+  color: var(--wws-gold);
+  cursor: pointer;
+  font-size: 20px;
+  transition: transform 140ms ease-out, filter 140ms ease-out, box-shadow 180ms ease-out;
+}
+
+.wws button.wws-slot:disabled {
+  cursor: default;
+}
+
+.wws button.wws-slot:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px var(--wws-gold), 0 0 12px var(--wws-gold-glow);
+}
+
+.wws-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-qty {
+  position: absolute;
+  right: 2px;
+  bottom: 1px;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wws-ivory);
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+
+.wws-slot-name {
+  width: 100%;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--wws-parch-muted);
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------- */
+/*  GM notes                                    */
+/* -------------------------------------------- */
+
+.wws-gm-notes {
+  margin-top: 22px;
+  padding: 10px 14px 12px;
+  background: rgb(90 62 30 / 9%);
+  border: 1px dashed rgb(90 62 30 / 40%);
+  border-radius: 3px;
+}
+
+.wws-gm-notes h4 {
+  margin: 0 0 6px;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-gm-notes .wws-prose {
+  font-size: 15px;
+}
+
+/* ============================================ */
+/*  Journal                                     */
+/* ============================================ */
+
+.wws-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 6px 8px 0;
+  padding: 0 8px;
+  height: 28px;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 2px;
+  background: rgb(255 250 235 / 35%);
+  color: var(--wws-parch-muted);
+}
+
+.wws-search:focus-within {
+  border-color: var(--wws-gold-dim);
+  box-shadow: 0 0 0 1px var(--wws-gold-dim);
+}
+
+.wws .wws-search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  box-shadow: none;
+  color: var(--wws-parch-ink);
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+}
+
+.wws .wws-search input::placeholder {
+  color: var(--wws-parch-faint);
+}
+
+.wws-thumb {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+}
+
+/* ============================================ */
+/*  Maps                                        */
+/* ============================================ */
+
+.wws-mapbook {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+}
+
+/* The list of maps is one parchment page. */
+.wws-map-list {
+  padding: 16px 10px 12px 14px;
+  background: var(--wws-paper);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-page-rule), inset 0 0 40px rgb(120 84 40 / 30%), 0 6px 18px rgb(0 0 0 / 55%);
+}
+
+.wws-map-list .wws-page-head h2 {
+  font-size: 19px;
+}
+
+.wws-map-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wws button.wws-map-thumb {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  width: 100%;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 140ms ease-out, border-color 140ms ease-out;
+}
+
+.wws-map-thumb img {
+  display: block;
+  width: 100%;
+  height: 84px;
+  object-fit: cover;
+  border: none;
+  opacity: 0.85;
+  transition: opacity 140ms ease-out;
+}
+
+.wws-map-name {
+  display: block;
+  padding: 4px 8px 5px;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-map-thumb .wws-row-mark {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  padding: 3px 4px;
+  border-radius: 2px;
+  background: rgb(0 0 0 / 60%);
+  color: var(--wws-ink-muted);
+}
+
+.wws button.wws-map-thumb:hover {
+  border-color: var(--wws-gold-dim);
+}
+
+.wws button.wws-map-thumb:hover img {
+  opacity: 1;
+}
+
+.wws button.wws-map-thumb.selected {
+  border-color: var(--wws-gold);
+  box-shadow: 0 0 0 1px var(--wws-gold), 0 0 10px var(--wws-gold-glow);
+}
+
+.wws button.wws-map-thumb.selected img {
+  opacity: 1;
+}
+
+.wws button.wws-map-thumb.selected .wws-map-name {
+  color: var(--wws-gold);
+}
+
+.wws button.wws-map-thumb:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+/* The open map: its name in Cinzel over the double rule, then the map itself in a gold frame. */
+.wws-map-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.wws-map-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 0 4px 6px;
+  margin-bottom: 8px;
+  box-shadow: var(--wws-double-rule);
+  border-bottom: 1px solid var(--wws-gold-dim);
+}
+
+.wws-map-head h2 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-ivory);
+  text-shadow: 0 2px 6px rgb(0 0 0 / 90%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-map-head .wws-tool {
+  color: var(--wws-ink-muted);
+}
+
+.wws-map-head button.wws-tool:hover:not(:disabled) {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws-map-head button.wws-tool.wws-bad:hover:not(:disabled) {
+  color: var(--wws-red);
+}
+
+.wws-map-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  background: radial-gradient(ellipse at center, #1d1812 0%, #0c0a08 100%);
+  box-shadow: inset 0 0 0 3px #120f0b, inset 0 0 0 4px var(--wws-line), 0 6px 18px rgb(0 0 0 / 55%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.wws-map-stage.panning { cursor: grabbing; }
+.wws-map-stage.placing { cursor: crosshair; }
+
+.wws-map-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.wws-map-stage:not(.wws-ready) .wws-map-layer {
+  visibility: hidden;
+}
+
+.wws-map-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  border: none;
+  pointer-events: none;
+  box-shadow: 0 0 30px rgb(0 0 0 / 60%);
+}
+
+/* The frame's inner rule drawn over the map, so the map reads as set into the page. */
+.wws-map-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 3px #120f0b, inset 0 0 0 4px var(--wws-line), inset 0 0 40px rgb(0 0 0 / 55%);
+}
+
+/* -------------------------------------------- */
+/*  Markers                                     */
+/* -------------------------------------------- */
+
+/* A diamond in the marker's color, kept the same size however far the map is zoomed. */
+.wws .wws-pin {
+  all: unset;
+  position: absolute;
+  z-index: 1;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--wws-zoom, 1)));
+  cursor: pointer;
+}
+
+.wws .wws-pin.movable { cursor: grab; }
+.wws .wws-pin.dragging { cursor: grabbing; z-index: 3; }
+
+.wws-pin-mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+  box-sizing: border-box;
+  background: var(--wws-steel);
+  border: 2px solid var(--wws-pin, var(--wws-gold));
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 3px 8px rgb(0 0 0 / 75%);
+  transition: box-shadow 160ms ease-out, background-color 140ms ease-out;
+}
+
+.wws-pin-mark i {
+  transform: rotate(-45deg);
+  font-size: 11px;
+  color: var(--wws-pin, var(--wws-gold));
+}
+
+.wws .wws-pin:hover .wws-pin-mark,
+.wws .wws-pin:focus-visible .wws-pin-mark {
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 0 12px var(--wws-pin, var(--wws-gold)), 0 3px 8px rgb(0 0 0 / 75%);
+}
+
+.wws .wws-pin.open {
+  z-index: 2;
+}
+
+.wws .wws-pin.open .wws-pin-mark {
+  background: var(--wws-pin, var(--wws-gold));
+}
+
+.wws .wws-pin.open .wws-pin-mark i {
+  color: var(--wws-dark);
+}
+
+.wws .wws-pin.private .wws-pin-mark {
+  border-style: dashed;
+}
+
+/* A tracked quest's marker breathes with a gold ring, as the Elder Scrolls games mark your current quest. */
+.wws .wws-pin.tracked::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 2px solid var(--wws-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--wws-gold-glow);
+  animation: wws-breathe 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes wws-breathe {
+  0%, 100% { opacity: 0.35; scale: 0.9; }
+  50% { opacity: 1; scale: 1.05; }
+}
+
+.wws-pin-label {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgb(15 13 10 / 70%);
+  color: var(--wws-ivory);
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+
+.wws-map-stage.wws-labels .wws-pin-label,
+.wws .wws-pin:hover .wws-pin-label,
+.wws .wws-pin.open .wws-pin-label {
+  opacity: 1;
+}
+
+/* -------------------------------------------- */
+/*  Map tools                                   */
+/* -------------------------------------------- */
+
+/* Leather slots down the map's right edge, like Witchwind UI's scene controls. */
+.wws-map-tools {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  cursor: default;
+}
+
+.wws-map-tools button.wws-tool {
+  width: 34px;
+  height: 34px;
+  background: var(--wws-grain), var(--wws-slot-bg);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 4px rgb(0 0 0 / 55%);
+  color: var(--wws-ink-muted);
+  transition: border-color 140ms ease-out, box-shadow 180ms ease-out, color 140ms ease-out;
+}
+
+.wws .wws-map-tools button.wws-tool:hover {
+  background: var(--wws-grain), var(--wws-raised);
+  border-color: var(--wws-gold);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px var(--wws-gold), 0 0 12px var(--wws-gold-glow);
+  color: var(--wws-ink);
+}
+
+.wws .wws-map-tools button.wws-tool[aria-pressed="true"] {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+}
+
+.wws .wws-map-tools button.wws-place {
+  height: 34px;
+  margin-top: 4px;
+  padding: 0 12px;
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 3px 8px rgb(0 0 0 / 60%);
+}
+
+.wws .wws-map-tools button.wws-place:hover {
+  background: var(--wws-gold-bright);
+  color: var(--wws-on-gold);
+}
+
+.wws .wws-map-tools button.wws-place.pressed {
+  background: var(--wws-steel);
+  border-color: var(--wws-gold);
+  color: var(--wws-gold);
+}
+
+.wws-place-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 4;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 14px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: rgb(18 15 11 / 88%);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 60%);
+}
+
+/* -------------------------------------------- */
+/*  Marker card                                 */
+/* -------------------------------------------- */
+
+/* A small parchment card with the double gold rule, as Witchwind Inventory's item cards. */
+.wws-pin-card {
+  position: absolute;
+  z-index: 5;
+  width: 260px;
+  padding: 10px 12px 10px;
+  box-sizing: border-box;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-page-rule), inset 0 0 30px rgb(120 84 40 / 30%), 0 8px 24px rgb(0 0 0 / 65%);
+  cursor: default;
+  font-family: var(--wws-font-body);
+}
+
+.wws-pin-card[hidden] {
+  display: none;
+}
+
+.wws-pin-card header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wws-pin-card header h3 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--wws-parch-head);
+}
+
+.wws-pin-card .wws-pin-mark {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 3px;
+  box-shadow: none;
+}
+
+.wws-pin-card .wws-pin-mark i {
+  font-size: 9px;
+}
+
+.wws-pin-card .wws-byline {
+  margin: 2px 0 6px;
+}
+
+.wws-pin-text {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.wws-pin-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.wws-pin-card footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--wws-parch-rule);
+}
+
+.wws-pin-card footer .wws-hint {
+  flex: 1;
+  text-align: right;
+}
+
+/* ============================================ */
+/*  Factions                                    */
+/* ============================================ */
+
+/* An emblem sits in a slot framed in the faction's own color. */
+.wws-emblem {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--wws-slot-bg);
+  border: 2px solid var(--wws-faction, var(--wws-gold-dim));
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%);
+  color: var(--wws-faction, var(--wws-gold));
+  font-size: 16px;
+}
+
+.wws-emblem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-emblem-large {
+  width: 84px;
+  height: 84px;
+  font-size: 34px;
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 55%), 0 0 0 3px var(--wws-parch), 0 0 0 4px var(--wws-gold-dim), 0 4px 12px rgb(60 40 20 / 40%);
+}
+
+.wws-faction-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.wws-faction-head .wws-entry-head {
+  margin: 0;
+}
+
+.wws-motto {
+  margin: 4px 0 0;
+  font-family: var(--wws-font-body);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--wws-parch-muted);
+}
+
+/* Standing tiers, from red through the paper's own brown to green and gold. */
+.wws-tier-hated { --wws-tier: #8a2a1a; }
+.wws-tier-hostile { --wws-tier: #a8461f; }
+.wws-tier-unfriendly { --wws-tier: #9a6a1c; }
+.wws-tier-neutral { --wws-tier: #6a5a43; }
+.wws-tier-friendly { --wws-tier: #3e7a33; }
+.wws-tier-trusted { --wws-tier: #2f6a8a; }
+.wws-tier-revered { --wws-tier: #8a6a1c; }
+
+.wws-tier {
+  font-weight: 700;
+  color: var(--wws-tier);
+}
+
+.wws-standing {
+  margin: 0 0 14px;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 3px;
+  background: rgb(255 250 235 / 25%);
+}
+
+.wws-standing-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.wws-label {
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-tier-name {
+  font-family: var(--wws-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-tier);
+}
+
+.wws-standing-value {
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-parch-faint);
+}
+
+.wws-standing-tools {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.wws-standing-bar {
+  position: relative;
+  height: 8px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #8a2a1a 0%, #a8461f 15%, #9a6a1c 32%, #8b7a5f 50%, #3e7a33 66%, #2f6a8a 84%, #b08a3c 100%);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 45%), 0 0 0 1px var(--wws-parch-rule);
+}
+
+/* Where the party stands: a gold diamond on the bar. */
+.wws-standing-mark {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  background: var(--wws-gold);
+  border: 2px solid var(--wws-parch-ink);
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+  transition: left 300ms ease-out;
+}
+
+.wws-your-rank {
+  margin: 0 0 14px;
+}
+
+.wws-your-rank p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+}
+
+.wws-your-rank img {
+  width: 26px;
+  height: 26px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+}
+
+.wws-your-rank strong {
+  font-family: var(--wws-font-display);
+  color: var(--wws-parch-head);
+}
+
+.wws-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.wws button.wws-chip {
+  all: unset;
+  box-sizing: border-box;
+  padding: 1px 8px;
+  border: 1px solid var(--wws-chip, var(--wws-gold-dim));
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--wws-chip, var(--wws-parch-ink));
+}
+
+.wws button.wws-chip:hover {
+  background: var(--wws-parch-wash);
+}
+
+.wws-chip.wws-ally { --wws-chip: var(--wws-good); }
+.wws-chip.wws-rival { --wws-chip: var(--wws-bad); }
+
+/* -------------------------------------------- */
+/*  The rank ladder                             */
+/* -------------------------------------------- */
+
+.wws-rung {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+  color: var(--wws-parch-faint);
+}
+
+.wws-rung:last-child {
+  border-bottom: none;
+}
+
+/* The rank's number, upright inside a diamond drawn behind it. */
+.wws-rung-number {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: lining-nums;
+}
+
+.wws-rung-number::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  z-index: -1;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.wws-rung-name {
+  font-family: var(--wws-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.wws-rung.filled {
+  color: var(--wws-parch-ink);
+}
+
+.wws-rung.filled .wws-rung-number {
+  color: var(--wws-gold-bright);
+}
+
+.wws-rung.filled .wws-rung-number::before {
+  background: var(--wws-parch-ink);
+  border-color: var(--wws-parch-ink);
+}
+
+.wws-rung.yours {
+  background: rgb(201 164 92 / 18%);
+  box-shadow: inset 3px 0 0 var(--wws-gold);
+}
+
+.wws-rung.yours .wws-rung-name {
+  color: var(--wws-parch-head);
+}
+
+.wws-rung-members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.wws-member {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wws button.wws-member-face {
+  all: unset;
+  display: block;
+  cursor: pointer;
+}
+
+.wws-member-face img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+}
+
+.wws-member.yours .wws-member-face img {
+  border-color: var(--wws-gold);
+  box-shadow: 0 0 0 1px var(--wws-gold), 0 0 6px var(--wws-gold-glow);
+}
+
+.wws-member-tools {
+  display: none;
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  margin-right: 2px;
+  padding: 1px;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 2px;
+  background: var(--wws-parch-light);
+  box-shadow: 0 2px 6px rgb(60 40 20 / 30%);
+}
+
+.wws-member:is(:hover, :focus-within) .wws-member-tools {
+  display: flex;
+}
+
+.wws-quest-links li {
+  padding: 2px 0;
+}
+
+.wws-quest-links .wws-diamond {
+  width: 7px;
+  height: 7px;
+}
+
+/* ============================================ */
+/*  Editors                                     */
+/* ============================================ */
+
+.wws-editor .window-content {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wws-editor-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 80vh;
+}
+
+.wws-editor-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Fields: dark insets with the sheets' thin edge; labels in the sans; legends in gold Cinzel. */
+.wws-editor {
+  --input-background-color: rgb(0 0 0 / 30%);
+  --input-border-color: var(--wws-line);
+  --input-text-color: var(--wws-ink);
+  --input-placeholder-color: var(--wws-ink-faint);
+  --input-focus-outline-color: var(--wws-gold-dim);
+  --checkbox-background-color: rgb(0 0 0 / 30%);
+  --checkbox-checked-color: var(--wws-gold);
+  --checkbox-checkmark-color: var(--wws-on-gold);
+  --button-background-color: rgb(0 0 0 / 25%);
+  --button-border-color: var(--wws-gold-dim);
+  --button-text-color: var(--wws-ink);
+  --button-hover-background-color: rgb(201 164 92 / 12%);
+  --button-hover-border-color: var(--wws-gold);
+  --button-hover-text-color: var(--wws-gold);
+  --button-focus-outline-color: var(--wws-gold);
+}
+
+.wws-editor .form-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.wws-editor .form-group > label {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--wws-ink-muted);
+}
+
+.wws-editor .form-group > :is(input, select, textarea, .wws-giver, .wws-range) {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-editor .form-group.stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
+
+.wws-editor .form-group.stacked > label {
+  flex: none;
+}
+
+.wws-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.wws-form-row .form-group > label {
+  flex-basis: auto;
+  min-width: 70px;
+}
+
+.wws-editor :is(input[type="text"], input[type="number"], input[type="search"], select, textarea) {
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  color: var(--wws-ink);
+  background: rgb(0 0 0 / 30%);
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+}
+
+.wws-editor :is(input[type="text"], input[type="number"], select) {
+  height: 30px;
+}
+
+.wws-editor textarea {
+  padding: 6px 8px;
+  resize: vertical;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.wws-editor :is(input, select, textarea):focus {
+  outline: none;
+  border-color: var(--wws-gold-dim);
+  box-shadow: 0 0 0 1px var(--wws-gold-dim);
+}
+
+.wws-editor .hint {
+  margin: -4px 0 0;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-ink-faint);
+}
+
+.wws-editor fieldset {
+  margin: 0;
+  padding: 8px 10px 10px;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 3px;
+}
+
+.wws-editor fieldset > legend {
+  padding: 0 6px;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wws-gold);
+}
+
+.wws-editor h4 {
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wws-gold);
+}
+
+/* Checkboxes: a dark square slot that fills with a gold diamond, like an equipped item's mark. */
+.wws-editor input[type="checkbox"] {
+  appearance: none;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: rgb(0 0 0 / 35%);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 50%);
+  cursor: pointer;
+}
+
+.wws-editor input[type="checkbox"]::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--wws-gold);
+  transform: rotate(45deg) scale(0);
+  transition: transform 120ms ease-out;
+  font: inherit;
+}
+
+.wws-editor input[type="checkbox"]::after {
+  content: none;
+}
+
+.wws-editor input[type="checkbox"]:checked {
+  border-color: var(--wws-gold);
+}
+
+.wws-editor input[type="checkbox"]:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+
+.wws-editor input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+/* A labeled checkbox. */
+.wws-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  color: var(--wws-ink);
+}
+
+.wws-toggle input {
+  margin: 0;
+}
+
+/* Tabs across the top of a long editor, gold-edged when open like the sheets' tabs. */
+.wws-editor-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: -4px 0 4px;
+  border-bottom: 1px solid var(--wws-line);
+}
+
+.wws-editor-tabs button {
+  all: unset;
+  box-sizing: border-box;
+  padding: 6px 12px 7px;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wws-ink-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.wws-editor-tabs button:hover {
+  color: var(--wws-ink);
+  background: var(--wws-gold-wash);
+}
+
+.wws-editor-tabs button.active {
+  color: var(--wws-gold);
+  border-bottom-color: var(--wws-gold);
+}
+
+.wws-editor-tabs button:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: -2px;
+}
+
+.wws-panel {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wws-panel.active {
+  display: flex;
+}
+
+/* The save button: solid gold Cinzel, as a dialog's main action in Witchwind UI. */
+.wws-editor-footer {
+  flex: none;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--wws-line);
+}
+
+.wws-editor-footer button[type="submit"] {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 36px;
+  border-radius: 2px;
+  background: var(--wws-gold);
+  color: var(--wws-on-gold);
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 2px 6px rgb(0 0 0 / 50%);
+  transition: background-color 120ms ease-out, box-shadow 160ms ease-out;
+}
+
+.wws-editor-footer button[type="submit"]:hover {
+  background: var(--wws-gold-bright);
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 0 12px var(--wws-gold-glow);
+}
+
+.wws-editor-footer button[type="submit"]:focus-visible {
+  outline: 2px solid var(--wws-ivory);
+  outline-offset: 2px;
+}
+
+/* Small outlined buttons inside a label or heading. */
+.wws button.wws-label-button,
+.wws button.wws-add,
+.wws button.wws-mini-button,
+.wws-image-buttons button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: rgb(0 0 0 / 25%);
+  color: var(--wws-ink);
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.wws button.wws-label-button { margin-left: auto; }
+.wws button.wws-add { align-self: flex-start; }
+.wws button.wws-mini-button { width: 26px; padding: 0; }
+
+.wws button:is(.wws-label-button, .wws-add, .wws-mini-button):hover,
+.wws-image-buttons button:hover {
+  border-color: var(--wws-gold);
+  background: rgb(201 164 92 / 12%);
+  color: var(--wws-gold);
+}
+
+/* -------------------------------------------- */
+/*  Rich text in editors                        */
+/* -------------------------------------------- */
+
+/* The editing page is parchment with a double gold rule; its toolbar sits on leather above it, as on the sheets. */
+.wws-editor prose-mirror {
+  --color-text-primary: var(--wws-parch-ink);
+  --color-text-secondary: var(--wws-parch-muted);
+  --min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 220px;
+  height: 260px;
+  max-height: 46vh;
+  resize: vertical;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-page-rule), inset 0 0 40px rgb(120 84 40 / 30%);
+  overflow: hidden;
+}
+
+.wws-editor prose-mirror :is(.menu-container, menu) {
+  --menu-background: var(--wws-steel);
+  --button-text-color: var(--wws-ink-muted);
+  --button-hover-text-color: var(--wws-gold);
+  --color-control-hover: var(--wws-raised);
+  --color-form-label-hover: var(--wws-gold);
+  --color-hover-bg: var(--wws-raised);
+  margin: 0;
+  background: var(--wws-steel);
+  color: var(--wws-ink-muted);
+}
+
+.wws-editor prose-mirror .menu-container {
+  border-bottom: 1px solid var(--wws-gold-dim);
+}
+
+.wws-editor prose-mirror .editor-content {
+  padding: 14px 18px;
+}
+
+.wws-editor prose-mirror :is(.editor-content, .ProseMirror) {
+  color: var(--wws-parch-ink);
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.wws-editor prose-mirror :is(.editor-content, .ProseMirror) :is(h1, h2, h3, h4) {
+  font-family: var(--wws-font-display);
+  color: var(--wws-parch-head);
+  border-bottom-color: var(--wws-parch-rule);
+}
+
+.wws-panel[data-panel="gm"] prose-mirror {
+  min-height: 300px;
+}
+
+/* -------------------------------------------- */
+/*  Picture field                               */
+/* -------------------------------------------- */
+
+.wws-image-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.wws-image-preview {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  box-sizing: border-box;
+  background: var(--wws-slot-bg) center / cover no-repeat;
+  border: 2px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%);
+  color: var(--wws-line-strong);
+  font-size: 26px;
+}
+
+.wws-image-preview:not(.empty) i {
+  display: none;
+}
+
+.wws-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wws-image-controls input[type="text"] {
+  width: 100%;
+}
+
+.wws-image-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wws-image-controls .hint {
+  margin: 0;
+}
+
+.wws-busy-mark {
+  display: none;
+  position: absolute;
+  inset: 0;
+  place-items: center;
+  border-radius: 3px;
+  background: rgb(15 13 10 / 70%);
+  color: var(--wws-gold);
+  font-size: 22px;
+}
+
+.wws-image-field.wws-busy .wws-busy-mark {
+  display: grid;
+}
+
+/* -------------------------------------------- */
+/*  Rows: objectives, entries, rewards, members */
+/* -------------------------------------------- */
+
+.wws-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wws-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 1px solid var(--wws-line);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 18%);
+}
+
+.wws-edit-row-tall {
+  align-items: flex-start;
+}
+
+.wws-edit-row > input[type="text"],
+.wws-edit-row > textarea {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-edit-row .wws-qty-input {
+  width: 64px;
+  flex: none;
+}
+
+.wws-edit-row select {
+  width: 160px;
+  flex: none;
+}
+
+/* Each flag on a row is an icon that lights gold when it's on. */
+.wws-edit-row > label {
+  flex: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  color: var(--wws-ink-faint);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.wws-edit-row > label input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wws-edit-row > label:hover {
+  border-color: var(--wws-gold-dim);
+  color: var(--wws-ink);
+}
+
+.wws-edit-row > label:has(input:checked) {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+}
+
+.wws-edit-row > label:has(input:focus-visible) {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 1px;
+}
+
+.wws-row-buttons {
+  flex: none;
+  display: flex;
+  gap: 1px;
+}
+
+.wws-row-buttons button {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 26px;
+  border-radius: 2px;
+  color: var(--wws-ink-faint);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.wws-row-buttons button:hover {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws-row-buttons button[data-action="removeRow"]:hover {
+  color: var(--wws-red);
+}
+
+.wws-row-img {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: var(--wws-slot-bg);
+}
+
+.wws-row-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed var(--wws-line-strong);
+  border-radius: 3px;
+  color: var(--wws-ink-faint);
+  font-size: 14px;
+}
+
+.wws-editor .wws-drop-over {
+  border-color: var(--wws-gold);
+  background-color: rgb(201 164 92 / 10%);
+  color: var(--wws-gold);
+  outline: none;
+}
+
+.wws-members-head {
+  display: flex;
+  align-items: center;
+}
+
+/* The quest giver: a portrait beside the name, filled by dropping an actor. */
+.wws-giver {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.wws-giver img {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+}
+
+.wws-giver input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+/* -------------------------------------------- */
+/*  Marker icon and color choices               */
+/* -------------------------------------------- */
+
+.wws-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 6px;
+}
+
+.wws-icon-choice {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 36px;
+  box-sizing: border-box;
+  background: var(--wws-grain), var(--wws-slot-bg);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%);
+  color: var(--wws-ink-muted);
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.wws-icon-choice input,
+.wws-color-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wws-icon-choice:hover {
+  border-color: var(--wws-gold);
+  color: var(--wws-ink);
+}
+
+.wws-icon-choice:has(input:checked) {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+  box-shadow: 0 0 0 1px var(--wws-dark), 0 0 10px var(--wws-gold-glow);
+}
+
+.wws-icon-choice:has(input:focus-visible),
+.wws-color-choice:has(input:focus-visible) {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws-color-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 4px 4px 2px;
+}
+
+.wws-color-choice {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.wws-color-choice span {
+  width: 18px;
+  height: 18px;
+  background: var(--wws-swatch);
+  border: 2px solid var(--wws-dark);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 1px var(--wws-line-strong);
+}
+
+.wws-color-choice:has(input:checked) span {
+  box-shadow: 0 0 0 2px var(--wws-ivory), 0 0 10px var(--wws-swatch);
+}
+
+/* -------------------------------------------- */
+/*  Faction editor                              */
+/* -------------------------------------------- */
+
+.wws-color-group input[type="color"] {
+  flex: none;
+  width: 44px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  background: rgb(0 0 0 / 30%);
+}
+
+.wws-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wws-range input[type="range"] {
+  flex: 1;
+  accent-color: var(--wws-gold);
+}
+
+.wws-range output {
+  width: 40px;
+  font-family: var(--wws-font-display);
+  font-weight: 700;
+  color: var(--wws-gold);
+  text-align: right;
+}
+
+.wws-relations {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  background: none;
+  border: none;
+}
+
+.wws-relations :is(th, td) {
+  padding: 3px 6px;
+  border: none;
+  border-bottom: 1px solid var(--wws-line);
+  background: none;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  text-align: left;
+}
+
+.wws-relations th {
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--wws-ink-muted);
+}
+
+.wws-relations :is(th, td):not(:first-child) {
+  width: 64px;
+  text-align: center;
+}
+
+.wws-relations thead tr {
+  background: none;
+}
+
+.wws-relations tbody tr:nth-child(even) {
+  background: rgb(201 164 92 / 4%);
+}
+
+/* ============================================ */
+/*  Confirm dialogs                             */
+/* ============================================ */
+
+.wws-dialog .window-content p {
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  color: var(--wws-ink);
+}
+
+.wws-dialog .window-content strong {
+  color: var(--wws-gold);
+}
+
+.wws-dialog .form-footer button {
+  --button-background-color: rgb(0 0 0 / 25%);
+  --button-border-color: var(--wws-gold-dim);
+  --button-text-color: var(--wws-ink);
+  --button-hover-background-color: rgb(201 164 92 / 12%);
+  --button-hover-border-color: var(--wws-gold);
+  --button-hover-text-color: var(--wws-gold);
+  font-family: var(--wws-font-display);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.wws-dialog .form-footer button[data-action="yes"] {
+  --button-background-color: var(--wws-gold);
+  --button-border-color: var(--wws-gold);
+  --button-text-color: var(--wws-on-gold);
+  --button-hover-background-color: var(--wws-gold-bright);
+  --button-hover-border-color: var(--wws-gold-bright);
+  --button-hover-text-color: var(--wws-on-gold);
+}
+
+/* ============================================ */
+/*  Quest tracker                               */
+/* ============================================ */
+
+/* Witchwind Inventory's steel card, high on the right beside the sidebar until it's dragged somewhere else. */
+#witchwind-tracker {
+  position: fixed;
+  top: 16px;
+  right: 340px;
+  z-index: var(--z-index-ui, 60);
+  width: 270px;
+  pointer-events: auto;
+}
+
+#witchwind-tracker[hidden] {
+  display: none;
+}
+
+.wws-tracker-card {
+  background: var(--wws-grain), rgb(27 23 18 / 94%);
+  color: var(--wws-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-inner-rule), 0 8px 24px rgb(0 0 0 / 55%);
+  font-family: var(--wws-font-ui);
+}
+
+.wws-tracker-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 6px 12px;
+  border-bottom: 1px solid var(--wws-line);
+  cursor: grab;
+  color: var(--wws-gold);
+}
+
+#witchwind-tracker.dragging .wws-tracker-head {
+  cursor: grabbing;
+}
+
+.wws-tracker-card.collapsed .wws-tracker-head {
+  border-bottom: none;
+}
+
+.wws-tracker-head h2 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws-tracker .wws-tool {
+  color: var(--wws-ink-faint);
+}
+
+.wws-tracker button.wws-tool:hover:not(:disabled) {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws-tracker-quests {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 4px 0 8px;
+}
+
+.wws-tracker-quest {
+  padding: 6px 8px 4px 12px;
+}
+
+.wws-tracker-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wws-tracker .wws-tracker-title button.wws-link {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--wws-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--wws-ivory);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 80%);
+}
+
+.wws-tracker .wws-tracker-title button.wws-link:hover {
+  color: var(--wws-gold);
+}
+
+.wws-tracker-title .wws-tool {
+  opacity: 0;
+}
+
+.wws-tracker-quest:is(:hover, :focus-within) .wws-tracker-title .wws-tool {
+  opacity: 1;
+}
+
+.wws-tracker-objectives li,
+.wws-tracker-location {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 3px 0 0;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--wws-ink);
+}
+
+.wws-tracker-objectives .wws-diamond {
+  position: relative;
+  top: -1px;
+  width: 7px;
+  height: 7px;
+  color: var(--wws-gold);
+}
+
+.wws-tracker-objectives li.wws-optional {
+  margin-left: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--wws-ink-muted);
+}
+
+.wws-tracker-location {
+  color: var(--wws-ink-muted);
+}
+
+.wws-tracker-location i {
+  color: var(--wws-gold-dim);
+  font-size: 12px;
+}
+
+/* ============================================ */
+/*  Banners                                     */
+/* ============================================ */
+
+/*
+ * "Quest Started", the quest's name and a line of detail, across a band of shadow near the top of the screen
+ * with gold rules above and below, as the Elder Scrolls games announce a quest.
+ */
+.wws-banner {
+  position: fixed;
+  top: 13vh;
+  left: 50%;
+  z-index: calc(var(--z-index-tooltip, 9999) - 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: min(760px, 90vw);
+  padding: 18px 40px 20px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent 0%, rgb(15 13 10 / 82%) 22%, rgb(15 13 10 / 82%) 78%, transparent 100%);
+  pointer-events: none;
+  text-align: center;
+  animation: wws-banner 4.8s ease-in-out forwards;
+}
+
+.wws-banner::before,
+.wws-banner::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--wws-gold) 30%, var(--wws-gold) 70%, transparent);
+}
+
+.wws-banner::before { top: 0; }
+.wws-banner::after { bottom: 0; }
+
+.wws-banner-icon {
+  font-size: 18px;
+  color: var(--wws-gold);
+  filter: drop-shadow(0 0 6px var(--wws-gold-glow));
+}
+
+.wws-banner-label {
+  font-family: var(--wws-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+  text-shadow: 0 2px 6px rgb(0 0 0 / 90%);
+}
+
+.wws-banner-title {
+  font-family: var(--wws-font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: var(--wws-ivory);
+  text-shadow: 0 2px 10px rgb(0 0 0 / 95%);
+}
+
+.wws-banner-detail {
+  max-width: 600px;
+  font-family: var(--wws-font-body);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--wws-ink);
+  text-shadow: 0 2px 6px rgb(0 0 0 / 90%);
+}
+
+.wws-tone-green .wws-banner-label,
+.wws-tone-green .wws-banner-icon { color: #8fd488; }
+.wws-tone-red .wws-banner-label,
+.wws-tone-red .wws-banner-icon { color: #e0644f; }
+
+@keyframes wws-banner {
+  0% { opacity: 0; transform: translate(-50%, -8px); }
+  12% { opacity: 1; transform: translate(-50%, 0); }
+  82% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 0); }
+}
+
+/* ============================================ */
+/*  The button in the Journal tab               */
+/* ============================================ */
+
+.wws-launch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  flex: 0 0 100%;
+  margin-bottom: 6px;
+  font-family: var(--wws-font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================ */
+/*  Narrow windows                              */
+/* ============================================ */
+
+/* Too narrow for two pages: the list sits above the entry on one page, and the map list becomes a strip. */
+@container wws-book (max-width: 760px) {
+  .wws-spread {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(220px, 45%) minmax(0, 1fr);
+  }
+
+  .wws-plate img {
+    max-height: 150px;
+  }
+
+  .wws-spread > .wws-page-detail {
+    border-left: none;
+    border-top: 1px solid rgb(90 62 30 / 22%);
+    box-shadow: inset 0 22px 26px -24px rgb(90 62 30 / 55%);
+  }
+
+  .wws-spread > .wws-page-list {
+    box-shadow: none;
+    padding-bottom: 6px;
+  }
+
+  .wws-detail-scroll {
+    padding: 16px 20px 22px;
+  }
+
+  .wws-mapbook {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .wws-map-list {
+    max-height: 150px;
+  }
+
+  .wws-map-thumbs {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .wws-map-thumbs > li {
+    flex: 0 0 150px;
+  }
+
+  .wws-map-thumb img {
+    height: 60px;
+  }
+
+  .wws-map-list .wws-drop-hint {
+    display: none;
+  }
+
+  .wws-tabs {
+    justify-content: center;
+  }
+}
+
+/* ============================================ */
+/*  Motion                                      */
+/* ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .wws-tab-slot,
+  .wws button:is(.wws-row, .wws-ink, .wws-button, .wws-tool, .wws-slot, .wws-filter, .wws-map-thumb),
+  .wws-pin-mark,
+  .wws-pin-label,
+  .wws-standing-mark,
+  .wws-row-tools {
+    transition: none;
+  }
+
+  .wws button.wws-slot:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .wws .wws-pin.tracked::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .wws-banner {
+    animation: wws-banner-still 4.8s step-end forwards;
+  }
+
+  @keyframes wws-banner-still {
+    0%, 99% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}

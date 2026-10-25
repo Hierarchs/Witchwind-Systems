@@ -1,0 +1,22 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</label>
+    <input type="text" name="name" value="{{entry.name}}" required>
+  </div>
+
+  <label class="wws-toggle">
+    <input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}>
+    <span>{{localize "WITCHWIND_SYSTEMS.Editor.VisibleMap"}}</span>
+  </label>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.MapImage"}}</label>
+    {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+  </div>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-map" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

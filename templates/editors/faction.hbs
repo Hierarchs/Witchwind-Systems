@@ -1,0 +1,138 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <nav class="wws-editor-tabs">
+    <button type="button" class="active" data-action="editorTab" data-tab="details" aria-pressed="true">{{localize "WITCHWIND_SYSTEMS.Editor.Details"}}</button>
+    <button type="button" data-action="editorTab" data-tab="ranks" aria-pressed="false">{{localize "WITCHWIND_SYSTEMS.Factions.RanksAndMembers"}}</button>
+    <button type="button" data-action="editorTab" data-tab="gm" aria-pressed="false">{{localize "WITCHWIND_SYSTEMS.GMNotes"}}</button>
+  </nav>
+
+  {{!-- Details --}}
+  <section class="wws-panel active" data-panel="details">
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</label>
+        <input type="text" name="name" value="{{entry.name}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Factions.NamePlaceholder"}}">
+      </div>
+      <div class="form-group wws-color-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Factions.Color"}}</label>
+        <input type="color" name="color" value="{{#if entry.color}}{{entry.color}}{{else}}#c9a45c{{/if}}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Factions.Motto"}}</label>
+      <input type="text" name="motto" value="{{entry.motto}}">
+    </div>
+    <label class="wws-toggle">
+      <input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}>
+      <span>{{localize "WITCHWIND_SYSTEMS.Editor.VisibleFaction"}}</span>
+    </label>
+
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Factions.Standing"}}</label>
+      <div class="wws-range">
+        <input type="range" name="standing" min="-100" max="100" step="1" value="{{standing}}">
+        <output data-standing>{{standing}}</output>
+      </div>
+    </div>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.StandingHint"}}</p>
+
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Factions.Leader"}}</label>
+        <input type="text" name="leader" value="{{entry.leader}}">
+      </div>
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Factions.Headquarters"}}</label>
+        <input type="text" name="headquarters" value="{{entry.headquarters}}">
+      </div>
+    </div>
+
+    {{#if others.length}}
+    <fieldset class="wws-choices">
+      <legend>{{localize "WITCHWIND_SYSTEMS.Factions.Relations"}}</legend>
+      <table class="wws-relations">
+        <thead><tr><th></th><th>{{localize "WITCHWIND_SYSTEMS.Factions.Ally"}}</th><th>{{localize "WITCHWIND_SYSTEMS.Factions.Rival"}}</th></tr></thead>
+        <tbody>
+          {{#each others}}
+          <tr>
+            <td>{{name}}</td>
+            <td><input type="checkbox" data-relation="ally" value="{{id}}" {{#if ally}}checked{{/if}} aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Ally"}}"></td>
+            <td><input type="checkbox" data-relation="rival" value="{{id}}" {{#if rival}}checked{{/if}} aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Rival"}}"></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </fieldset>
+    {{/if}}
+
+    <div class="form-group stacked">
+      <label>{{localize "WITCHWIND_SYSTEMS.Factions.Emblem"}}</label>
+      {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+    </div>
+
+    <div class="form-group stacked">
+      <label>{{localize "WITCHWIND_SYSTEMS.Factions.About"}}</label>
+      <prose-mirror name="description" value="{{entry.description}}"></prose-mirror>
+    </div>
+  </section>
+
+  {{!-- Ranks and members --}}
+  <section class="wws-panel" data-panel="ranks">
+    <div class="form-group stacked">
+      <label>{{localize "WITCHWIND_SYSTEMS.Factions.Ranks"}}</label>
+      <textarea name="ranks" rows="6">{{ranksText}}</textarea>
+      <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.RanksHint"}}</p>
+    </div>
+
+    <div class="wws-members-head">
+      <h4>{{localize "WITCHWIND_SYSTEMS.Factions.Members"}}</h4>
+      <button type="button" class="wws-label-button" data-action="addParty"><i class="fa-solid fa-users" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.AddParty"}}</button>
+    </div>
+    <div class="wws-drop-zone" data-drop="members">
+      <i class="fa-solid fa-user-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.MembersDrop"}}
+    </div>
+    <ol class="wws-rows" data-list="members">
+      {{#each members}}
+      <li class="wws-edit-row" data-list-row>
+        <input type="hidden" data-field="uuid" value="{{uuid}}">
+        <input type="hidden" data-field="name" value="{{name}}">
+        <input type="hidden" data-field="img" value="{{img}}">
+        <img class="wws-row-img" src="{{img}}" data-show="img" alt="">
+        <span class="wws-row-name" data-text="name">{{name}}</span>
+        <select data-field="rank" aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Rank"}}">
+          {{#each ranks}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+        </select>
+        <span class="wws-row-buttons">
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+      {{/each}}
+    </ol>
+    <template data-row-template="members">
+      <li class="wws-edit-row" data-list-row>
+        <input type="hidden" data-field="uuid" value="">
+        <input type="hidden" data-field="name" value="">
+        <input type="hidden" data-field="img" value="">
+        <img class="wws-row-img" src="icons/svg/mystery-man.svg" data-show="img" alt="">
+        <span class="wws-row-name" data-text="name"></span>
+        <select data-field="rank" aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Rank"}}">
+          {{#each rankOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+        </select>
+        <span class="wws-row-buttons">
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+    </template>
+  </section>
+
+  {{!-- GM notes --}}
+  <section class="wws-panel" data-panel="gm">
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.GMNotesHint"}}</p>
+    <prose-mirror name="gmNotes" value="{{entry.gmNotes}}"></prose-mirror>
+  </section>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-chess-rook" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Factions.Create"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

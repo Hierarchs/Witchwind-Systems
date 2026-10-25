@@ -1,0 +1,157 @@
+<div class="wws-mapbook">
+
+  {{!-- The list of maps down the side --}}
+  <aside class="wws-page wws-map-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.maps"}}</h2>
+      {{#if page.isGM}}
+      <span class="wws-head-tools">
+        <button type="button" class="wws-ink" data-action="mapUpload" data-tooltip="WITCHWIND_SYSTEMS.Maps.UploadHint">
+          <i class="fa-solid fa-upload" inert></i> {{localize "WITCHWIND_SYSTEMS.Maps.Upload"}}
+        </button>
+        {{#if page.canBrowse}}
+        <button type="button" class="wws-tool" data-action="mapNew" data-tooltip="WITCHWIND_SYSTEMS.Maps.Choose">
+          <i class="fa-solid fa-folder-open" inert></i>
+        </button>
+        {{/if}}
+        <input type="file" accept="image/*" multiple hidden data-map-upload>
+      </span>
+      {{/if}}
+    </header>
+
+    <div class="wws-list-scroll">
+      {{#unless page.maps.length}}
+      <p class="wws-empty">{{#if page.isGM}}{{localize "WITCHWIND_SYSTEMS.Maps.EmptyGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Maps.Empty"}}{{/if}}</p>
+      {{/unless}}
+      <ol class="wws-map-thumbs">
+        {{#each page.maps}}
+        <li>
+          <button type="button" class="wws-map-thumb{{#if selected}} selected{{/if}}" data-action="mapSelect" data-id="{{id}}">
+            <img src="{{img}}" alt="" loading="lazy" draggable="false">
+            <span class="wws-map-name">{{name}}</span>
+            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    {{#if page.isGM}}
+    <p class="wws-drop-hint"><i class="fa-solid fa-file-import" inert></i> {{localize "WITCHWIND_SYSTEMS.Maps.DropHint"}}</p>
+    {{/if}}
+  </aside>
+
+  {{!-- The open map --}}
+  <section class="wws-map-view">
+    {{#with page.map as |map|}}
+    <header class="wws-map-head">
+      <h2>{{map.name}}</h2>
+      {{#if map.hidden}}<span class="wws-ribbon wws-ribbon-inline"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</span>{{/if}}
+      {{#if @root.page.isGM}}
+      <span class="wws-head-tools">
+        <button type="button" class="wws-tool" data-action="mapEdit" data-id="{{map.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
+          <i class="fa-solid fa-pen-to-square" inert></i>
+        </button>
+        <button type="button" class="wws-tool" data-action="mapReveal" data-id="{{map.id}}"
+                data-tooltip="{{#if map.hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+          <i class="fa-solid {{#if map.hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+        </button>
+        <button type="button" class="wws-tool" data-action="mapShow" data-id="{{map.id}}" data-tooltip="WITCHWIND_SYSTEMS.ShowToPlayers">
+          <i class="fa-solid fa-bullhorn" inert></i>
+        </button>
+        <button type="button" class="wws-tool wws-bad" data-action="mapDelete" data-id="{{map.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+          <i class="fa-solid fa-trash" inert></i>
+        </button>
+      </span>
+      {{/if}}
+    </header>
+
+    <div class="wws-map-stage{{#if @root.page.placing}} placing{{/if}}" data-map="{{map.id}}">
+      <div class="wws-map-layer">
+        <img class="wws-map-image" src="{{map.img}}" alt="" draggable="false">
+        {{#each @root.page.pins}}
+        <button type="button" class="wws-pin{{#if open}} open{{/if}}{{#if tracked}} tracked{{/if}}{{#if private}} private{{/if}}{{#if canEdit}} movable{{/if}}"
+                data-id="{{id}}" style="left: {{x}}%; top: {{y}}%; --wws-pin: {{color}};" aria-label="{{label}}">
+          <span class="wws-pin-mark"><i class="fa-solid {{icon}}" inert></i></span>
+          {{#if label}}<span class="wws-pin-label">{{label}}</span>{{/if}}
+        </button>
+        {{/each}}
+      </div>
+
+      <div class="wws-map-tools">
+        <button type="button" class="wws-tool" data-action="mapZoom" data-step="1.25" data-tooltip="WITCHWIND_SYSTEMS.Maps.ZoomIn">
+          <i class="fa-solid fa-magnifying-glass-plus" inert></i>
+        </button>
+        <button type="button" class="wws-tool" data-action="mapZoom" data-step="0.8" data-tooltip="WITCHWIND_SYSTEMS.Maps.ZoomOut">
+          <i class="fa-solid fa-magnifying-glass-minus" inert></i>
+        </button>
+        <button type="button" class="wws-tool" data-action="mapFit" data-tooltip="WITCHWIND_SYSTEMS.Maps.Fit">
+          <i class="fa-solid fa-expand" inert></i>
+        </button>
+        <button type="button" class="wws-tool" data-action="mapLabels" data-tooltip="WITCHWIND_SYSTEMS.Maps.Labels"
+                aria-pressed="{{#if @root.page.labels}}true{{else}}false{{/if}}">
+          <i class="fa-solid fa-tag" inert></i>
+        </button>
+        {{#if @root.page.canPlace}}
+        <button type="button" class="wws-ink wws-place{{#if @root.page.placing}} pressed{{/if}}" data-action="mapPlace"
+                aria-pressed="{{#if @root.page.placing}}true{{else}}false{{/if}}">
+          <i class="fa-solid fa-location-dot" inert></i>
+          {{#if @root.page.placing}}{{localize "WITCHWIND_SYSTEMS.Cancel"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Maps.Place"}}{{/if}}
+        </button>
+        {{/if}}
+      </div>
+
+      {{#if @root.page.placing}}
+      <p class="wws-place-hint">{{localize "WITCHWIND_SYSTEMS.Maps.PlaceHint"}}</p>
+      {{/if}}
+
+      {{#with @root.page.card as |card|}}
+      <div class="wws-pin-card" hidden style="--wws-pin: {{card.color}};">
+        <header>
+          <span class="wws-pin-mark"><i class="fa-solid {{card.icon}}" inert></i></span>
+          <h3>{{card.label}}</h3>
+          <button type="button" class="wws-tool wws-mini" data-action="pinClose" aria-label="{{localize "WITCHWIND_SYSTEMS.Close"}}">
+            <i class="fa-solid fa-xmark" inert></i>
+          </button>
+        </header>
+        <p class="wws-byline">
+          <span class="wws-author" style="--wws-author: {{card.author.color}}">{{card.author.name}}</span>
+          {{#if card.private}} · <i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Private"}}{{/if}}
+        </p>
+        {{#if card.text}}<p class="wws-pin-text">{{card.text}}</p>{{/if}}
+        {{#if (or card.quest card.faction)}}
+        <p class="wws-pin-links">
+          {{#if card.quest}}
+          <button type="button" class="wws-link" data-action="pinQuest" data-quest="{{card.quest.id}}">
+            <i class="fa-solid fa-scroll-old" inert></i> {{card.quest.title}}
+          </button>
+          {{/if}}
+          {{#if card.faction}}
+          <button type="button" class="wws-link" data-action="pinFaction" data-faction="{{card.faction.id}}">
+            <i class="fa-solid fa-chess-rook" inert></i> {{card.faction.name}}
+          </button>
+          {{/if}}
+        </p>
+        {{/if}}
+        {{#if card.canEdit}}
+        <footer>
+          <button type="button" class="wws-button" data-action="pinEdit" data-id="{{card.id}}">
+            <i class="fa-solid fa-pen-to-square" inert></i> {{localize "WITCHWIND_SYSTEMS.Edit"}}
+          </button>
+          <button type="button" class="wws-tool wws-bad" data-action="pinDelete" data-id="{{card.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+            <i class="fa-solid fa-trash" inert></i>
+          </button>
+          <span class="wws-hint">{{localize "WITCHWIND_SYSTEMS.Maps.DragHint"}}</span>
+        </footer>
+        {{/if}}
+      </div>
+      {{/with}}
+    </div>
+    {{else}}
+    <p class="wws-empty wws-empty-page wws-empty-map">
+      <i class="fa-solid fa-map" inert></i>
+      {{#if page.isGM}}{{localize "WITCHWIND_SYSTEMS.Maps.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Maps.NoneHint"}}{{/if}}
+    </p>
+    {{/with}}
+  </section>
+</div>

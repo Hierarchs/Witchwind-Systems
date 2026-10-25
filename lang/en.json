@@ -1,0 +1,347 @@
+{
+  "WITCHWIND_SYSTEMS": {
+    "Title": "Witchwind Journal",
+    "Open": "Quests, Journal, Maps and Factions",
+    "NoSections": "Every section is switched off in this world's settings.",
+    "HiddenFromPlayers": "Hidden from players",
+    "GM": "GM",
+    "GMNotes": "GM notes",
+    "Edit": "Edit",
+    "Reveal": "Reveal to players",
+    "Hide": "Hide from players",
+    "ShowToPlayers": "Show to players",
+    "ShownToPlayers": "Shown to everyone who's connected.",
+    "Save": "Save",
+    "Cancel": "Cancel",
+    "Close": "Close",
+    "None": "None",
+    "Untitled": "Untitled",
+    "Unknown": "Unknown",
+    "Delete": {
+      "Title": "Delete",
+      "Body": "Delete <strong>{name}</strong>? This can't be undone."
+    },
+
+    "Sections": {
+      "quests": "Quests",
+      "journal": "Journal",
+      "maps": "Maps",
+      "factions": "Factions"
+    },
+
+    "Settings": {
+      "Sections": {
+        "quests": {
+          "Name": "Quests tab",
+          "Hint": "Show the Quests tab, and the quest tracker, for everyone in this world."
+        },
+        "journal": {
+          "Name": "Journal tab",
+          "Hint": "Show the Journal tab, where players and the GM write and share notes, for everyone in this world."
+        },
+        "maps": {
+          "Name": "Maps tab",
+          "Hint": "Show the Maps tab, with the GM's maps and everyone's markers, for everyone in this world."
+        },
+        "factions": {
+          "Name": "Factions tab",
+          "Hint": "Show the Factions tab, with each faction's standing and the party's ranks, for everyone in this world."
+        }
+      },
+      "PlayerNotes": {
+        "Name": "Players can write in the journal",
+        "Hint": "Let players add notes to the Journal tab, and edit or delete their own. The GM can always write notes."
+      },
+      "PlayerPins": {
+        "Name": "Players can place map markers",
+        "Hint": "Let players place markers on maps, and move or delete their own. The GM can always place markers."
+      },
+      "Announce": {
+        "Name": "Announce quest updates",
+        "Hint": "When a quest starts, changes, is completed or failed, or a character rises in a faction, show it across the top of each player's screen as in the Elder Scrolls games."
+      },
+      "Tracker": {
+        "Name": "Show the quest tracker",
+        "Hint": "Keep the quests you're tracking, and what's left to do in each, in a small card on your screen. This only changes your own view."
+      }
+    },
+
+    "Keys": {
+      "toggle": "Open or close the journal",
+      "quests": "Open the quests",
+      "journal": "Open the journal notes",
+      "maps": "Open the maps",
+      "factions": "Open the factions"
+    },
+
+    "Errors": {
+      "NoGM": "A GM needs to be connected to upload pictures for you.",
+      "NoAnswer": "The GM didn't answer in time. Try again in a moment.",
+      "NotImage": "That file isn't a picture.",
+      "UploadFailed": "The picture couldn't be uploaded.",
+      "TooLarge": "That picture is too large to send. Try a smaller one.",
+      "NoPermission": "You don't have permission to see that.",
+      "FileType": "Drop a picture, or a .txt, .md or .html file."
+    },
+
+    "Quests": {
+      "New": "New Quest",
+      "NewShort": "New",
+      "Create": "Create Quest",
+      "Edit": "Edit {name}",
+      "AddEntry": "Add journal entry",
+      "AddEntryTo": "New entry: {name}",
+      "Tracked": "Tracked",
+      "Track": "Track",
+      "Tracking": "Tracking",
+      "ShowOnMap": "Show on map",
+      "Complete": "Complete quest",
+      "Fail": "Fail quest",
+      "Reopen": "Make active again",
+      "Giver": "Quest giver",
+      "GiverPlaceholder": "A name, or drop an actor here",
+      "Location": "Location",
+      "LocationPlaceholder": "Where it leads",
+      "Faction": "Faction",
+      "Objectives": "Objectives",
+      "ToggleDone": "Mark done or not done",
+      "ToggleFailed": "Mark failed",
+      "Optional": "Optional",
+      "Done": "Done",
+      "Failed": "Failed",
+      "Journal": "Journal",
+      "Description": "Details",
+      "Rewards": "Rewards",
+      "NothingYet": "Nothing has been written about this quest yet.",
+      "StartHint": "No quests here yet. Use New to write the first.",
+      "NoneHint": "No quests here yet.",
+      "TitlePlaceholder": "The quest's name",
+      "Kind": "Kind",
+      "StatusLabel": "Status",
+      "Kinds": {
+        "main": "Main Quests",
+        "side": "Side Quests",
+        "faction": "Faction Quests",
+        "misc": "Miscellaneous"
+      },
+      "Status": {
+        "active": "Active",
+        "completed": "Completed",
+        "failed": "Failed"
+      },
+      "Filters": {
+        "active": "Current",
+        "completed": "Completed",
+        "failed": "Failed",
+        "updates": "Updates"
+      },
+      "Empty": {
+        "active": "No current quests.",
+        "completed": "No completed quests yet.",
+        "failed": "No failed quests.",
+        "updates": "No updates yet."
+      }
+    },
+
+    "Journal": {
+      "New": "New Note",
+      "NewShort": "New",
+      "Create": "Add to Journal",
+      "Edit": "Edit {name}",
+      "Search": "Search notes",
+      "NoMatches": "No notes match your search.",
+      "Empty": "No notes here yet.",
+      "Private": "Only you and the GM",
+      "Shared": "Shared with the party",
+      "PrivateHint": "Only the writer and the GM can see this",
+      "DropHint": "Drop a picture or text file here to make a note",
+      "Edited": "edited {date}",
+      "ViewImage": "View the picture",
+      "Blank": "This note is blank.",
+      "StartHint": "No notes yet. Use New, or drop a picture or text file onto this page.",
+      "NoneHint": "No notes yet.",
+      "Uploading": "Uploading the picture…",
+      "TitlePlaceholder": "What this note is about",
+      "Kind": "Kind",
+      "Body": "Note",
+      "Kinds": {
+        "all": "All notes",
+        "mine": "My notes",
+        "general": "General",
+        "people": "People",
+        "places": "Places",
+        "lore": "Lore",
+        "clues": "Clues"
+      }
+    },
+
+    "Maps": {
+      "Upload": "Upload",
+      "UploadHint": "Upload pictures as new maps",
+      "Uploading": "Uploading…",
+      "Choose": "Choose a picture already on the server",
+      "Edit": "Edit {name}",
+      "EditPin": "Edit {name}",
+      "NewPin": "New Marker",
+      "Empty": "No maps yet.",
+      "EmptyGM": "No maps yet. Upload a picture, or drop one here.",
+      "DropHint": "Drop pictures here to add maps",
+      "ZoomIn": "Zoom in",
+      "ZoomOut": "Zoom out",
+      "Fit": "Fit the map to the window",
+      "Labels": "Show marker names",
+      "Place": "Place marker",
+      "PlacePin": "Place Marker",
+      "PlaceHint": "Click the map to place your marker. You can also double-click anywhere.",
+      "DragHint": "Drag the marker to move it.",
+      "StartHint": "Upload a map to begin. New maps start hidden; reveal one when the party should see it.",
+      "NoneHint": "The GM hasn't shared any maps yet.",
+      "PinLabel": "Name",
+      "PinPlaceholder": "What's here",
+      "Icon": "Icon",
+      "Color": "Color",
+      "PinText": "Notes",
+      "PinTextPlaceholder": "Anything worth remembering about this place",
+      "LinkQuest": "Quest",
+      "LinkFaction": "Faction",
+      "Icons": {
+        "location": "Location",
+        "city": "City",
+        "village": "Village",
+        "castle": "Castle",
+        "tower": "Tower",
+        "dungeon": "Dungeon",
+        "camp": "Camp",
+        "tavern": "Tavern",
+        "temple": "Temple",
+        "shop": "Shop",
+        "port": "Port",
+        "forest": "Forest",
+        "mountain": "Mountain",
+        "ruins": "Ruins",
+        "danger": "Danger",
+        "treasure": "Treasure",
+        "quest": "Quest",
+        "person": "Person",
+        "note": "Note",
+        "flag": "Flag"
+      },
+      "Colors": {
+        "gold": "Gold",
+        "ivory": "Ivory",
+        "red": "Red",
+        "orange": "Orange",
+        "green": "Green",
+        "blue": "Blue",
+        "purple": "Purple"
+      }
+    },
+
+    "Factions": {
+      "New": "New Faction",
+      "NewShort": "New",
+      "Create": "Create Faction",
+      "Edit": "Edit {name}",
+      "Empty": "No factions yet.",
+      "StartHint": "No factions yet. Use New to write the first.",
+      "NoneHint": "The party hasn't heard of any factions yet.",
+      "DropHint": "Drop actors here to add members",
+      "Standing": "Standing",
+      "Lower": "Lower standing",
+      "Raise": "Raise standing",
+      "YourRank": "{name}:",
+      "Leader": "Leader",
+      "Headquarters": "Headquarters",
+      "Allies": "Allies",
+      "Rivals": "Rivals",
+      "Relations": "Relations",
+      "Ally": "Ally",
+      "Rival": "Rival",
+      "Ranks": "Ranks",
+      "Rank": "Rank",
+      "RanksAndMembers": "Ranks & Members",
+      "Members": "Members",
+      "Promote": "Promote",
+      "Demote": "Demote",
+      "RemoveMember": "Remove from the faction",
+      "NoMembers": "None of the party belong to this faction.",
+      "NoMembersGM": "No members yet. Drop actors onto this page, or add the party in the editor.",
+      "About": "About",
+      "Quests": "Quests",
+      "NamePlaceholder": "The faction's name",
+      "Color": "Color",
+      "Motto": "Motto",
+      "Emblem": "Emblem",
+      "Tiers": {
+        "hated": "Hated",
+        "hostile": "Hostile",
+        "unfriendly": "Unfriendly",
+        "neutral": "Neutral",
+        "friendly": "Friendly",
+        "trusted": "Trusted",
+        "revered": "Revered"
+      }
+    },
+
+    "Editor": {
+      "Details": "Details",
+      "Title": "Title",
+      "Name": "Name",
+      "Picture": "Picture",
+      "MapImage": "Map picture",
+      "ImagePath": "Picture path or URL",
+      "Upload": "Upload",
+      "Browse": "Browse",
+      "Clear": "Clear",
+      "ImageHint": "Upload a picture, choose one from the server, or drop one here.",
+      "ImageHintRelay": "Upload a picture or drop one here; a connected GM's client stores it for you.",
+      "VisibleQuest": "Players can see this quest",
+      "VisibleMap": "Players can see this map",
+      "VisibleFaction": "Players can see this faction",
+      "ObjectivesHint": "What the party needs to do. Hidden objectives stay secret until you reveal them from the quest page.",
+      "ObjectivePlaceholder": "Find the missing heir",
+      "AddObjective": "Add objective",
+      "MoveUp": "Move up",
+      "MoveDown": "Move down",
+      "Remove": "Remove",
+      "LogHint": "Journal entries tell the story of the quest as it's played, newest first, as in the Elder Scrolls games. Write a hidden entry ahead of time and reveal it later.",
+      "EntryPlaceholder": "What happened, in the party's words…",
+      "HiddenEntry": "Hide this entry from players for now",
+      "RewardsDrop": "Drop items here from the sidebar or a compendium",
+      "RewardPlaceholder": "500 gold, a favor, an item…",
+      "Quantity": "Quantity",
+      "AddReward": "Add reward",
+      "GMNotesHint": "Only GMs can see these notes.",
+      "SharedNote": "Shared with the party",
+      "SharedNoteHint": "Turn this off to keep the note between you and the GM.",
+      "ImportText": "Import a text file",
+      "SharedPin": "Everyone can see this marker",
+      "SharedPinHint": "Turn this off to keep the marker between you and the GM.",
+      "SharedPinHintGM": "Turn this off to keep the marker for GMs only.",
+      "StandingHint": "From -100 (hated) to 100 (revered). The party sees the tier, such as Friendly or Hostile.",
+      "RanksHint": "One rank per line, lowest first.",
+      "AddParty": "Add the party",
+      "MembersDrop": "Drop actors here to add them as members"
+    },
+
+    "Banners": {
+      "Started": "Quest Started",
+      "Updated": "Quest Updated",
+      "Completed": "Quest Completed",
+      "Failed": "Quest Failed",
+      "ObjectiveDone": "Objective Complete",
+      "NewObjective": "New Objective",
+      "Joined": "Joined",
+      "Promoted": "Promoted",
+      "StandingUp": "Standing Rises",
+      "StandingDown": "Standing Falls"
+    },
+
+    "Tracker": {
+      "Title": "Tracked Quests",
+      "DragHint": "Drag to move",
+      "Collapse": "Show or hide objectives",
+      "Untrack": "Stop tracking"
+    }
+  }
+}

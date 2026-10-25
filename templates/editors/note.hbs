@@ -1,0 +1,42 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Title"}}</label>
+    <input type="text" name="title" value="{{entry.title}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Journal.TitlePlaceholder"}}">
+  </div>
+
+  <div class="wws-form-row">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Journal.Kind"}}</label>
+      <select name="kind">
+        {{#each kinds}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+    </div>
+    <label class="wws-toggle">
+      <input type="checkbox" name="shared" {{#if shared}}checked{{/if}}>
+      <span>{{localize "WITCHWIND_SYSTEMS.Editor.SharedNote"}}</span>
+    </label>
+  </div>
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.SharedNoteHint"}}</p>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Picture"}}</label>
+    {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+  </div>
+
+  <div class="form-group stacked" data-drop="body">
+    <label>
+      {{localize "WITCHWIND_SYSTEMS.Journal.Body"}}
+      <button type="button" class="wws-label-button" data-action="importText">
+        <i class="fa-solid fa-file-import" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.ImportText"}}
+      </button>
+    </label>
+    <prose-mirror name="body" value="{{entry.body}}"></prose-mirror>
+    <input type="file" accept=".txt,.md,.markdown,.html,.htm,text/plain,text/markdown,text/html" hidden data-import>
+  </div>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-feather-pointed" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Journal.Create"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

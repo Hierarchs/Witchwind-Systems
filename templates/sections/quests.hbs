@@ -1,0 +1,261 @@
+<div class="wws-spread wws-quests">
+
+  {{!-- Left page: the quest list --}}
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.quests"}}</h2>
+      {{#if page.canCreate}}
+      <button type="button" class="wws-ink" data-action="questNew">
+        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Quests.NewShort"}}
+      </button>
+      {{/if}}
+    </header>
+
+    <nav class="wws-filters">
+      {{#each page.filters}}
+      <button type="button" class="wws-filter{{#if active}} active{{/if}}" data-action="questFilter" data-filter="{{id}}"
+              aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+        {{localize label}}{{#if count}}<span class="wws-count">{{count}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </nav>
+
+    <div class="wws-list-scroll">
+      {{#if page.empty}}<p class="wws-empty">{{localize page.emptyLabel}}</p>{{/if}}
+
+      {{#each page.groups}}
+      <h3 class="wws-group">{{localize label}}</h3>
+      <ol class="wws-list">
+        {{#each quests}}
+        <li>
+          <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="questSelect" data-id="{{id}}">
+            <i class="wws-diamond" inert></i>
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{title}}</span>
+              {{#if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}
+            </span>
+            {{#if tracked}}<i class="fa-solid fa-location-crosshairs wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Quests.Tracked"></i>{{/if}}
+            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+      {{/each}}
+
+      {{#if page.isUpdates}}
+      <ol class="wws-list wws-updates">
+        {{#each page.updates}}
+        <li>
+          <button type="button" class="wws-row wws-update wws-status-{{status}}{{#if selected}} selected{{/if}}" data-action="questSelect" data-id="{{quest}}">
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{title}}</span>
+              <span class="wws-row-sub">{{text}}</span>
+            </span>
+            <time class="wws-row-date">{{dateLabel}}</time>
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+      {{/if}}
+    </div>
+  </section>
+
+  {{!-- Right page: the chosen quest --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.quest as |quest|}}
+      <article class="wws-entry wws-quest wws-status-{{quest.status}}">
+        {{#if quest.hidden}}
+        <p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>
+        {{/if}}
+
+        {{#if quest.img}}
+        <figure class="wws-plate"><img src="{{quest.img}}" alt=""></figure>
+        {{/if}}
+
+        <header class="wws-entry-head">
+          <p class="wws-kicker">
+            {{localize quest.kindLabel}}
+            <span class="wws-sep" aria-hidden="true">◆</span>
+            <span class="wws-status-word">{{localize quest.statusLabel}}</span>
+          </p>
+          <h1 class="wws-entry-title">{{quest.title}}</h1>
+        </header>
+
+        <div class="wws-actions">
+          {{#if quest.isActive}}
+          <button type="button" class="wws-button{{#if quest.isTracked}} pressed{{/if}}" data-action="questTrack" data-id="{{quest.id}}"
+                  aria-pressed="{{#if quest.isTracked}}true{{else}}false{{/if}}">
+            <i class="fa-solid fa-location-crosshairs" inert></i>
+            {{#if quest.isTracked}}{{localize "WITCHWIND_SYSTEMS.Quests.Tracking"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Quests.Track"}}{{/if}}
+          </button>
+          {{/if}}
+          {{#if quest.pin}}
+          <button type="button" class="wws-button" data-action="questMap" data-pin="{{quest.pin}}">
+            <i class="fa-solid fa-map-location-dot" inert></i> {{localize "WITCHWIND_SYSTEMS.Quests.ShowOnMap"}}
+          </button>
+          {{/if}}
+        </div>
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="questEntry" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Quests.AddEntry">
+            <i class="fa-solid fa-feather" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="questEdit" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
+            <i class="fa-solid fa-pen-to-square" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="questReveal" data-id="{{quest.id}}"
+                  data-tooltip="{{#if quest.hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+            <i class="fa-solid {{#if quest.hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="questShow" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.ShowToPlayers">
+            <i class="fa-solid fa-bullhorn" inert></i>
+          </button>
+          <span class="wws-gm-gap"></span>
+          {{#if quest.isActive}}
+          <button type="button" class="wws-tool wws-good" data-action="questStatus" data-id="{{quest.id}}" data-status="completed" data-tooltip="WITCHWIND_SYSTEMS.Quests.Complete">
+            <i class="fa-solid fa-circle-check" inert></i>
+          </button>
+          <button type="button" class="wws-tool wws-bad" data-action="questStatus" data-id="{{quest.id}}" data-status="failed" data-tooltip="WITCHWIND_SYSTEMS.Quests.Fail">
+            <i class="fa-solid fa-circle-xmark" inert></i>
+          </button>
+          {{else}}
+          <button type="button" class="wws-tool" data-action="questStatus" data-id="{{quest.id}}" data-status="active" data-tooltip="WITCHWIND_SYSTEMS.Quests.Reopen">
+            <i class="fa-solid fa-arrow-rotate-left" inert></i>
+          </button>
+          {{/if}}
+          <button type="button" class="wws-tool wws-bad" data-action="questDelete" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+            <i class="fa-solid fa-trash" inert></i>
+          </button>
+        </div>
+        {{/if}}
+
+        {{#if (or quest.giver quest.location quest.faction)}}
+        <dl class="wws-facts">
+          {{#if quest.giver}}
+          <div>
+            <dt>{{localize "WITCHWIND_SYSTEMS.Quests.Giver"}}</dt>
+            <dd>
+              <button type="button" class="wws-person" data-action="questGiver" data-uuid="{{quest.giver.uuid}}" {{#unless quest.giver.uuid}}disabled{{/unless}}>
+                {{#if quest.giver.img}}<img src="{{quest.giver.img}}" alt="">{{/if}}
+                <span>{{quest.giver.name}}</span>
+              </button>
+            </dd>
+          </div>
+          {{/if}}
+          {{#if quest.location}}
+          <div>
+            <dt>{{localize "WITCHWIND_SYSTEMS.Quests.Location"}}</dt>
+            <dd>{{quest.location}}</dd>
+          </div>
+          {{/if}}
+          {{#if quest.faction}}
+          <div>
+            <dt>{{localize "WITCHWIND_SYSTEMS.Quests.Faction"}}</dt>
+            <dd>
+              <button type="button" class="wws-person" data-action="questFaction" data-faction="{{quest.faction.id}}">
+                {{#if quest.faction.img}}<img src="{{quest.faction.img}}" alt="">{{/if}}
+                <span>{{quest.faction.name}}</span>
+              </button>
+            </dd>
+          </div>
+          {{/if}}
+        </dl>
+        {{/if}}
+
+        {{#if quest.hasObjectives}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Objectives"}}</h3>
+        <ol class="wws-objectives">
+          {{#each quest.objectives}}
+          <li class="wws-objective wws-{{state}}{{#if hidden}} wws-is-hidden{{/if}}">
+            {{#if @root.isGM}}
+            <button type="button" class="wws-check" data-action="questObjective" data-id="{{quest.id}}" data-row="{{id}}"
+                    data-tooltip="WITCHWIND_SYSTEMS.Quests.ToggleDone" aria-pressed="{{#if done}}true{{else}}false{{/if}}">
+              <i class="wws-diamond" inert></i>
+            </button>
+            {{else}}
+            <span class="wws-check"><i class="wws-diamond" inert></i></span>
+            {{/if}}
+            <span class="wws-objective-text">
+              {{text}}
+              {{#if optional}}<em class="wws-optional">{{localize "WITCHWIND_SYSTEMS.Quests.Optional"}}</em>{{/if}}
+            </span>
+            {{#if @root.isGM}}
+            <span class="wws-row-tools">
+              <button type="button" class="wws-tool wws-mini" data-action="questObjectiveFail" data-id="{{quest.id}}" data-row="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Quests.ToggleFailed">
+                <i class="fa-solid fa-xmark" inert></i>
+              </button>
+              <button type="button" class="wws-tool wws-mini" data-action="questObjectiveHide" data-id="{{quest.id}}" data-row="{{id}}"
+                      data-tooltip="{{#if hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+                <i class="fa-solid {{#if hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+              </button>
+            </span>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if quest.log.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Journal"}}</h3>
+        <ol class="wws-log">
+          {{#each quest.log}}
+          <li class="wws-log-entry{{#if hidden}} wws-is-hidden{{/if}}{{#if @first}} wws-latest{{/if}}">
+            <div class="wws-log-meta">
+              <time>{{dateLabel}}</time>
+              {{#if @root.isGM}}
+              <button type="button" class="wws-tool wws-mini" data-action="questEntryHide" data-id="{{quest.id}}" data-row="{{id}}"
+                      data-tooltip="{{#if hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+                <i class="fa-solid {{#if hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+              </button>
+              {{/if}}
+            </div>
+            <div class="wws-prose">{{{html}}}</div>
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if quest.description}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Description"}}</h3>
+        <div class="wws-prose">{{{quest.description}}}</div>
+        {{/if}}
+
+        {{#if quest.rewards.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Rewards"}}</h3>
+        <ul class="wws-slots">
+          {{#each quest.rewards}}
+          <li>
+            <button type="button" class="wws-slot" data-action="questReward" data-uuid="{{uuid}}" data-wws-rarity="{{rarity}}"
+                    data-tooltip="{{name}}" {{#unless uuid}}disabled{{/unless}}>
+              {{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-gift" inert></i>{{/if}}
+              {{#if (gt qty 1)}}<span class="wws-qty">{{qty}}</span>{{/if}}
+            </button>
+            <span class="wws-slot-name">{{name}}</span>
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if quest.gmNotes}}
+        <aside class="wws-gm-notes">
+          <h4><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.GMNotes"}}</h4>
+          <div class="wws-prose">{{{quest.gmNotes}}}</div>
+        </aside>
+        {{/if}}
+
+        {{#unless (or quest.hasObjectives quest.log.length quest.description quest.rewards.length)}}
+        <p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Quests.NothingYet"}}</p>
+        {{/unless}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page">
+        <i class="fa-solid fa-scroll-old" inert></i>
+        {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Quests.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Quests.NoneHint"}}{{/if}}
+      </p>
+      {{/with}}
+    </div>
+  </section>
+</div>

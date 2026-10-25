@@ -1,0 +1,64 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Maps.PinLabel"}}</label>
+    <input type="text" name="label" value="{{entry.label}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Maps.PinPlaceholder"}}">
+  </div>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Maps.Icon"}}</legend>
+    <div class="wws-icon-grid">
+      {{#each icons}}
+      <label class="wws-icon-choice" data-tooltip="{{label}}">
+        <input type="radio" name="icon" value="{{id}}" {{#if checked}}checked{{/if}} aria-label="{{localize label}}">
+        <i class="fa-solid {{icon}}" inert></i>
+      </label>
+      {{/each}}
+    </div>
+  </fieldset>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Maps.Color"}}</legend>
+    <div class="wws-color-row">
+      {{#each colors}}
+      <label class="wws-color-choice" data-tooltip="{{label}}" style="--wws-swatch: {{value}};">
+        <input type="radio" name="color" value="{{id}}" {{#if checked}}checked{{/if}} aria-label="{{localize label}}">
+        <span></span>
+      </label>
+      {{/each}}
+    </div>
+  </fieldset>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Maps.PinText"}}</label>
+    <textarea name="text" rows="3" placeholder="{{localize "WITCHWIND_SYSTEMS.Maps.PinTextPlaceholder"}}">{{entry.text}}</textarea>
+  </div>
+
+  <div class="wws-form-row">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Maps.LinkQuest"}}</label>
+      <select name="quest">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+        {{#each quests}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{title}}</option>{{/each}}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Maps.LinkFaction"}}</label>
+      <select name="faction">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+        {{#each factions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </div>
+  </div>
+
+  <label class="wws-toggle">
+    <input type="checkbox" name="shared" {{#if shared}}checked{{/if}}>
+    <span>{{localize "WITCHWIND_SYSTEMS.Editor.SharedPin"}}</span>
+  </label>
+  <p class="hint">{{#if isGM}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHintGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHint"}}{{/if}}</p>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-location-dot" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Maps.PlacePin"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

@@ -1,0 +1,22 @@
+{{!-- A picture field: a framed preview, the path, and buttons to upload, browse or clear. Drop a picture on it too. --}}
+<div class="wws-image-field" data-drop="image">
+  <span class="wws-image-preview{{#unless image.value}} empty{{/unless}}"
+        {{#if image.value}}style="background-image: url('{{image.value}}')"{{/if}}>
+    <i class="fa-solid fa-image" inert></i>
+  </span>
+  <div class="wws-image-controls">
+    <input type="text" name="{{image.name}}" value="{{image.value}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Editor.ImagePath"}}">
+    <div class="wws-image-buttons">
+      <button type="button" data-action="uploadImage"><i class="fa-solid fa-upload" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.Upload"}}</button>
+      {{#if canBrowse}}
+      <button type="button" data-action="browseImage"><i class="fa-solid fa-folder-open" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.Browse"}}</button>
+      {{/if}}
+      <button type="button" data-action="clearImage" data-tooltip="WITCHWIND_SYSTEMS.Editor.Clear" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Clear"}}">
+        <i class="fa-solid fa-xmark" inert></i>
+      </button>
+    </div>
+    <p class="hint">{{#if canUpload}}{{localize "WITCHWIND_SYSTEMS.Editor.ImageHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Editor.ImageHintRelay"}}{{/if}}</p>
+  </div>
+  <input type="file" accept="image/*" hidden data-upload>
+  <span class="wws-busy-mark"><i class="fa-solid fa-spinner fa-spin" inert></i></span>
+</div>

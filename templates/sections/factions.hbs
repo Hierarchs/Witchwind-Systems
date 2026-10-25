@@ -1,0 +1,212 @@
+<div class="wws-spread wws-factions">
+
+  {{!-- Left page: the factions --}}
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.factions"}}</h2>
+      {{#if page.canCreate}}
+      <button type="button" class="wws-ink" data-action="factionNew">
+        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Factions.NewShort"}}
+      </button>
+      {{/if}}
+    </header>
+
+    <div class="wws-list-scroll">
+      {{#if page.empty}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Factions.Empty"}}</p>{{/if}}
+      <ol class="wws-list">
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row wws-faction-row{{#if selected}} selected{{/if}}" data-action="factionSelect" data-id="{{id}}"
+                  style="--wws-faction: {{#if color}}{{color}}{{else}}#8f7442{{/if}};">
+            <span class="wws-emblem">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-chess-rook" inert></i>{{/if}}</span>
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{name}}</span>
+              <span class="wws-row-sub">
+                <span class="wws-tier wws-tier-{{tier}}">{{localize tierLabel}}</span>
+                {{#if yourRank}} · {{yourRank}}{{/if}}
+              </span>
+            </span>
+            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+  </section>
+
+  {{!-- Right page: the chosen faction --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.faction as |faction|}}
+      <article class="wws-entry wws-faction-page" data-id="{{faction.id}}"
+               style="--wws-faction: {{#if faction.color}}{{faction.color}}{{else}}#8f7442{{/if}};">
+        {{#if faction.hidden}}
+        <p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>
+        {{/if}}
+
+        <header class="wws-faction-head">
+          <span class="wws-emblem wws-emblem-large">
+            {{#if faction.img}}<img src="{{faction.img}}" alt="">{{else}}<i class="fa-solid fa-chess-rook" inert></i>{{/if}}
+          </span>
+          <div class="wws-entry-head">
+            <h1 class="wws-entry-title">{{faction.name}}</h1>
+            {{#if faction.motto}}<p class="wws-motto">“{{faction.motto}}”</p>{{/if}}
+          </div>
+        </header>
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="factionEdit" data-id="{{faction.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
+            <i class="fa-solid fa-pen-to-square" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="factionReveal" data-id="{{faction.id}}"
+                  data-tooltip="{{#if faction.hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+            <i class="fa-solid {{#if faction.hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="factionShow" data-id="{{faction.id}}" data-tooltip="WITCHWIND_SYSTEMS.ShowToPlayers">
+            <i class="fa-solid fa-bullhorn" inert></i>
+          </button>
+          <span class="wws-gm-gap"></span>
+          <span class="wws-hint">{{localize "WITCHWIND_SYSTEMS.Factions.DropHint"}}</span>
+          <button type="button" class="wws-tool wws-bad" data-action="factionDelete" data-id="{{faction.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+            <i class="fa-solid fa-trash" inert></i>
+          </button>
+        </div>
+        {{/if}}
+
+        {{!-- Standing: a bar from hated to revered, the marker where the party stands. --}}
+        <section class="wws-standing wws-tier-{{faction.tier}}">
+          <div class="wws-standing-head">
+            <span class="wws-label">{{localize "WITCHWIND_SYSTEMS.Factions.Standing"}}</span>
+            <strong class="wws-tier-name">{{localize faction.tierLabel}}</strong>
+            <span class="wws-standing-value">{{faction.standingLabel}}</span>
+            {{#if @root.isGM}}
+            <span class="wws-standing-tools">
+              <button type="button" class="wws-tool wws-mini" data-action="factionStanding" data-id="{{faction.id}}" data-delta="-1" data-tooltip="WITCHWIND_SYSTEMS.Factions.Lower">
+                <i class="fa-solid fa-minus" inert></i>
+              </button>
+              <button type="button" class="wws-tool wws-mini" data-action="factionStanding" data-id="{{faction.id}}" data-delta="1" data-tooltip="WITCHWIND_SYSTEMS.Factions.Raise">
+                <i class="fa-solid fa-plus" inert></i>
+              </button>
+            </span>
+            {{/if}}
+          </div>
+          <div class="wws-standing-bar" role="meter" aria-valuemin="-100" aria-valuemax="100" aria-valuenow="{{faction.standing}}"
+               aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Standing"}}">
+            <span class="wws-standing-mark" style="left: {{faction.standingPercent}}%"></span>
+          </div>
+        </section>
+
+        {{#if faction.yours.length}}
+        <section class="wws-your-rank">
+          {{#each faction.yours}}
+          <p><img src="{{img}}" alt=""> <span>{{localize "WITCHWIND_SYSTEMS.Factions.YourRank" name=name}}</span> <strong>{{rankName}}</strong></p>
+          {{/each}}
+        </section>
+        {{/if}}
+
+        {{#if (or faction.leader faction.headquarters faction.allies.length faction.rivals.length)}}
+        <dl class="wws-facts">
+          {{#if faction.leader}}
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Factions.Leader"}}</dt><dd>{{faction.leader}}</dd></div>
+          {{/if}}
+          {{#if faction.headquarters}}
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Factions.Headquarters"}}</dt><dd>{{faction.headquarters}}</dd></div>
+          {{/if}}
+          {{#if faction.allies.length}}
+          <div>
+            <dt>{{localize "WITCHWIND_SYSTEMS.Factions.Allies"}}</dt>
+            <dd class="wws-chips">
+              {{#each faction.allies}}
+              <button type="button" class="wws-chip wws-ally" data-action="factionGo" data-faction="{{id}}">{{name}}</button>
+              {{/each}}
+            </dd>
+          </div>
+          {{/if}}
+          {{#if faction.rivals.length}}
+          <div>
+            <dt>{{localize "WITCHWIND_SYSTEMS.Factions.Rivals"}}</dt>
+            <dd class="wws-chips">
+              {{#each faction.rivals}}
+              <button type="button" class="wws-chip wws-rival" data-action="factionGo" data-faction="{{id}}">{{name}}</button>
+              {{/each}}
+            </dd>
+          </div>
+          {{/if}}
+        </dl>
+        {{/if}}
+
+        {{!-- The rank ladder, highest first, with each member beside their rank. --}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Factions.Ranks"}}</h3>
+        <ol class="wws-ladder">
+          {{#each faction.ranks}}
+          <li class="wws-rung{{#if members.length}} filled{{/if}}{{#if yours}} yours{{/if}}">
+            <span class="wws-rung-number">{{number}}</span>
+            <span class="wws-rung-name">{{name}}</span>
+            <span class="wws-rung-members">
+              {{#each members}}
+              <span class="wws-member{{#if yours}} yours{{/if}}">
+                <button type="button" class="wws-member-face" data-action="factionMember" data-uuid="{{uuid}}" data-tooltip="{{name}}">
+                  <img src="{{img}}" alt="{{name}}">
+                </button>
+                {{#if @root.isGM}}
+                <span class="wws-member-tools">
+                  <button type="button" class="wws-tool wws-mini" data-action="factionRank" data-id="{{faction.id}}" data-uuid="{{uuid}}" data-delta="1"
+                          data-tooltip="WITCHWIND_SYSTEMS.Factions.Promote" {{#if (eq rank faction.topRank)}}disabled{{/if}}>
+                    <i class="fa-solid fa-chevron-up" inert></i>
+                  </button>
+                  <button type="button" class="wws-tool wws-mini" data-action="factionRank" data-id="{{faction.id}}" data-uuid="{{uuid}}" data-delta="-1"
+                          data-tooltip="WITCHWIND_SYSTEMS.Factions.Demote" {{#if (eq rank 0)}}disabled{{/if}}>
+                    <i class="fa-solid fa-chevron-down" inert></i>
+                  </button>
+                  <button type="button" class="wws-tool wws-mini wws-bad" data-action="factionMemberRemove" data-id="{{faction.id}}" data-uuid="{{uuid}}"
+                          data-tooltip="WITCHWIND_SYSTEMS.Factions.RemoveMember">
+                    <i class="fa-solid fa-xmark" inert></i>
+                  </button>
+                </span>
+                {{/if}}
+              </span>
+              {{/each}}
+            </span>
+          </li>
+          {{/each}}
+        </ol>
+        {{#unless faction.hasMembers}}
+        <p class="wws-empty wws-empty-small">{{#if @root.isGM}}{{localize "WITCHWIND_SYSTEMS.Factions.NoMembersGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Factions.NoMembers"}}{{/if}}</p>
+        {{/unless}}
+
+        {{#if faction.description}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Factions.About"}}</h3>
+        <div class="wws-prose">{{{faction.description}}}</div>
+        {{/if}}
+
+        {{#if faction.quests.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Factions.Quests"}}</h3>
+        <ul class="wws-quest-links">
+          {{#each faction.quests}}
+          <li>
+            <button type="button" class="wws-link wws-status-{{status}}" data-action="factionQuest" data-quest="{{id}}">
+              <i class="wws-diamond" inert></i> {{title}}
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if faction.gmNotes}}
+        <aside class="wws-gm-notes">
+          <h4><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.GMNotes"}}</h4>
+          <div class="wws-prose">{{{faction.gmNotes}}}</div>
+        </aside>
+        {{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page">
+        <i class="fa-solid fa-chess-rook" inert></i>
+        {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Factions.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Factions.NoneHint"}}{{/if}}
+      </p>
+      {{/with}}
+    </div>
+  </section>
+</div>

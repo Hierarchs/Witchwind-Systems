@@ -1,0 +1,33 @@
+<div class="wws-tracker-card{{#if collapsed}} collapsed{{/if}}">
+  <header class="wws-tracker-head" data-tooltip="WITCHWIND_SYSTEMS.Tracker.DragHint">
+    <i class="fa-solid fa-location-crosshairs" inert></i>
+    <h2>{{localize "WITCHWIND_SYSTEMS.Tracker.Title"}}</h2>
+    <button type="button" class="wws-tool wws-mini" data-action="trackerCollapse"
+            aria-label="{{localize "WITCHWIND_SYSTEMS.Tracker.Collapse"}}" aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}">
+      <i class="fa-solid {{#if collapsed}}fa-chevron-down{{else}}fa-chevron-up{{/if}}" inert></i>
+    </button>
+  </header>
+  {{#unless collapsed}}
+  <ol class="wws-tracker-quests">
+    {{#each quests}}
+    <li class="wws-tracker-quest">
+      <div class="wws-tracker-title">
+        <button type="button" class="wws-link" data-action="trackerOpen" data-id="{{id}}">{{title}}</button>
+        <button type="button" class="wws-tool wws-mini" data-action="trackerUntrack" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Tracker.Untrack">
+          <i class="fa-solid fa-xmark" inert></i>
+        </button>
+      </div>
+      {{#if objectives.length}}
+      <ul class="wws-tracker-objectives">
+        {{#each objectives}}
+        <li{{#if optional}} class="wws-optional"{{/if}}><i class="wws-diamond" inert></i> {{text}}</li>
+        {{/each}}
+      </ul>
+      {{else if location}}
+      <p class="wws-tracker-location"><i class="fa-solid fa-signs-post" inert></i> {{location}}</p>
+      {{/if}}
+    </li>
+    {{/each}}
+  </ol>
+  {{/unless}}
+</div>
