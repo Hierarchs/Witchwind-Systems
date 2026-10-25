@@ -1,13 +1,16 @@
-import { PATH, L, QUEST_KINDS, QUEST_STATUSES } from "../config.mjs";
+import { PATH, L, QUEST_STATUSES } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
-import { enrich, asHTML, plainText, formatDate, loc, confirmDelete, openSheet, showToPlayers, byTitle } from "../helpers.mjs";
+import { enrich, asHTML, plainText, formatDate, loc, confirmDelete, openSheet, showToPlayers, viewerNames, byTitle } from "../helpers.mjs";
 
 /** The list filters across the top of the left page, as in Oblivion: current, completed, failed, recent updates. */
 const FILTERS = ["active", "completed", "failed", "updates"];
 
 /** How many entries Recent Updates shows. */
 const UPDATES_SHOWN = 30;
+
+/** The drag data type for reordering quests, so other drops onto the list are ignored. */
+const DRAG_TYPE = "application/x-witchwind-quest";
 
 export default {
   id: "quests",
@@ -19,43 +22,62 @@ export default {
     const filter = FILTERS.includes(app.filters.quests) ? app.filters.quests : "active";
     const counts = Object.fromEntries(QUEST_STATUSES.map(s => [s, quests.filter(q => statusOf(q) === s).length]));
     const filters = FILTERS.map(id => ({ id, label: `${L}.Quests.Filters.${id}`, count: counts[id], active: id === filter }));
+    const groups = store.questGroups();
 
-    let groups = [];
+    let lists = [];
     let updates = [];
     if ( filter === "updates" ) updates = recentUpdates(quests);
-    else {
-      const shown = quests.filter(q => statusOf(q) === filter);
-      groups = QUEST_KINDS.map(kind => ({
-        kind,
-        label: `${L}.Quests.Kinds.${kind}`,
-        quests: shown.filter(q => kindOf(q) === kind).sort(byTitle).map(q => ({
-          id: q.id,
-          title: q.title || loc("Untitled"),
-          location: q.location,
-          tracked: tracked.includes(q.id),
-          hidden: !q.visible,
-          selected: q.id === app.selected.quests
-        }))
-      })).filter(g => g.quests.length);
-    }
+    else lists = groupedList(quests.filter(q => statusOf(q) === filter), groups, tracked, app, filter === "active");
 
     // Keep the chosen quest while it's listed; otherwise show the first one.
-    const listed = filter === "updates" ? updates.map(u => u.quest) : groups.flatMap(g => g.quests.map(q => q.id));
+    const listed = filter === "updates" ? updates.map(u => u.quest) : lists.flatMap(g => g.quests.map(q => q.id));
     if ( !listed.includes(app.selected.quests) ) app.selected.quests = listed[0] ?? null;
-    for ( const group of groups ) for ( const q of group.quests ) q.selected = q.id === app.selected.quests;
+    for ( const group of lists ) for ( const q of group.quests ) q.selected = q.id === app.selected.quests;
     for ( const u of updates ) u.selected = u.quest === app.selected.quests;
 
     const quest = quests.find(q => q.id === app.selected.quests);
     return {
       filters,
-      groups,
+      groups: lists,
       updates,
       isUpdates: filter === "updates",
       empty: !listed.length,
       emptyLabel: `${L}.Quests.Empty.${filter}`,
       canCreate: game.user.isGM,
-      quest: quest ? await detail(quest, tracked) : null
+      quest: quest ? await detail(quest, quests, groups, tracked) : null
     };
+  },
+
+  /** GMs drag quests to reorder them, onto another quest to sit before it, or onto a group's heading to join it. */
+  onRender(app, element) {
+    if ( !game.user.isGM ) return;
+    const list = element.querySelector(".wws-quests .wws-list-scroll");
+    if ( !list ) return;
+    list.addEventListener("dragstart", event => {
+      const row = event.target.closest("[data-drag-quest]");
+      if ( !row ) return;
+      event.dataTransfer.setData(DRAG_TYPE, row.dataset.dragQuest);
+      event.dataTransfer.effectAllowed = "move";
+      row.classList.add("dragging");
+    });
+    list.addEventListener("dragend", () => list.querySelectorAll(".dragging, .wws-drop-before, .wws-drop-into")
+      .forEach(el => el.classList.remove("dragging", "wws-drop-before", "wws-drop-into")));
+    list.addEventListener("dragover", event => {
+      if ( !event.dataTransfer.types.includes(DRAG_TYPE) ) return;
+      const target = event.target.closest("[data-drop-quest], [data-drop-group]");
+      if ( !target ) return;
+      event.preventDefault();
+      list.querySelectorAll(".wws-drop-before, .wws-drop-into").forEach(el => el.classList.remove("wws-drop-before", "wws-drop-into"));
+      target.classList.add(target.dataset.dropGroup ? "wws-drop-into" : "wws-drop-before");
+    });
+    list.addEventListener("drop", event => {
+      const id = event.dataTransfer.getData(DRAG_TYPE);
+      const target = event.target.closest("[data-drop-quest], [data-drop-group]");
+      if ( !id || !target ) return;
+      event.preventDefault();
+      if ( target.dataset.dropGroup ) moveToGroup(id, target.dataset.dropGroup);
+      else moveBefore(id, target.dataset.dropQuest);
+    });
   },
 
   actions: {
@@ -69,14 +91,34 @@ export default {
       this.render();
     },
 
-    questNew() {
+    /** Fold a quest's steps away under it, or show them again. */
+    questCollapse(event, target) {
+      const collapsed = this.collapsed ??= new Set();
+      if ( collapsed.has(target.dataset.id) ) collapsed.delete(target.dataset.id);
+      else collapsed.add(target.dataset.id);
+      this.render();
+    },
+
+    questNew(event, target) {
+      const parent = target.dataset.parent ? store.get("quests", target.dataset.parent) : null;
       openEditor("quest", {
+        entry: parent ? { parent: parent.id, kind: parent.kind, status: "active" } : {},
         title: loc("Quests.New"),
         onSave: async data => {
+          const siblings = store.all("quests").filter(q => (q.kind === data.kind) && ((q.parent || "") === (data.parent || "")));
+          data.sort = Math.max(0, ...siblings.map(q => q.sort ?? 0)) + 1;
           const id = await store.create("quests", data);
           this.selected.quests = id;
           this.filters.quests = data.status;
         }
+      });
+    },
+
+    questGroups() {
+      openEditor("groups", {
+        entry: { id: "groups", groups: store.questGroups() },
+        title: loc("Quests.EditGroups"),
+        onSave: data => store.setQuestGroups(data.groups)
       });
     },
 
@@ -92,7 +134,11 @@ export default {
 
     async questDelete(event, target) {
       const quest = store.get("quests", target.dataset.id);
-      if ( quest && await confirmDelete(quest.title) ) await store.remove("quests", quest.id);
+      if ( !quest || !await confirmDelete(quest.title) ) return;
+      // Its steps move up to its own parent rather than vanishing with it.
+      const steps = store.all("quests").filter(q => q.parent === quest.id);
+      if ( steps.length ) await store.updateMany("quests", Object.fromEntries(steps.map(q => [q.id, { parent: quest.parent ?? "" }])));
+      await store.remove("quests", quest.id);
     },
 
     questTrack(event, target) {
@@ -167,6 +213,10 @@ export default {
       this.open("factions", target.dataset.faction);
     },
 
+    questNote(event, target) {
+      this.open("journal", target.dataset.note);
+    },
+
     questShow(event, target) {
       return showToPlayers("quests", target.dataset.id);
     }
@@ -176,9 +226,54 @@ export default {
 /* -------------------------------------------- */
 
 const statusOf = q => q.status ?? "active";
-const kindOf = q => q.kind ?? "side";
+const bySort = (a, b) => ((a.sort ?? 0) - (b.sort ?? 0)) || byTitle(a, b);
 
-async function detail(quest, tracked) {
+/** The group a quest belongs to: its own if that group still exists, otherwise the first. */
+function groupOf(quest, groups) {
+  return groups.some(g => g.id === quest.kind) ? quest.kind : groups[0]?.id;
+}
+
+export function groupName(group) {
+  return group?.name || game.i18n.localize(`${L}.Quests.Kinds.${group?.id}`);
+}
+
+/**
+ * Lists for each group, with each quest's steps folded under it. A step whose parent isn't in this list (another
+ * status, or hidden) stands on its own.
+ */
+function groupedList(shown, groups, tracked, app, showEmpty) {
+  const ids = new Set(shown.map(q => q.id));
+  const isRoot = q => !q.parent || (q.parent === q.id) || !ids.has(q.parent);
+  const collapsed = app.collapsed ?? new Set();
+  const rows = (quest, depth, seen) => {
+    if ( seen.has(quest.id) ) return [];
+    seen.add(quest.id);
+    const steps = shown.filter(q => (q.parent === quest.id) && (q.id !== quest.id)).sort(bySort);
+    const row = {
+      id: quest.id,
+      title: quest.title || loc("Untitled"),
+      location: quest.location,
+      tracked: tracked.includes(quest.id),
+      hidden: !quest.visible,
+      restricted: !!quest.viewers?.length,
+      depth,
+      hasSteps: steps.length > 0,
+      collapsed: collapsed.has(quest.id),
+      stepCount: steps.length,
+      stepsDone: steps.filter(s => statusOf(s) === "completed").length
+    };
+    if ( row.collapsed ) return [row];
+    return [row, ...steps.flatMap(s => rows(s, depth + 1, seen))];
+  };
+  return groups.map(group => {
+    const seen = new Set();
+    const roots = shown.filter(q => isRoot(q) && (groupOf(q, groups) === group.id)).sort(bySort);
+    return { id: group.id, label: groupName(group), quests: roots.flatMap(q => rows(q, 0, seen)) };
+  // Empty groups stay visible to the GM on the Current list, so there's a heading to drag quests into.
+  }).filter(g => g.quests.length || (showEmpty && game.user.isGM));
+}
+
+async function detail(quest, quests, groups, tracked) {
   const isGM = game.user.isGM;
   const status = statusOf(quest);
 
@@ -194,16 +289,22 @@ async function detail(quest, tracked) {
   const faction = store.get("factions", quest.faction);
   const pin = store.all("pins").find(p => (p.quest === quest.id) && store.isVisible("pins", p)
     && store.isVisible("maps", store.get("maps", p.map)));
+  const parent = quests.find(q => (q.id === quest.parent) && (q.id !== quest.id));
+  const steps = quests.filter(q => (q.parent === quest.id) && (q.id !== quest.id)).sort(bySort)
+    .map(q => ({ id: q.id, title: q.title || loc("Untitled"), status: statusOf(q) }));
+  const notes = store.all("notes").filter(n => (n.quest === quest.id) && store.isVisible("notes", n))
+    .map(n => ({ id: n.id, title: n.title || loc("Untitled") }));
 
   return {
     ...quest,
     title: quest.title || loc("Untitled"),
     status,
     statusLabel: `${L}.Quests.Status.${status}`,
-    kindLabel: `${L}.Quests.Kinds.${kindOf(quest)}`,
+    kindLabel: groupName(groups.find(g => g.id === groupOf(quest, groups))),
     isActive: status === "active",
     isTracked: tracked.includes(quest.id),
     hidden: !quest.visible,
+    viewers: isGM ? viewerNames(quest) : "",
     description: await enrich(quest.description),
     gmNotes: isGM ? await enrich(quest.gmNotes) : "",
     objectives,
@@ -212,7 +313,10 @@ async function detail(quest, tracked) {
     rewards: quest.rewards ?? [],
     giver: (quest.giverName || quest.giverImg) ? { name: quest.giverName, img: quest.giverImg, uuid: quest.giverUuid } : null,
     faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name, img: faction.img } : null,
-    pin: pin ? pin.id : null
+    pin: pin ? pin.id : null,
+    parent: parent ? { id: parent.id, title: parent.title || loc("Untitled") } : null,
+    steps,
+    notes
   };
 }
 
@@ -244,4 +348,41 @@ function changeRow(target, list, change) {
   if ( !row ) return;
   change(row);
   return store.update("quests", quest.id, { [list]: quest[list] });
+}
+
+/* -------------------------------------------- */
+/*  Reordering                                  */
+/* -------------------------------------------- */
+
+/** Is one quest somewhere among another's steps? Used so a quest is never moved under itself. */
+function isWithin(id, ancestorId, all) {
+  const seen = new Set();
+  for ( let q = all.find(x => x.id === id); q?.parent && !seen.has(q.id); q = all.find(x => x.id === q.parent) ) {
+    seen.add(q.id);
+    if ( q.parent === ancestorId ) return true;
+  }
+  return false;
+}
+
+/** Put a quest just before another, alongside it: same group, same parent. Its siblings are renumbered in order. */
+function moveBefore(id, targetId) {
+  if ( id === targetId ) return;
+  const all = store.all("quests");
+  const target = all.find(q => q.id === targetId);
+  if ( !target || isWithin(targetId, id, all) ) return;
+  const groups = store.questGroups();
+  const kind = groupOf(target, groups);
+  const parent = target.parent || "";
+  const siblings = all.filter(q => (q.id !== id) && (groupOf(q, groups) === kind) && ((q.parent || "") === parent)).sort(bySort);
+  siblings.splice(siblings.findIndex(q => q.id === targetId), 0, { id });
+  const changes = Object.fromEntries(siblings.map((q, i) => [q.id, { sort: i + 1 }]));
+  Object.assign(changes[id], { kind, parent });
+  return store.updateMany("quests", changes);
+}
+
+/** Move a quest to the end of a group, out of any chain. */
+function moveToGroup(id, groupId) {
+  const all = store.all("quests");
+  const last = Math.max(0, ...all.filter(q => (q.kind === groupId) && !q.parent).map(q => q.sort ?? 0));
+  return store.update("quests", id, { kind: groupId, parent: "", sort: last + 1 });
 }

@@ -40,6 +40,7 @@
               <span class="wws-row-sub"><span class="wws-author" style="--wws-author: {{author.color}}">{{author.name}}</span> · {{dateLabel}}</span>
             </span>
             {{#if private}}<i class="fa-solid fa-lock wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Journal.PrivateHint"></i>{{/if}}
+            {{#if restricted}}<i class="fa-solid fa-user-lock wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Visibility.Limited"></i>{{/if}}
           </button>
         </li>
         {{/each}}
@@ -62,6 +63,8 @@
             <span class="wws-sep" aria-hidden="true">◆</span>
             {{#if note.private}}
             <span><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Private"}}</span>
+            {{else if note.viewers}}
+            <span><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=note.viewers}}</span>
             {{else}}
             <span><i class="fa-solid fa-users" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Shared"}}</span>
             {{/if}}
@@ -99,6 +102,20 @@
             <img src="{{note.img}}" alt="">
           </button>
         </figure>
+        {{/if}}
+
+        {{#if (or note.links.quest note.links.faction note.links.pin)}}
+        <ul class="wws-chips wws-note-links">
+          {{#if note.links.quest}}
+          <li><button type="button" class="wws-chip" data-action="noteQuest" data-quest="{{note.links.quest.id}}"><i class="fa-solid fa-scroll-old" inert></i> {{note.links.quest.title}}</button></li>
+          {{/if}}
+          {{#if note.links.faction}}
+          <li><button type="button" class="wws-chip" data-action="noteFaction" data-faction="{{note.links.faction.id}}"><i class="fa-solid fa-chess-rook" inert></i> {{note.links.faction.name}}</button></li>
+          {{/if}}
+          {{#if note.links.pin}}
+          <li><button type="button" class="wws-chip" data-action="notePin" data-pin="{{note.links.pin.id}}"><i class="fa-solid fa-location-dot" inert></i> {{note.links.pin.label}}</button></li>
+          {{/if}}
+        </ul>
         {{/if}}
 
         {{#if note.body}}

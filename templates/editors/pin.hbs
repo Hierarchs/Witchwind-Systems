@@ -51,10 +51,7 @@
     </div>
   </div>
 
-  <label class="wws-toggle">
-    <input type="checkbox" name="shared" {{#if shared}}checked{{/if}}>
-    <span>{{localize "WITCHWIND_SYSTEMS.Editor.SharedPin"}}</span>
-  </label>
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
   <p class="hint">{{#if isGM}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHintGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHint"}}{{/if}}</p>
 </div>
 

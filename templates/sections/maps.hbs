@@ -46,7 +46,14 @@
     {{#with page.map as |map|}}
     <header class="wws-map-head">
       <h2>{{map.name}}</h2>
-      {{#if map.hidden}}<span class="wws-ribbon wws-ribbon-inline"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</span>{{/if}}
+      {{#if map.hidden}}<span class="wws-ribbon wws-ribbon-inline"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</span>
+      {{else if map.viewers}}<span class="wws-ribbon wws-ribbon-inline"><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=map.viewers}}</span>{{/if}}
+      <label class="wws-search wws-map-search">
+        <i class="fa-solid fa-magnifying-glass" inert></i>
+        <input type="search" data-focus-key="maps" value="{{@root.page.search}}"
+               placeholder="{{localize "WITCHWIND_SYSTEMS.Maps.Search"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Maps.Search"}}">
+        {{#if (ne @root.page.matchCount null)}}<span class="wws-count">{{@root.page.matchCount}}</span>{{/if}}
+      </label>
       {{#if @root.page.isGM}}
       <span class="wws-head-tools">
         <button type="button" class="wws-tool" data-action="mapEdit" data-id="{{map.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
@@ -70,7 +77,7 @@
       <div class="wws-map-layer">
         <img class="wws-map-image" src="{{map.img}}" alt="" draggable="false" decoding="async">
         {{#each @root.page.pins}}
-        <button type="button" class="wws-pin{{#if open}} open{{/if}}{{#if tracked}} tracked{{/if}}{{#if private}} private{{/if}}{{#if canEdit}} movable{{/if}}"
+        <button type="button" class="wws-pin{{#if open}} open{{/if}}{{#if tracked}} tracked{{/if}}{{#if private}} private{{/if}}{{#if canEdit}} movable{{/if}}{{#if match}} match{{/if}}{{#if dim}} dim{{/if}}"
                 data-id="{{id}}" style="left: {{x}}%; top: {{y}}%; --wws-pin: {{color}};" aria-label="{{label}}">
           <span class="wws-pin-mark"><i class="fa-solid {{icon}}" inert></i></span>
           {{#if label}}<span class="wws-pin-label">{{label}}</span>{{/if}}
@@ -92,6 +99,12 @@
                 aria-pressed="{{#if @root.page.labels}}true{{else}}false{{/if}}">
           <i class="fa-solid fa-tag" inert></i>
         </button>
+        {{#if @root.page.legend.length}}
+        <button type="button" class="wws-tool" data-action="mapLegendToggle" data-tooltip="WITCHWIND_SYSTEMS.Maps.Legend"
+                aria-pressed="{{#if @root.page.showLegend}}true{{else}}false{{/if}}">
+          <i class="fa-solid fa-list" inert></i>
+        </button>
+        {{/if}}
         {{#if @root.page.canPlace}}
         <button type="button" class="wws-ink wws-place{{#if @root.page.placing}} pressed{{/if}}" data-action="mapPlace"
                 aria-pressed="{{#if @root.page.placing}}true{{else}}false{{/if}}">
@@ -105,6 +118,22 @@
       <p class="wws-place-hint">{{localize "WITCHWIND_SYSTEMS.Maps.PlaceHint"}}</p>
       {{/if}}
 
+      {{#if @root.page.showLegend}}
+      <aside class="wws-legend">
+        <h3>{{localize "WITCHWIND_SYSTEMS.Maps.Legend"}}</h3>
+        <ul>
+          {{#each @root.page.legend}}
+          <li>
+            <button type="button" class="wws-legend-item{{#if hidden}} off{{/if}}" data-action="mapLegend" data-icon="{{id}}"
+                    aria-pressed="{{#if hidden}}false{{else}}true{{/if}}">
+              <i class="fa-solid {{icon}}" inert></i> <span>{{localize label}}</span> <span class="wws-count">{{count}}</span>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+      </aside>
+      {{/if}}
+
       {{#with @root.page.card as |card|}}
       <div class="wws-pin-card" hidden style="--wws-pin: {{card.color}};">
         <header>
@@ -116,11 +145,17 @@
         </header>
         <p class="wws-byline">
           <span class="wws-author" style="--wws-author: {{card.author.color}}">{{card.author.name}}</span>
-          {{#if card.private}} · <i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Private"}}{{/if}}
+          {{#if card.private}} · <i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.Private"}}
+          {{else if card.viewers}} · <i class="fa-solid fa-user-lock" inert></i> {{card.viewers}}{{/if}}
         </p>
         {{#if card.text}}<p class="wws-pin-text">{{card.text}}</p>{{/if}}
-        {{#if (or card.quest card.faction)}}
+        {{#if (or card.quest card.faction card.notes.length)}}
         <p class="wws-pin-links">
+          {{#each card.notes}}
+          <button type="button" class="wws-link" data-action="pinNote" data-note="{{id}}">
+            <i class="fa-solid fa-feather" inert></i> {{title}}
+          </button>
+          {{/each}}
           {{#if card.quest}}
           <button type="button" class="wws-link" data-action="pinQuest" data-quest="{{card.quest.id}}">
             <i class="fa-solid fa-scroll-old" inert></i> {{card.quest.title}}

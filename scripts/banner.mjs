@@ -1,6 +1,7 @@
 import { MODULE_ID, L, standingTier } from "./config.mjs";
 import * as store from "./store.mjs";
 import { plainText, docSync } from "./helpers.mjs";
+import { playSound } from "./sounds.mjs";
 
 /*
  * When the GM starts, updates, completes or fails a quest, or promotes your character in a faction, a title
@@ -56,6 +57,7 @@ function next() {
   if ( banner.detail ) detail.textContent = banner.detail;
   else detail.remove();
   document.body.append(el);
+  playSound("quest");
   setTimeout(() => {
     el.remove();
     next();
@@ -123,10 +125,24 @@ function factionEvents(before, after) {
     for ( const member of mine(faction) ) {
       const was = old.get(member.uuid);
       const name = docSync(member.uuid)?.name ?? member.name;
-      if ( !was ) {
+      const joined = (member.rank ?? 0) >= 0;
+      if ( (!was || ((was.rank ?? 0) < 0)) && joined ) {
         events.push({ label: t("Joined"), title: faction.name, detail: `${name} · ${ranks[member.rank] ?? ""}`, icon: "fa-solid fa-chess-rook" });
-      } else if ( (member.rank ?? 0) > (was.rank ?? 0) ) {
+      } else if ( was && joined && ((member.rank ?? 0) > (was.rank ?? 0)) ) {
         events.push({ label: t("Promoted"), title: ranks[member.rank] ?? "", detail: `${name} · ${faction.name}`, icon: "fa-solid fa-crown" });
+      }
+      // A character's own standing crossing into another tier.
+      const before = Number.isFinite(was?.standing) ? was.standing : null;
+      const after = Number.isFinite(member.standing) ? member.standing : null;
+      if ( (before !== null) && (after !== null) && (standingTier(before) !== standingTier(after)) ) {
+        const rising = after > before;
+        events.push({
+          label: t(rising ? "StandingUp" : "StandingDown"),
+          title: game.i18n.localize(`${L}.Factions.Tiers.${standingTier(after)}`),
+          detail: `${name} · ${faction.name}`,
+          tone: rising ? "green" : "red",
+          icon: rising ? "fa-solid fa-arrow-trend-up" : "fa-solid fa-arrow-trend-down"
+        });
       }
     }
     if ( prev && (standingTier(prev.standing ?? 0) !== standingTier(faction.standing ?? 0)) ) {

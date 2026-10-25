@@ -1,8 +1,8 @@
-import { PATH, PIN_ICONS, PIN_COLORS } from "../config.mjs";
+import { PATH, L, PIN_ICONS, PIN_COLORS } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { uploadImage, canBrowse } from "../uploads.mjs";
-import { loc, authorOf, confirmDelete, showToPlayers, byName } from "../helpers.mjs";
+import { loc, authorOf, confirmDelete, showToPlayers, viewerNames, byName } from "../helpers.mjs";
 
 const MIN_ZOOM = 0.05;
 const MAX_ZOOM = 4;
@@ -26,24 +26,46 @@ export default {
 
     const tracked = new Set(store.tracked());
     const quests = new Map(store.all("quests").filter(q => store.isVisible("quests", q)).map(q => [q.id, q]));
-    const pins = map ? store.all("pins").filter(p => (p.map === map.id) && store.isVisible("pins", p)).map(p => ({
+    const onMap = map ? store.all("pins").filter(p => (p.map === map.id) && store.isVisible("pins", p)) : [];
+
+    // The legend: each kind of marker on this map, which can be hidden from view.
+    const hiddenIcons = app.mapHiddenIcons ??= new Set();
+    const legend = Object.keys(PIN_ICONS).map(id => ({
+      id,
+      icon: PIN_ICONS[id],
+      label: `${L}.Maps.Icons.${id}`,
+      count: onMap.filter(p => iconKey(p) === id).length,
+      hidden: hiddenIcons.has(id)
+    })).filter(l => l.count);
+
+    // Searching dims every marker whose name and notes don't match.
+    const search = (app.search.maps ?? "").trim().toLowerCase();
+    const matches = p => `${p.label ?? ""} ${p.text ?? ""}`.toLowerCase().includes(search);
+
+    const pins = onMap.filter(p => !hiddenIcons.has(iconKey(p))).map(p => ({
       ...p,
-      icon: PIN_ICONS[p.icon] ?? PIN_ICONS.location,
+      icon: PIN_ICONS[iconKey(p)],
       color: PIN_COLORS[p.color] ?? PIN_COLORS.gold,
       x: (p.x ?? 0.5) * 100,
       y: (p.y ?? 0.5) * 100,
       tracked: tracked.has(p.quest) && (quests.get(p.quest)?.status ?? "active") === "active",
       private: !p.shared,
       canEdit: store.canEdit("pins", p),
-      open: p.id === app.openPin
-    })) : [];
+      open: p.id === app.openPin,
+      match: !!search && matches(p),
+      dim: !!search && !matches(p)
+    }));
     if ( !pins.some(p => p.open) ) app.openPin = null;
 
     const open = pins.find(p => p.open);
     return {
       maps: maps.map(m => ({ id: m.id, name: m.name || loc("Untitled"), img: m.img, hidden: !m.visible, selected: m.id === map?.id })),
-      map: map ? { ...map, name: map.name || loc("Untitled"), hidden: !map.visible } : null,
+      map: map ? { ...map, name: map.name || loc("Untitled"), hidden: !map.visible, viewers: isGM ? viewerNames(map) : "" } : null,
       pins,
+      legend,
+      showLegend: !!app.mapLegend && (legend.length > 0),
+      search: app.search.maps ?? "",
+      matchCount: search ? pins.filter(p => p.match).length : null,
       card: open ? pinCard(open, quests) : null,
       labels: app.mapLabels,
       placing: app.placing,
@@ -56,6 +78,17 @@ export default {
   onRender(app, element) {
     const stage = element.querySelector(".wws-map-stage");
     if ( stage ) new MapViewer(app, stage);
+
+    // Enter in the marker search jumps to the first match and opens its card.
+    element.querySelector("input[data-focus-key=maps]")?.addEventListener("keydown", event => {
+      if ( event.key !== "Enter" ) return;
+      event.preventDefault();
+      const id = element.querySelector(".wws-pin.match")?.dataset.id;
+      const pin = id ? store.get("pins", id) : null;
+      if ( !pin ) return;
+      app.search.maps = event.target.value;
+      app.showPin(pin);
+    });
 
     // Upload pictures as new maps, from the Upload button or dropped onto the list of maps.
     const list = element.querySelector(".wws-map-list");
@@ -158,6 +191,24 @@ export default {
       target.setAttribute("aria-pressed", String(this.mapLabels));
     },
 
+    mapLegendToggle() {
+      this.mapLegend = !this.mapLegend;
+      this.render();
+    },
+
+    /** Hide or show every marker with one icon. */
+    mapLegend(event, target) {
+      const hidden = this.mapHiddenIcons ??= new Set();
+      const icon = target.dataset.icon;
+      if ( hidden.has(icon) ) hidden.delete(icon);
+      else hidden.add(icon);
+      this.render();
+    },
+
+    pinNote(event, target) {
+      this.open("journal", target.dataset.note);
+    },
+
     mapPlace() {
       this.placing = !this.placing;
       this.openPin = null;
@@ -204,6 +255,8 @@ async function createMap(img, filename) {
   return store.create("maps", { name: name ? name[0].toUpperCase() + name.slice(1) : loc("Untitled"), img, visible: false, sort });
 }
 
+const iconKey = pin => (pin.icon in PIN_ICONS ? pin.icon : "location");
+
 function pinCard(pin, quests) {
   const quest = quests.get(pin.quest);
   const faction = store.get("factions", pin.faction);
@@ -212,7 +265,10 @@ function pinCard(pin, quests) {
     label: pin.label || loc("Untitled"),
     author: authorOf(pin.author),
     quest: quest ? { id: quest.id, title: quest.title } : null,
-    faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name } : null
+    faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name } : null,
+    notes: store.all("notes").filter(n => (n.pin === pin.id) && store.isVisible("notes", n))
+      .map(n => ({ id: n.id, title: n.title || loc("Untitled") })),
+    viewers: pin.shared ? viewerNames(pin) : ""
   };
 }
 
@@ -332,7 +388,7 @@ class MapViewer {
   }
 
   #onWheel(event) {
-    if ( event.target.closest(".wws-pin-card, .wws-map-tools") ) return;
+    if ( event.target.closest(".wws-pin-card, .wws-map-tools, .wws-legend") ) return;
     event.preventDefault();
     const rect = this.stage.getBoundingClientRect();
     this.zoomBy(event.deltaY < 0 ? 1.15 : (1 / 1.15), event.clientX - rect.left, event.clientY - rect.top);
@@ -340,7 +396,7 @@ class MapViewer {
 
   #onPointerDown(event) {
     if ( (event.button !== 0) || !this.view ) return;
-    if ( event.target.closest(".wws-pin-card, .wws-map-tools") ) return;
+    if ( event.target.closest(".wws-pin-card, .wws-map-tools, .wws-legend") ) return;
     const pinEl = event.target.closest(".wws-pin");
     const start = { x: event.clientX, y: event.clientY, view: { ...this.view } };
     let moved = false;
@@ -404,7 +460,7 @@ class MapViewer {
   }
 
   #onDoubleClick(event) {
-    if ( event.target.closest(".wws-pin, .wws-pin-card, .wws-map-tools") ) return;
+    if ( event.target.closest(".wws-pin, .wws-pin-card, .wws-map-tools, .wws-legend") ) return;
     if ( !store.canCreate("pins") ) return;
     this.#newPin(this.#toMap(event));
   }

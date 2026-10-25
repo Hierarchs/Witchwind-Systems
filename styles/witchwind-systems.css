@@ -3388,6 +3388,341 @@
 }
 
 /* ============================================ */
+/*  Quest chains and groups                     */
+/* ============================================ */
+
+/* Steps sit indented under their quest on a faint thread, with a caret to fold them away. */
+.wws-quest-item {
+  display: flex;
+  align-items: center;
+  padding-left: calc(var(--wws-depth, 0) * 18px);
+}
+
+.wws-quest-item:not(:has(.wws-caret)) > .wws-row {
+  margin-left: 18px;
+}
+
+.wws-quest-item > .wws-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-quest-item.wws-step {
+  background: linear-gradient(var(--wws-parch-rule), var(--wws-parch-rule)) calc(var(--wws-depth) * 18px - 9px) 0 / 1px 100% no-repeat;
+}
+
+.wws-quest-item.wws-step .wws-row-title {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.wws button.wws-caret {
+  all: unset;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 24px;
+  color: var(--wws-parch-muted);
+  cursor: pointer;
+  font-size: 10px;
+  transition: transform 160ms ease-out, color 120ms ease-out;
+}
+
+.wws button.wws-caret:hover {
+  color: var(--wws-parch-head);
+}
+
+.wws button.wws-caret.collapsed {
+  transform: rotate(-90deg);
+}
+
+.wws button.wws-caret:focus-visible {
+  outline: 2px solid var(--wws-gold-dim);
+  outline-offset: 1px;
+}
+
+/* Dragging a quest: it fades, and a line shows where it will land, or the group heading lights. */
+.wws .wws-row.dragging {
+  opacity: 0.4;
+}
+
+.wws .wws-row.wws-drop-before {
+  box-shadow: inset 0 2px 0 var(--wws-parch-head);
+}
+
+.wws .wws-group.wws-drop-into {
+  background: rgb(201 164 92 / 22%);
+  border-radius: 2px;
+}
+
+.wws .wws-group[data-drop-group] {
+  padding: 2px 4px;
+  margin-left: -4px;
+}
+
+.wws-chain {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-steps li {
+  padding: 3px 0;
+}
+
+/* Lists of chips: linked notes, quests and factions. */
+ul.wws-chips {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+}
+
+.wws button.wws-chip i {
+  margin-right: 3px;
+  font-size: 11px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-note-links {
+  margin-bottom: 14px !important;
+}
+
+/* ============================================ */
+/*  Who can see it                              */
+/* ============================================ */
+
+.wws-visibility {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wws-viewers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wws-viewers .hint {
+  margin: 0;
+}
+
+.wws-viewer-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wws-viewer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 5px;
+  border: 1px solid var(--wws-line);
+  border-left: 3px solid var(--wws-author, var(--wws-line-strong));
+  border-radius: 2px;
+  background: rgb(0 0 0 / 20%);
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  color: var(--wws-ink);
+}
+
+.wws-viewer:has(input:checked) {
+  border-color: var(--wws-gold-dim);
+  border-left-color: var(--wws-author, var(--wws-gold));
+  background: var(--wws-gold-wash);
+}
+
+/* ============================================ */
+/*  Map search and legend                       */
+/* ============================================ */
+
+.wws-map-head .wws-map-search {
+  flex: 0 1 240px;
+  margin: 0;
+  height: 30px;
+  border-color: var(--wws-line-strong);
+  background: rgb(0 0 0 / 35%);
+  color: var(--wws-ink-faint);
+}
+
+.wws-map-head .wws-map-search input {
+  color: var(--wws-ink);
+}
+
+.wws-map-head .wws-map-search input::placeholder {
+  color: var(--wws-ink-faint);
+}
+
+.wws-map-head .wws-map-search .wws-count {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws .wws-pin.dim {
+  opacity: 0.25;
+}
+
+.wws .wws-pin.match .wws-pin-mark {
+  box-shadow: 0 0 0 2px var(--wws-gold), 0 0 14px var(--wws-gold-glow), 0 3px 8px rgb(0 0 0 / 75%);
+}
+
+/* The legend: a steel card in the map's corner; each kind of marker can be hidden. */
+.wws-legend {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 6;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  min-width: 170px;
+  padding: 8px 8px 6px;
+  background: var(--wws-grain), rgb(27 23 18 / 94%);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-inner-rule), 0 6px 18px rgb(0 0 0 / 60%);
+  cursor: default;
+}
+
+.wws-legend h3 {
+  margin: 0 4px 6px;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws-legend ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws button.wws-legend-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-ink);
+}
+
+.wws button.wws-legend-item i {
+  width: 16px;
+  text-align: center;
+  color: var(--wws-gold);
+}
+
+.wws button.wws-legend-item span:first-of-type {
+  flex: 1;
+}
+
+.wws button.wws-legend-item:hover {
+  background: var(--wws-gold-wash);
+}
+
+.wws button.wws-legend-item.off {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.wws-legend .wws-count {
+  background: rgb(0 0 0 / 35%);
+  color: var(--wws-ink-muted);
+}
+
+/* ============================================ */
+/*  Personal standing                           */
+/* ============================================ */
+
+.wws-member-face {
+  position: relative;
+}
+
+/* A small diamond on a portrait, in the colour of that character's own standing tier. */
+.wws-personal-pip {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 8px;
+  height: 8px;
+  background: var(--wws-tier, var(--wws-gold));
+  border: 1px solid var(--wws-parch);
+  transform: rotate(45deg);
+}
+
+.wws-outsiders {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws-outsiders > li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-outsiders > li.yours {
+  background: rgb(201 164 92 / 14%);
+}
+
+.wws-outsider-name {
+  flex: 1;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.wws-outsider-tools {
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.wws-outsiders > li:is(:hover, :focus-within) .wws-outsider-tools {
+  opacity: 1;
+}
+
+/* ============================================ */
+/*  Backups and imports                         */
+/* ============================================ */
+
+.wws-data fieldset {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.wws-data fieldset .hint {
+  margin: 0;
+}
+
+.wws-import-row {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* ============================================ */
 /*  Narrow windows                              */
 /* ============================================ */
 

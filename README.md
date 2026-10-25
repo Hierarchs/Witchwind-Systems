@@ -5,10 +5,14 @@ Quests, a shared journal, maps with markers and factions in one book, in the sty
 Press **J** to open it (or **M** for the map), click the book among the token tools on the left, or use the button at the top of the Journal tab. It fills the screen, as Simple Quest does: the four tabs run across a leather bar at the top, and the parchment pages fill the rest. Press **Esc** or **J** again to close it. Editors, pictures and dialogs open above it.
 
 - **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
+- **Sounds.** The book can play a sound as it opens and closes, turn a page on each new tab or entry, and sound a fanfare with quest banners. No sounds ship with the module: upload your own audio files to your Foundry server and choose them under **Configure Settings > Witchwind Systems**. Each player sets their own volume, or turns it to zero.
+- **Keyboard.** Up and Down move through the list, Left and Right change tab, Esc closes. While the book is open they don't pan the map underneath.
 
 ### Quests
 
-- **Two pages.** Current quests on the left, grouped into Main, Side, Faction and Miscellaneous, with Completed, Failed and Recent Updates across the top as in Oblivion. The chosen quest fills the right page.
+- **Two pages.** Current quests on the left, in groups, with Completed, Failed and Recent Updates across the top as in Oblivion. The chosen quest fills the right page.
+- **Your own groups.** Main, Side, Faction and Miscellaneous to start; rename them, add your own (Companions, Guild Contracts…) and put them in order with the layers button. Drag quests to reorder them, or onto a group's heading to move them there.
+- **Quest chains.** Make a quest a step of another ("Part of" in the editor, or **Add a step** on the quest's page). Steps fold under their quest on a thread, with "2 of 5 steps done", and fold away with the caret. A step's page links back to its quest, and a quest's page lists its steps.
 - **Objectives** are gold diamonds: hollow while open, filled when done, struck through when failed. Optional ones say so. The GM ticks them off right on the page.
 - **A journal per quest.** Dated entries, newest first, tell the story as it's played. The GM can write entries ahead of time, hidden, and reveal them when the moment comes; the same goes for objectives.
 - **Giver, location, faction and rewards.** Drop an actor in as the quest giver and items in as rewards; rewards are Witchwind Inventory's slots, framed by rarity. Click either to open its sheet.
@@ -22,6 +26,7 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Shared or private.** A shared note is for the whole party; a private one is only for you and the GM.
 - **Upload.** Drop a picture or a `.txt`, `.md` or `.html` file anywhere on the journal to start a note from it, or use **Import a text file** in the editor. Players without upload permission can still attach pictures: their browser shrinks the picture and a connected GM's client stores it.
 - **Show to players** opens a note on everyone's screen; click a note's picture to see it full size, and share it from there.
+- **Links.** Link a note to a quest, a faction or a map marker. The note shows them as chips, and the quest's page, the faction's page and the marker's card list the notes linked to them.
 
 ### Maps
 
@@ -29,6 +34,7 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Pan and zoom** by dragging and scrolling; the tools on the right zoom, fit the map and show or hide marker names.
 - **Markers.** Anyone can place one with **Place marker** or a double-click: pick from twenty icons and seven colors, give it a name and notes, and link it to a quest or faction. Drag your own markers to move them. A private marker is only for you and the GM; the GM's private markers are for GMs only.
 - **Show on map.** A quest with a linked marker gets a button that opens its map, centered on the marker.
+- **Find and filter.** Search markers by name and notes (matches glow, the rest fade; Enter jumps to the first), and open the legend to hide or show each kind of marker.
 
 ### Factions
 
@@ -36,6 +42,19 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Ranks.** Each faction has its own ladder of ranks, highest first, with each member's portrait beside their rank. Players see their own characters' ranks called out, and get a banner when they're promoted or join.
 - **And more:** emblem and color, motto, leader, headquarters, allies and rivals (which link to each other), the faction's quests, a description and GM notes.
 - **Members.** Drop actors onto a faction's page, or use **Add the party** in the editor.
+- **Personal standing.** Each character can have their own standing alongside the party's, nudged with + and − beside their portrait or set in the editor. Characters who aren't members ("Not a member") are listed as known to the faction with their standing, and can be made members with one click.
+
+### Who can see it
+
+Every quest, map, faction, note and marker can be shown to all players or only some: tick the players in its editor. Limited entries carry a small lock-and-person mark for the GM, and "Only Aria, Bren" on their page.
+
+### Backups and imports
+
+Under **Configure Settings > Witchwind Systems > Backups and Imports** (GM only):
+
+- **Download backup** saves every quest, note, map, marker and faction, with your quest groups, as one file.
+- **Restore** loads one, replacing what's there or adding to it. Notes and markers go back to whoever wrote them, or to you if they aren't in this world.
+- **Import from the Journal** turns each journal entry in a folder into a quest: the first page becomes its details, each further page a step, and checklist items its objectives. Folders named Completed or Failed set the status. This works with Simple Quest's folders.
 
 ## Requirements
 
@@ -63,6 +82,9 @@ Under **Configure Settings > Witchwind Systems**:
 | Players can place map markers | Lets players place markers, and move or delete their own. |
 | Announce quest updates | The Elder Scrolls style banners for quest and faction changes. |
 | Show the quest tracker | Each player's own choice. |
+| Sounds: book opens, closes, page turns (two), quest updates | Audio files on your server, chosen by the GM. Empty plays nothing. |
+| Sound volume | Each player's own volume; zero turns the sounds off. |
+| Backups and Imports | Download, restore or import from the Journal (GM only). |
 
 Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the book, M opens the maps, and the other sections can be given keys of their own.
 

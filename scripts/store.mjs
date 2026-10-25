@@ -1,4 +1,4 @@
-import { MODULE_ID } from "./config.mjs";
+import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
 
 /*
  * Where everything lives:
@@ -37,6 +37,15 @@ export function registerData() {
       onChange: (value, options, userId) => emit(kind, userId)
     });
   }
+
+  // The GM's own quest groups, in order. Empty means the four defaults.
+  game.settings.register(MODULE_ID, "questGroups", {
+    scope: "world",
+    config: false,
+    type: Array,
+    default: [],
+    onChange: (value, options, userId) => emit("quests", userId)
+  });
 
   Hooks.on("updateUser", (user, changes) => {
     const flags = changes.flags?.[MODULE_ID];
@@ -114,12 +123,16 @@ export function canEdit(kind, entry) {
   return USER_KINDS.includes(kind) && (entry?.author === game.user.id);
 }
 
-/** GMs see everything; players see what's been revealed, what's shared, and what they wrote. */
+/**
+ * GMs see everything; players see what's been revealed or shared, and what they wrote. A revealed or shared entry
+ * with a list of viewers is only for those players.
+ */
 export function isVisible(kind, entry, user=game.user) {
   if ( !entry ) return false;
   if ( user.isGM ) return true;
-  if ( WORLD_KINDS.includes(kind) ) return !!entry.visible;
-  return !!entry.shared || (entry.author === user.id);
+  const allowed = !entry.viewers?.length || entry.viewers.includes(user.id);
+  if ( WORLD_KINDS.includes(kind) ) return !!entry.visible && allowed;
+  return (entry.author === user.id) || (!!entry.shared && allowed);
 }
 
 /* -------------------------------------------- */
@@ -180,6 +193,52 @@ export async function update(kind, id, changes) {
   return user.update({ flags: { [MODULE_ID]: { [kind]: { [id]: changes } } } });
 }
 
+/** Change several entries of a GM collection in one write, as reordering quests does. */
+export async function updateMany(kind, changesById) {
+  const now = Date.now();
+  return writeWorld(kind, all => {
+    for ( const [id, changes] of Object.entries(changesById) ) {
+      if ( all[id] ) Object.assign(all[id], changes, { updated: now });
+    }
+  });
+}
+
+/** Create several GM entries in one write, keeping any ids they bring (so imported chains stay linked). */
+export async function createMany(kind, entries) {
+  const now = Date.now();
+  const made = entries.map(data => ({ created: now, ...data, id: data.id ?? foundry.utils.randomID(), updated: now }));
+  await writeWorld(kind, all => { for ( const entry of made ) all[entry.id] = entry; });
+  return made.map(e => e.id);
+}
+
+/**
+ * Write notes or markers back to their writers, as importing a backup does: each to the user who wrote it, or to
+ * the importing GM if that user isn't in this world. Replacing first clears every user's entries of that kind.
+ */
+export async function importOwned(kind, entries, replace) {
+  const byUser = new Map();
+  for ( const entry of entries ) {
+    const user = game.users.get(entry.author) ?? game.user;
+    if ( !byUser.has(user) ) byUser.set(user, {});
+    const { author, ...data } = entry;
+    byUser.get(user)[entry.id] = data;
+  }
+  for ( const user of game.users ) {
+    const owned = byUser.get(user) ?? {};
+    if ( !replace && foundry.utils.isEmpty(owned) ) continue;
+    const value = replace ? foundry.data.operators.ForcedReplacement.create(owned) : owned;
+    await user.update({ flags: { [MODULE_ID]: { [kind]: value } } });
+  }
+}
+
+/** Replace a whole GM collection, as importing a backup does. GM only. */
+export async function replaceWorld(kind, entries) {
+  return writeWorld(kind, all => {
+    for ( const id of Object.keys(all) ) delete all[id];
+    for ( const entry of entries ) if ( entry?.id ) all[entry.id] = entry;
+  });
+}
+
 export async function remove(kind, id) {
   if ( WORLD_KINDS.includes(kind) ) return writeWorld(kind, all => { delete all[id]; });
   const user = ownerOf(kind, id);
@@ -196,6 +255,21 @@ export async function removePinsOnMap(mapId) {
     const deletion = Object.fromEntries(doomed.map(id => [id, new foundry.data.operators.ForcedDeletion()]));
     await user.update({ flags: { [MODULE_ID]: { pins: deletion } } });
   }
+}
+
+/* -------------------------------------------- */
+/*  Quest groups                                */
+/* -------------------------------------------- */
+
+/** The quest groups in order, each { id, name }; a blank name shows the default group's translated name. */
+export function questGroups() {
+  const groups = game.settings.get(MODULE_ID, "questGroups");
+  if ( Array.isArray(groups) && groups.length ) return foundry.utils.deepClone(groups);
+  return QUEST_KINDS.map(id => ({ id, name: "" }));
+}
+
+export function setQuestGroups(groups) {
+  return game.settings.set(MODULE_ID, "questGroups", groups);
 }
 
 /* -------------------------------------------- */

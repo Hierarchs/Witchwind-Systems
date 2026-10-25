@@ -5,6 +5,8 @@ import Tracker from "./tracker.mjs";
 import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
 import { initBanners, announce } from "./banner.mjs";
+import { registerSounds, playSound } from "./sounds.mjs";
+import DataManager from "./data.mjs";
 import { SECTION_KINDS } from "./helpers.mjs";
 
 /* -------------------------------------------- */
@@ -74,6 +76,18 @@ Hooks.once("init", () => {
     onChange: () => Tracker.refresh()
   });
 
+  registerSounds();
+
+  // Backups, restores and journal imports, behind a button in Configure Settings.
+  game.settings.registerMenu(MODULE_ID, "data", {
+    name: `${L}.Data.Title`,
+    label: `${L}.Data.Open`,
+    hint: `${L}.Data.Hint`,
+    icon: "fa-solid fa-box-archive",
+    type: DataManager,
+    restricted: true
+  });
+
   register("trackerCollapsed", { scope: "client", config: false, type: Boolean, default: false, onChange: () => Tracker.refresh() });
   register("trackerPosition", { scope: "client", config: false, type: Object, default: {} });
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
@@ -92,20 +106,33 @@ Hooks.once("init", () => {
     });
   }
 
-  // Escape closes the book. Core's own Escape closes framed windows first, so any open window (an editor, a
-  // sheet) is left to it; the book closes on the next press. Without this, core would open its main menu instead.
-  game.keybindings.register(MODULE_ID, "dismiss", {
-    name: `${L}.Keys.dismiss`,
-    uneditable: [{ key: "Escape" }],
-    precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY,
-    onDown: () => {
-      if ( !Codex.existing?.rendered ) return false;
-      const framed = Array.from(foundry.applications.instances.values()).some(app => app.hasFrame && app.rendered);
-      if ( framed || Object.keys(ui.windows ?? {}).length ) return false;
-      Codex.existing.close();
-      return true;
-    }
-  });
+  // Escape closes the book, and the arrow keys browse it, while it's open and no window is. Core's own Escape closes
+  // framed windows first, so those are left to it; the book closes on the next press. Taking the keys here also
+  // keeps them from opening core's main menu or panning the canvas underneath.
+  const bookKey = fn => () => {
+    if ( !Codex.existing?.rendered ) return false;
+    const framed = Array.from(foundry.applications.instances.values()).some(app => app.hasFrame && app.rendered);
+    if ( framed || Object.keys(ui.windows ?? {}).length ) return false;
+    fn(Codex.existing);
+    return true;
+  };
+  const bookKeys = {
+    dismiss: { keys: [], uneditable: ["Escape"], fn: book => book.close() },
+    nextEntry: { keys: ["ArrowDown"], fn: book => book.step(1) },
+    previousEntry: { keys: ["ArrowUp"], fn: book => book.step(-1) },
+    nextTab: { keys: ["ArrowRight"], fn: book => book.stepTab(1) },
+    previousTab: { keys: ["ArrowLeft"], fn: book => book.stepTab(-1) }
+  };
+  for ( const [action, { keys, uneditable = [], fn }] of Object.entries(bookKeys) ) {
+    game.keybindings.register(MODULE_ID, action, {
+      name: `${L}.Keys.${action}`,
+      editable: keys.map(key => ({ key })),
+      uneditable: uneditable.map(key => ({ key })),
+      precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY,
+      repeat: action !== "dismiss",
+      onDown: bookKey(fn)
+    });
+  }
 });
 
 /* -------------------------------------------- */
@@ -174,6 +201,8 @@ Hooks.once("ready", () => {
     close: () => Codex.existing?.close(),
     /** Show an Elder Scrolls style banner on this client: { label, title, detail }. */
     announce,
+    /** Play one of the module's sounds on this client: "open", "close", "page" or "quest". */
+    playSound,
     store
   };
 });

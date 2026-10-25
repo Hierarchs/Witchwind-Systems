@@ -5,19 +5,42 @@
     <input type="text" name="title" value="{{entry.title}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Journal.TitlePlaceholder"}}">
   </div>
 
-  <div class="wws-form-row">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Journal.Kind"}}</label>
+    <select name="kind">
+      {{#each kinds}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+    </select>
+  </div>
+
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.SharedNoteHint"}}</p>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Journal.LinksTitle"}}</legend>
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Maps.LinkQuest"}}</label>
+        <select name="quest">
+          <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+          {{#each quests}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{title}}</option>{{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Maps.LinkFaction"}}</label>
+        <select name="faction">
+          <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+          {{#each factions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+        </select>
+      </div>
+    </div>
     <div class="form-group">
-      <label>{{localize "WITCHWIND_SYSTEMS.Journal.Kind"}}</label>
-      <select name="kind">
-        {{#each kinds}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      <label>{{localize "WITCHWIND_SYSTEMS.Journal.LinkPin"}}</label>
+      <select name="pin">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+        {{#each pins}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
       </select>
     </div>
-    <label class="wws-toggle">
-      <input type="checkbox" name="shared" {{#if shared}}checked{{/if}}>
-      <span>{{localize "WITCHWIND_SYSTEMS.Editor.SharedNote"}}</span>
-    </label>
-  </div>
-  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.SharedNoteHint"}}</p>
+  </fieldset>
 
   <div class="form-group stacked">
     <label>{{localize "WITCHWIND_SYSTEMS.Editor.Picture"}}</label>

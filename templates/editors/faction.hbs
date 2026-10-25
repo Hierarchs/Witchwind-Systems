@@ -22,10 +22,7 @@
       <label>{{localize "WITCHWIND_SYSTEMS.Factions.Motto"}}</label>
       <input type="text" name="motto" value="{{entry.motto}}">
     </div>
-    <label class="wws-toggle">
-      <input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}>
-      <span>{{localize "WITCHWIND_SYSTEMS.Editor.VisibleFaction"}}</span>
-    </label>
+    {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
 
     <div class="form-group">
       <label>{{localize "WITCHWIND_SYSTEMS.Factions.Standing"}}</label>
@@ -102,6 +99,9 @@
         <select data-field="rank" aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Rank"}}">
           {{#each ranks}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
         </select>
+        <input type="number" class="wws-qty-input" data-field="standing" value="{{standing}}" min="-100" max="100" step="1"
+               placeholder="{{localize "WITCHWIND_SYSTEMS.Factions.PartyShort"}}" data-tooltip="WITCHWIND_SYSTEMS.Factions.PersonalHint"
+               aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Personal"}}">
         <span class="wws-row-buttons">
           <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
         </span>
@@ -118,6 +118,9 @@
         <select data-field="rank" aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Rank"}}">
           {{#each rankOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
         </select>
+        <input type="number" class="wws-qty-input" data-field="standing" value="" min="-100" max="100" step="1"
+               placeholder="{{localize "WITCHWIND_SYSTEMS.Factions.PartyShort"}}" data-tooltip="WITCHWIND_SYSTEMS.Factions.PersonalHint"
+               aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Personal"}}">
         <span class="wws-row-buttons">
           <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
         </span>

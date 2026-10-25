@@ -1,0 +1,35 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <fieldset>
+    <legend>{{localize "WITCHWIND_SYSTEMS.Data.Backup"}}</legend>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Data.BackupHint" quests=counts.quests notes=counts.notes maps=counts.maps pins=counts.pins factions=counts.factions}}</p>
+    <button type="button" class="wws-add" data-action="exportData"><i class="fa-solid fa-download" inert></i> {{localize "WITCHWIND_SYSTEMS.Data.Download"}}</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{localize "WITCHWIND_SYSTEMS.Data.Restore"}}</legend>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Data.RestoreHint"}}</p>
+    <label class="wws-toggle">
+      <input type="checkbox" name="replace" checked>
+      <span>{{localize "WITCHWIND_SYSTEMS.Data.Replace"}}</span>
+    </label>
+    <button type="button" class="wws-add" data-action="importData"><i class="fa-solid fa-upload" inert></i> {{localize "WITCHWIND_SYSTEMS.Data.Choose"}}</button>
+    <input type="file" accept=".json,application/json" hidden data-import-backup>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{localize "WITCHWIND_SYSTEMS.Data.Journal"}}</legend>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Data.JournalHint"}}</p>
+    {{#if folders.length}}
+    <div class="wws-form-row wws-import-row">
+      <select name="folder" aria-label="{{localize "WITCHWIND_SYSTEMS.Data.Folder"}}">
+        {{#each folders}}<option value="{{id}}">{{name}}</option>{{/each}}
+      </select>
+      <button type="button" class="wws-add" data-action="importJournal"><i class="fa-solid fa-file-import" inert></i> {{localize "WITCHWIND_SYSTEMS.Data.Import"}}</button>
+    </div>
+    {{else}}
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Data.NoFolders"}}</p>
+    {{/if}}
+  </fieldset>
+</div>
+</div>

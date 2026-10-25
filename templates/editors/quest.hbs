@@ -16,7 +16,7 @@
     </div>
     <div class="wws-form-row">
       <div class="form-group">
-        <label>{{localize "WITCHWIND_SYSTEMS.Quests.Kind"}}</label>
+        <label>{{localize "WITCHWIND_SYSTEMS.Quests.Group"}}</label>
         <select name="kind">
           {{#each kinds}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
         </select>
@@ -28,10 +28,15 @@
         </select>
       </div>
     </div>
-    <label class="wws-toggle">
-      <input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}>
-      <span>{{localize "WITCHWIND_SYSTEMS.Editor.VisibleQuest"}}</span>
-    </label>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Quests.PartOf"}}</label>
+      <select name="parent">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.Quests.NoParent"}}</option>
+        {{#each parents}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{title}}</option>{{/each}}
+      </select>
+    </div>
+
+    {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
 
     <div class="wws-form-row">
       <div class="form-group wws-giver-group">

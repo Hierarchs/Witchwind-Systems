@@ -1,0 +1,34 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Editor.GroupsHint"}}</p>
+  <ol class="wws-rows" data-list="groups">
+    {{#each groups}}
+    <li class="wws-edit-row" data-list-row>
+      <input type="hidden" data-field="id" value="{{id}}">
+      <input type="text" data-field="name" value="{{name}}" placeholder="{{placeholder}}">
+      <span class="wws-row-buttons">
+        <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+        <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+        <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+      </span>
+    </li>
+    {{/each}}
+  </ol>
+  <button type="button" class="wws-add" data-action="addRow" data-list="groups"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.AddGroup"}}</button>
+  <template data-row-template="groups">
+    <li class="wws-edit-row" data-list-row>
+      <input type="hidden" data-field="id" value="">
+      <input type="text" data-field="name" value="" placeholder="{{localize "WITCHWIND_SYSTEMS.Editor.GroupPlaceholder"}}">
+      <span class="wws-row-buttons">
+        <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+        <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+        <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+      </span>
+    </li>
+  </template>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-layer-group" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

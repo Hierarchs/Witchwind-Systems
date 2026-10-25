@@ -5,7 +5,16 @@ import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 700, note: 640, map: 460, pin: 460, entry: 480 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440 };
+
+/** Which field says an entry is shown to players: GM collections are revealed, user-owned ones are shared. */
+const VISIBILITY = {
+  quest: { field: "visible", label: "Editor.VisibleQuest" },
+  map: { field: "visible", label: "Editor.VisibleMap" },
+  faction: { field: "visible", label: "Editor.VisibleFaction" },
+  note: { field: "shared", label: "Editor.SharedNote" },
+  pin: { field: "shared", label: "Editor.SharedPin" }
+};
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
 const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps" };
@@ -59,7 +68,10 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @override */
   _configureRenderParts(options) {
     return {
-      form: { template: `${PATH}/templates/editors/${this.kind}.hbs`, templates: [`${PATH}/templates/editors/image.hbs`] }
+      form: {
+        template: `${PATH}/templates/editors/${this.kind}.hbs`,
+        templates: [`${PATH}/templates/editors/image.hbs`, `${PATH}/templates/editors/visibility.hbs`]
+      }
     };
   }
 
@@ -72,20 +84,31 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       isNew: !entry.id,
       canUpload: canUpload(),
       canBrowse: canBrowse(),
-      image: { name: "img", value: entry.img ?? "", folder: FOLDERS[this.kind] }
+      image: { name: "img", value: entry.img ?? "", folder: FOLDERS[this.kind] },
+      visibility: visibilityContext(this.kind, entry)
     };
     switch ( this.kind ) {
-      case "quest":
-        context.kinds = QUEST_KINDS.map(id => ({ id, label: `${L}.Quests.Kinds.${id}`, selected: (entry.kind ?? "side") === id }));
+      case "quest": {
+        const groups = store.questGroups();
+        const kind = groups.some(g => g.id === entry.kind) ? entry.kind : groups[0]?.id;
+        context.kinds = groups.map(g => ({ id: g.id, label: g.name || `${L}.Quests.Kinds.${g.id}`, selected: g.id === kind }));
         context.statuses = QUEST_STATUSES.map(id => ({ id, label: `${L}.Quests.Status.${id}`, selected: (entry.status ?? "active") === id }));
         context.factions = factionChoices(entry.faction);
+        context.parents = parentChoices(entry);
         context.objectives = entry.objectives ?? [];
         context.log = entry.log ?? [];
         context.rewards = entry.rewards ?? [];
         break;
+      }
       case "note":
         context.kinds = NOTE_KINDS.map(id => ({ id, label: `${L}.Journal.Kinds.${id}`, selected: (entry.kind ?? "general") === id }));
-        context.shared = entry.shared ?? true;
+        context.quests = store.all("quests").filter(q => store.isVisible("quests", q))
+          .sort(byTitle).map(q => ({ id: q.id, title: q.title, selected: q.id === entry.quest }));
+        context.factions = factionChoices(entry.faction);
+        context.pins = pinChoices(entry.pin);
+        break;
+      case "groups":
+        context.groups = (entry.groups ?? []).map(g => ({ ...g, placeholder: game.i18n.localize(`${L}.Quests.Kinds.${g.id}`) }));
         break;
       case "pin":
         context.icons = Object.entries(PIN_ICONS).map(([id, icon]) => ({
@@ -94,7 +117,6 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.colors = Object.entries(PIN_COLORS).map(([id, value]) => ({
           id, value, label: `${L}.Maps.Colors.${id}`, checked: (entry.color ?? "gold") === id
         }));
-        context.shared = entry.shared ?? true;
         context.quests = store.all("quests").filter(q => store.isVisible("quests", q))
           .sort(byTitle).map(q => ({ id: q.id, title: q.title, selected: q.id === entry.quest }));
         context.factions = factionChoices(entry.faction);
@@ -105,7 +127,7 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.others = store.all("factions").filter(f => f.id !== entry.id).sort(byName).map(f => ({
           id: f.id, name: f.name, ally: entry.allies?.includes(f.id), rival: entry.rivals?.includes(f.id)
         }));
-        context.members = (entry.members ?? []).map(m => ({ ...m, ranks: rankChoices(entry.ranks, m.rank) }));
+        context.members = (entry.members ?? []).map(m => ({ ...m, ranks: rankChoices(entry.ranks, m.rank ?? 0) }));
         context.rankOptions = rankChoices(entry.ranks, 0);
         break;
     }
@@ -144,12 +166,21 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onSubmit(event, form) {
     const data = readForm(form);
+    if ( VISIBILITY[this.kind] ) data.viewers = Array.from(form.querySelectorAll("[data-viewer]:checked"), el => el.value);
+    if ( this.kind === "groups" ) {
+      data.groups = (data.groups ?? []).map(g => ({ id: g.id || foundry.utils.randomID(), name: g.name ?? "" }));
+      if ( !data.groups.length ) data.groups = QUEST_KINDS.map(id => ({ id, name: "" }));
+    }
     if ( this.kind === "faction" ) {
       data.ranks = String(data.ranks ?? "").split(/\r?\n/).map(r => r.trim()).filter(Boolean);
       if ( !data.ranks.length ) data.ranks = [...DEFAULT_RANKS];
       data.allies = Array.from(form.querySelectorAll("[data-relation=ally]:checked"), el => el.value);
       data.rivals = Array.from(form.querySelectorAll("[data-relation=rival]:checked"), el => el.value);
-      data.members = (data.members ?? []).map(m => ({ ...m, rank: Number(m.rank) || 0 }));
+      data.members = (data.members ?? []).map(m => ({
+        ...m,
+        rank: Number(m.rank) || 0,
+        standing: Number.isFinite(m.standing) ? Math.clamp(m.standing, -100, 100) : null
+      }));
     }
     if ( this.kind === "quest" ) {
       data.objectives = (data.objectives ?? []).filter(o => o.text).map(o => ({ ...o, id: o.id || foundry.utils.randomID() }));
@@ -338,7 +369,7 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     const rows = this.element.querySelector(".wws-rows[data-list=members]");
     const present = Array.from(rows.querySelectorAll("[data-field=uuid]"), el => el.value);
     if ( present.includes(actor.uuid) ) return;
-    this.#addRow("members", { uuid: actor.uuid, name: actor.name, img: actor.img, rank: 0 });
+    this.#addRow("members", { uuid: actor.uuid, name: actor.name, img: actor.img, rank: 0, standing: "" });
   }
 
   static #onAddParty(event, target) {
@@ -353,7 +384,9 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     const template = this.element.querySelector("template[data-row-template=members]")?.content.querySelector("select[data-field=rank]");
     for ( const select of [...selects, template].filter(Boolean) ) {
       const current = Number(select.value) || 0;
-      select.replaceChildren(...ranks.map((rank, i) => new Option(rank, String(i), false, i === Math.min(current, ranks.length - 1))));
+      const outsider = new Option(game.i18n.localize(`${L}.Factions.NotMember`), "-1", false, current < 0);
+      select.replaceChildren(outsider, ...ranks.map((rank, i) => new Option(rank, String(i), false,
+        (current >= 0) && (i === Math.min(current, ranks.length - 1)))));
     }
   }
 
@@ -419,8 +452,48 @@ function factionChoices(selected) {
   return store.all("factions").sort(byName).map(f => ({ id: f.id, name: f.name, selected: f.id === selected }));
 }
 
+/** A faction's ranks as choices, after "Not a member" (-1) for characters the faction only knows by standing. */
 function rankChoices(ranks, selected) {
-  return (ranks?.length ? ranks : DEFAULT_RANKS).map((name, i) => ({ value: i, name, selected: i === selected }));
+  const outsider = { value: -1, name: game.i18n.localize(`${L}.Factions.NotMember`), selected: selected < 0 };
+  return [outsider, ...(ranks?.length ? ranks : DEFAULT_RANKS).map((name, i) => ({ value: i, name, selected: i === selected }))];
+}
+
+/**
+ * Who can see an entry: the reveal or share switch, and the players it can be limited to. A player sharing a note
+ * or marker isn't offered themselves, since they always see their own.
+ */
+function visibilityContext(kind, entry) {
+  const config = VISIBILITY[kind];
+  if ( !config ) return null;
+  const viewers = entry.viewers ?? [];
+  const on = config.field === "shared" ? (entry.shared ?? true) : !!entry.visible;
+  return {
+    field: config.field,
+    on,
+    label: `${L}.${config.label}`,
+    players: game.users.filter(u => !u.isGM && (u.id !== game.user.id)).map(u => ({
+      id: u.id, name: u.name, color: u.color?.css ?? "#8a7d66", checked: viewers.includes(u.id)
+    }))
+  };
+}
+
+/** Quests this one could be a step of: any but itself and its own steps, so a chain never loops. */
+function parentChoices(entry) {
+  const all = store.all("quests");
+  const below = new Set([entry.id]);
+  for ( let grew = true; grew; ) {
+    grew = false;
+    for ( const q of all ) if ( q.parent && below.has(q.parent) && !below.has(q.id) ) { below.add(q.id); grew = true; }
+  }
+  return all.filter(q => !below.has(q.id)).sort(byTitle).map(q => ({ id: q.id, title: q.title, selected: q.id === entry.parent }));
+}
+
+/** Markers a note can point to, named with their map. */
+function pinChoices(selected) {
+  const maps = new Map(store.all("maps").filter(m => store.isVisible("maps", m)).map(m => [m.id, m]));
+  return store.all("pins").filter(p => maps.has(p.map) && store.isVisible("pins", p))
+    .map(p => ({ id: p.id, label: `${p.label || game.i18n.localize(`${L}.Untitled`)} · ${maps.get(p.map).name}`, selected: p.id === selected }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 }
 
 const byTitle = (a, b) => (a.title ?? "").localeCompare(b.title ?? "");

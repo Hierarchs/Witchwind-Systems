@@ -1,0 +1,21 @@
+{{!-- Who can see an entry: shown to players or not, and optionally only to some of them. --}}
+<fieldset class="wws-visibility">
+  <legend>{{localize "WITCHWIND_SYSTEMS.Visibility.Title"}}</legend>
+  <label class="wws-toggle">
+    <input type="checkbox" name="{{visibility.field}}" {{#if visibility.on}}checked{{/if}}>
+    <span>{{localize visibility.label}}</span>
+  </label>
+  {{#if visibility.players.length}}
+  <div class="wws-viewers">
+    <span class="hint">{{localize "WITCHWIND_SYSTEMS.Visibility.OnlyHint"}}</span>
+    <div class="wws-viewer-list">
+      {{#each visibility.players}}
+      <label class="wws-viewer" style="--wws-author: {{color}};">
+        <input type="checkbox" data-viewer value="{{id}}" {{#if checked}}checked{{/if}}>
+        <span>{{name}}</span>
+      </label>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+</fieldset>

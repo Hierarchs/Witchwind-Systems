@@ -1,5 +1,6 @@
 import { MODULE_ID, PATH, L, SECTION_IDS, SECTION_ICONS } from "./config.mjs";
 import * as store from "./store.mjs";
+import { playSound } from "./sounds.mjs";
 import quests from "./sections/quests.mjs";
 import journal from "./sections/journal.mjs";
 import maps from "./sections/maps.mjs";
@@ -136,10 +137,29 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     return this.open(section);
   }
 
+  /** Choose the next (1) or previous (-1) entry in the open list, as the arrow keys do. */
+  step(delta) {
+    const rows = Array.from(this.element?.querySelectorAll(
+      ".wws-page-list button.wws-row[data-id], .wws-map-list button.wws-map-thumb[data-id]") ?? []);
+    if ( !rows.length ) return;
+    const current = rows.findIndex(r => r.classList.contains("selected"));
+    const next = rows[Math.clamp(current + delta, 0, rows.length - 1)] ?? rows[0];
+    if ( !next.classList.contains("selected") ) next.click();
+  }
+
+  /** Move to the next (1) or previous (-1) tab, wrapping around. */
+  stepTab(delta) {
+    const sections = enabledSections();
+    if ( sections.length < 2 ) return;
+    const next = sections[(sections.indexOf(this.section) + delta + sections.length) % sections.length];
+    this.element?.querySelector(`.wws-tab[data-section="${next}"]`)?.click();
+  }
+
   /** Fade the overlay away, then close without core's window-collapsing transition. */
   async close(options={}) {
     if ( !this.rendered || this.#closing ) return this;
     this.#closing = true;
+    playSound("close");
     try {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if ( !reduced && (options.animate !== false) ) {
@@ -220,8 +240,15 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     await super._onRender(context, options);
     const el = this.element;
     el.dataset.section = this.section ?? "";
-    el.dataset.animate = this.#animationFor(options);
+    const animation = el.dataset.animate = this.#animationFor(options);
     SECTIONS[this.section]?.onRender?.(this, el);
+
+    // The book opens with its own sound and turns a page for each new tab or entry.
+    if ( animation === "open" ) playSound("open");
+    else if ( (animation === "section") || (animation === "entry") ) playSound("page");
+    if ( animation === "entry" ) {
+      el.querySelector(".wws-page-list .selected, .wws-map-thumb.selected")?.scrollIntoView({ block: "nearest" });
+    }
 
     // Search boxes re-render the list as you type, keeping the caret where it was.
     for ( const input of this.element.querySelectorAll("input[data-focus-key]") ) {

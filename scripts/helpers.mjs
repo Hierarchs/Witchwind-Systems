@@ -80,6 +80,11 @@ export function authorOf(userId) {
   return { name: user?.name ?? loc("Unknown"), color: user?.color?.css ?? "#8a7d66", isGM: !!user?.isGM };
 }
 
+/** The names of the players an entry is limited to, or "" when it isn't limited. */
+export function viewerNames(entry) {
+  return (entry?.viewers ?? []).map(id => game.users.get(id)?.name).filter(Boolean).join(", ");
+}
+
 /** Ask before deleting something. Resolves true only if confirmed. */
 export async function confirmDelete(name) {
   const result = await foundry.applications.api.DialogV2.confirm({

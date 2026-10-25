@@ -5,6 +5,9 @@
     <header class="wws-page-head">
       <h2>{{localize "WITCHWIND_SYSTEMS.Sections.quests"}}</h2>
       {{#if page.canCreate}}
+      <button type="button" class="wws-tool" data-action="questGroups" data-tooltip="WITCHWIND_SYSTEMS.Quests.EditGroups">
+        <i class="fa-solid fa-layer-group" inert></i>
+      </button>
       <button type="button" class="wws-ink" data-action="questNew">
         <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Quests.NewShort"}}
       </button>
@@ -24,23 +27,35 @@
       {{#if page.empty}}<p class="wws-empty">{{localize page.emptyLabel}}</p>{{/if}}
 
       {{#each page.groups}}
-      <h3 class="wws-group">{{localize label}}</h3>
+      <h3 class="wws-group" {{#if @root.isGM}}data-drop-group="{{id}}"{{/if}}>{{label}}</h3>
       <ol class="wws-list">
         {{#each quests}}
-        <li>
-          <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="questSelect" data-id="{{id}}">
+        <li class="wws-quest-item{{#if depth}} wws-step{{/if}}" style="--wws-depth: {{depth}};">
+          {{#if hasSteps}}
+          <button type="button" class="wws-caret{{#if collapsed}} collapsed{{/if}}" data-action="questCollapse" data-id="{{id}}"
+                  aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Quests.ToggleSteps"}}">
+            <i class="fa-solid fa-chevron-down" inert></i>
+          </button>
+          {{/if}}
+          <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="questSelect" data-id="{{id}}"
+                  {{#if @root.isGM}}draggable="true" data-drag-quest="{{id}}" data-drop-quest="{{id}}"{{/if}}>
             <i class="wws-diamond" inert></i>
             <span class="wws-row-text">
               <span class="wws-row-title">{{title}}</span>
-              {{#if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}
+              {{#if hasSteps}}<span class="wws-row-sub">{{localize "WITCHWIND_SYSTEMS.Quests.StepsDone" done=stepsDone total=stepCount}}</span>
+              {{else if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}
             </span>
             {{#if tracked}}<i class="fa-solid fa-location-crosshairs wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Quests.Tracked"></i>{{/if}}
+            {{#if restricted}}<i class="fa-solid fa-user-lock wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Visibility.Limited"></i>{{/if}}
             {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
           </button>
         </li>
         {{/each}}
       </ol>
       {{/each}}
+      {{#if page.canCreate}}{{#unless page.isUpdates}}
+      <p class="wws-drop-hint"><i class="fa-solid fa-grip-lines" inert></i> {{localize "WITCHWIND_SYSTEMS.Quests.DragHint"}}</p>
+      {{/unless}}{{/if}}
 
       {{#if page.isUpdates}}
       <ol class="wws-list wws-updates">
@@ -67,6 +82,15 @@
       <article class="wws-entry wws-quest wws-status-{{quest.status}}">
         {{#if quest.hidden}}
         <p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>
+        {{else if quest.viewers}}
+        <p class="wws-ribbon"><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=quest.viewers}}</p>
+        {{/if}}
+
+        {{#if quest.parent}}
+        <p class="wws-chain">
+          <i class="fa-solid fa-turn-up fa-flip-horizontal" inert></i> {{localize "WITCHWIND_SYSTEMS.Quests.PartOf"}}
+          <button type="button" class="wws-link" data-action="questSelect" data-id="{{quest.parent.id}}">{{quest.parent.title}}</button>
+        </p>
         {{/if}}
 
         {{#if quest.img}}
@@ -102,6 +126,9 @@
           <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
           <button type="button" class="wws-tool" data-action="questEntry" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Quests.AddEntry">
             <i class="fa-solid fa-feather" inert></i>
+          </button>
+          <button type="button" class="wws-tool" data-action="questNew" data-parent="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Quests.AddStep">
+            <i class="fa-solid fa-diagram-subtask" inert></i>
           </button>
           <button type="button" class="wws-tool" data-action="questEdit" data-id="{{quest.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
             <i class="fa-solid fa-pen-to-square" inert></i>
@@ -198,6 +225,19 @@
         </ol>
         {{/if}}
 
+        {{#if quest.steps.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Steps"}}</h3>
+        <ol class="wws-quest-links wws-steps">
+          {{#each quest.steps}}
+          <li>
+            <button type="button" class="wws-link wws-status-{{status}}" data-action="questSelect" data-id="{{id}}">
+              <i class="wws-diamond" inert></i> {{title}}
+            </button>
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
         {{#if quest.log.length}}
         <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Journal"}}</h3>
         <ol class="wws-log">
@@ -235,6 +275,15 @@
             </button>
             <span class="wws-slot-name">{{name}}</span>
           </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if quest.notes.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Journal.Linked"}}</h3>
+        <ul class="wws-chips">
+          {{#each quest.notes}}
+          <li><button type="button" class="wws-chip" data-action="questNote" data-note="{{id}}"><i class="fa-solid fa-feather" inert></i> {{title}}</button></li>
           {{/each}}
         </ul>
         {{/if}}

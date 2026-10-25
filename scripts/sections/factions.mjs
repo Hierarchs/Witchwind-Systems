@@ -1,7 +1,7 @@
 import { PATH, L, DEFAULT_RANKS, standingTier } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
-import { enrich, loc, confirmDelete, openSheet, showToPlayers, docSync, byName, byTitle } from "../helpers.mjs";
+import { enrich, loc, confirmDelete, openSheet, showToPlayers, docSync, viewerNames, byName, byTitle } from "../helpers.mjs";
 
 /** How far one click of the standing arrows moves it. */
 const STANDING_STEP = 5;
@@ -109,14 +109,28 @@ export default {
       return store.update("factions", faction.id, { standing });
     },
 
-    /** Promote or demote a member one rank. */
+    /** Promote or demote a member one rank; promoting an outsider makes them a member at the lowest rank. */
     factionRank(event, target) {
       const faction = store.get("factions", target.dataset.id);
       const member = faction?.members?.find(m => m.uuid === target.dataset.uuid);
       if ( !member ) return;
       const top = ranksOf(faction).length - 1;
-      member.rank = Math.clamp((member.rank ?? 0) + Number(target.dataset.delta), 0, top);
+      member.rank = Math.clamp((member.rank ?? 0) + Number(target.dataset.delta), -1, top);
       return store.update("factions", faction.id, { members: faction.members });
+    },
+
+    /** Raise or lower one character's own standing, starting from the party's. */
+    factionPersonal(event, target) {
+      const faction = store.get("factions", target.dataset.id);
+      const member = faction?.members?.find(m => m.uuid === target.dataset.uuid);
+      if ( !member ) return;
+      const from = Number.isFinite(member.standing) ? member.standing : (faction.standing ?? 0);
+      member.standing = Math.clamp(from + (Number(target.dataset.delta) * STANDING_STEP), -100, 100);
+      return store.update("factions", faction.id, { members: faction.members });
+    },
+
+    factionNote(event, target) {
+      this.open("journal", target.dataset.note);
     },
 
     async factionMemberRemove(event, target) {
@@ -149,18 +163,28 @@ export default {
 
 const ranksOf = f => (f.ranks?.length ? f.ranks : DEFAULT_RANKS);
 
-/** Members with their current name and picture, their rank's name, and whether they're the viewer's character. */
+/**
+ * Characters the faction knows: members with a rank, or outsiders (rank -1) known only by their standing. Each has
+ * their current name and picture, rank name, personal standing if they have one, and whether they're the viewer's.
+ */
 function members(faction) {
   const ranks = ranksOf(faction);
   return (faction.members ?? []).map(m => {
     const actor = docSync(m.uuid);
-    const rank = Math.clamp(m.rank ?? 0, 0, ranks.length - 1);
+    const rank = (m.rank ?? 0) < 0 ? -1 : Math.min(m.rank ?? 0, ranks.length - 1);
+    const personal = Number.isFinite(m.standing) ? Math.clamp(m.standing, -100, 100) : null;
+    const standing = personal ?? Math.clamp(faction.standing ?? 0, -100, 100);
     return {
       uuid: m.uuid,
       name: actor?.name ?? m.name,
       img: actor?.img ?? m.img,
       rank,
-      rankName: ranks[rank],
+      member: rank >= 0,
+      rankName: rank >= 0 ? ranks[rank] : game.i18n.localize(`${L}.Factions.NotMember`),
+      personal,
+      standingLabel: standing > 0 ? `+${standing}` : String(standing),
+      tier: standingTier(standing),
+      tierLabel: `${L}.Factions.Tiers.${standingTier(standing)}`,
       yours: !game.user.isGM && !!actor?.isOwner
     };
   });
@@ -195,8 +219,12 @@ async function detail(faction) {
       yours: list.some(m => m.yours && m.rank === i)
     })).reverse(),
     members: list,
+    outsiders: list.filter(m => !m.member),
     yours: list.filter(m => m.yours),
-    hasMembers: list.length > 0,
+    hasMembers: list.some(m => m.member),
+    notes: store.all("notes").filter(n => (n.faction === faction.id) && store.isVisible("notes", n))
+      .map(n => ({ id: n.id, title: n.title || loc("Untitled") })),
+    viewers: isGM ? viewerNames(faction) : "",
     canPromote: isGM,
     topRank: ranks.length - 1,
     allies: related(faction.allies),

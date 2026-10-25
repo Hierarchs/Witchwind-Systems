@@ -5,10 +5,7 @@
     <input type="text" name="name" value="{{entry.name}}" required>
   </div>
 
-  <label class="wws-toggle">
-    <input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}>
-    <span>{{localize "WITCHWIND_SYSTEMS.Editor.VisibleMap"}}</span>
-  </label>
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
 
   <div class="form-group stacked">
     <label>{{localize "WITCHWIND_SYSTEMS.Editor.MapImage"}}</label>

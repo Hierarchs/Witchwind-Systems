@@ -21,14 +21,12 @@
       "Title": "Delete",
       "Body": "Delete <strong>{name}</strong>? This can't be undone."
     },
-
     "Sections": {
       "quests": "Quests",
       "journal": "Journal",
       "maps": "Maps",
       "factions": "Factions"
     },
-
     "Settings": {
       "Sections": {
         "quests": {
@@ -63,18 +61,46 @@
       "Tracker": {
         "Name": "Show the quest tracker",
         "Hint": "Keep the quests you're tracking, and what's left to do in each, in a small card on your screen. This only changes your own view."
+      },
+      "Sounds": {
+        "open": {
+          "Name": "Sound: book opens",
+          "Hint": "Played when the book opens. Pick any audio file on the server, such as one you have uploaded."
+        },
+        "close": {
+          "Name": "Sound: book closes",
+          "Hint": "Played when the book closes."
+        },
+        "page": {
+          "Name": "Sound: page turns",
+          "Hint": "Played on each new tab or entry."
+        },
+        "page2": {
+          "Name": "Sound: page turns (second)",
+          "Hint": "A second page turn; when both are set, each turn picks one of them at random."
+        },
+        "quest": {
+          "Name": "Sound: quest updates",
+          "Hint": "Played with the banners for quests started, updated, completed or failed, and for faction promotions."
+        },
+        "Volume": {
+          "Name": "Sound volume",
+          "Hint": "How loud the book and quest sounds are for you. Set it to zero to turn them off. This only changes your own sound."
+        }
       }
     },
-
     "Keys": {
       "toggle": "Open or close the journal",
       "quests": "Open the quests",
       "journal": "Open the journal notes",
       "maps": "Open the maps",
       "factions": "Open the factions",
-      "dismiss": "Close the book"
+      "dismiss": "Close the book",
+      "nextEntry": "Next entry in the list",
+      "previousEntry": "Previous entry in the list",
+      "nextTab": "Next tab",
+      "previousTab": "Previous tab"
     },
-
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
       "NoAnswer": "The GM didn't answer in time. Try again in a moment.",
@@ -84,7 +110,6 @@
       "NoPermission": "You don't have permission to see that.",
       "FileType": "Drop a picture, or a .txt, .md or .html file."
     },
-
     "Quests": {
       "New": "New Quest",
       "NewShort": "New",
@@ -141,9 +166,17 @@
         "completed": "No completed quests yet.",
         "failed": "No failed quests.",
         "updates": "No updates yet."
-      }
+      },
+      "EditGroups": "Edit quest groups",
+      "ToggleSteps": "Show or hide steps",
+      "StepsDone": "{done} of {total} steps done",
+      "DragHint": "Drag quests to reorder them, or onto a group heading to move them",
+      "PartOf": "Part of",
+      "AddStep": "Add a step",
+      "Steps": "Steps",
+      "Group": "Group",
+      "NoParent": "Nothing (a quest of its own)"
     },
-
     "Journal": {
       "New": "New Note",
       "NewShort": "New",
@@ -173,9 +206,11 @@
         "places": "Places",
         "lore": "Lore",
         "clues": "Clues"
-      }
+      },
+      "Linked": "Notes",
+      "LinksTitle": "Links",
+      "LinkPin": "Map marker"
     },
-
     "Maps": {
       "Upload": "Upload",
       "UploadHint": "Upload pictures as new maps",
@@ -235,9 +270,10 @@
         "green": "Green",
         "blue": "Blue",
         "purple": "Purple"
-      }
+      },
+      "Search": "Find a marker",
+      "Legend": "Legend"
     },
-
     "Factions": {
       "New": "New Faction",
       "NewShort": "New",
@@ -281,9 +317,16 @@
         "friendly": "Friendly",
         "trusted": "Trusted",
         "revered": "Revered"
-      }
+      },
+      "NotMember": "Not a member",
+      "Outsiders": "Known to the faction",
+      "PersonalLower": "Lower personal standing",
+      "PersonalRaise": "Raise personal standing",
+      "Join": "Make a member",
+      "PartyShort": "Party",
+      "PersonalHint": "Personal standing, -100 to 100. Leave empty to use the party’s.",
+      "Personal": "Personal standing"
     },
-
     "Editor": {
       "Details": "Details",
       "Title": "Title",
@@ -322,9 +365,11 @@
       "StandingHint": "From -100 (hated) to 100 (revered). The party sees the tier, such as Friendly or Hostile.",
       "RanksHint": "One rank per line, lowest first.",
       "AddParty": "Add the party",
-      "MembersDrop": "Drop actors here to add them as members"
+      "MembersDrop": "Drop actors here to add them as members",
+      "GroupsHint": "Name your quest groups and put them in order. Leave a default group’s name blank to keep its usual name. Quests in a removed group move to the first.",
+      "AddGroup": "Add group",
+      "GroupPlaceholder": "Companions"
     },
-
     "Banners": {
       "Started": "Quest Started",
       "Updated": "Quest Updated",
@@ -337,12 +382,40 @@
       "StandingUp": "Standing Rises",
       "StandingDown": "Standing Falls"
     },
-
     "Tracker": {
       "Title": "Tracked Quests",
       "DragHint": "Drag to move",
       "Collapse": "Show or hide objectives",
       "Untrack": "Stop tracking"
+    },
+    "Visibility": {
+      "Title": "Who can see it",
+      "OnlyHint": "Only these players (none ticked means everyone):",
+      "Only": "Only {names}",
+      "Limited": "Only some players can see this"
+    },
+    "Data": {
+      "Title": "Backups and Imports",
+      "Open": "Backups and Imports",
+      "Hint": "Download all quests, notes, maps, markers and factions as one file, restore one, or turn a folder of journal entries into quests.",
+      "Backup": "Backup",
+      "BackupHint": "{quests} quests, {notes} notes, {maps} maps, {pins} markers and {factions} factions, with your quest groups.",
+      "Download": "Download backup",
+      "Restore": "Restore",
+      "RestoreHint": "Load a backup file downloaded from here, from this world or another.",
+      "Replace": "Replace everything with the backup (untick to add it to what’s here)",
+      "Choose": "Choose a backup file…",
+      "Journal": "Import from the Journal",
+      "JournalHint": "Turns each journal entry in a folder into a quest: its first page becomes the details, each further page a step, and checklist items objectives. Folders named Completed or Failed set the status. Works with Simple Quest’s folders.",
+      "Folder": "Journal folder",
+      "Import": "Import",
+      "NoFolders": "There are no journal folders in this world.",
+      "BadFile": "That isn’t a Witchwind Systems backup.",
+      "ConfirmReplace": "Replace all quests, notes, maps, markers and factions with the backup from {date}? This can’t be undone.",
+      "ConfirmMerge": "Add the backup from {date} to what’s here? Entries in both are replaced by the backup’s.",
+      "Restored": "The backup has been restored.",
+      "NothingToImport": "There are no journal entries in that folder.",
+      "Imported": "Imported {count} quests."
     }
   }
 }

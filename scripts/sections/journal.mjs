@@ -2,7 +2,7 @@ import { PATH, L, NOTE_KINDS, NOTE_ICONS } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { uploadImage, readTextFile } from "../uploads.mjs";
-import { enrich, plainText, formatDate, loc, authorOf, confirmDelete, showImage, showToPlayers } from "../helpers.mjs";
+import { enrich, plainText, formatDate, loc, authorOf, confirmDelete, showImage, showToPlayers, viewerNames } from "../helpers.mjs";
 
 export default {
   id: "journal",
@@ -43,6 +43,7 @@ export default {
       dateLabel: formatDate(n.updated),
       img: n.img,
       private: !n.shared,
+      restricted: !!n.shared && !!n.viewers?.length,
       selected: n.id === app.selected.journal
     }));
 
@@ -128,6 +129,19 @@ export default {
 
     noteShow(event, target) {
       return showToPlayers("journal", target.dataset.id);
+    },
+
+    noteQuest(event, target) {
+      this.open("quests", target.dataset.quest);
+    },
+
+    noteFaction(event, target) {
+      this.open("factions", target.dataset.faction);
+    },
+
+    notePin(event, target) {
+      const pin = store.get("pins", target.dataset.pin);
+      if ( pin ) this.showPin(pin);
     }
   }
 };
@@ -149,8 +163,18 @@ function newNote(app, entry) {
 
 async function detail(note) {
   const kind = kindOf(note);
+  const quest = store.get("quests", note.quest);
+  const faction = store.get("factions", note.faction);
+  const pin = store.all("pins").find(p => p.id === note.pin);
+  const map = pin ? store.get("maps", pin.map) : null;
   return {
     ...note,
+    links: {
+      quest: store.isVisible("quests", quest) ? { id: quest.id, title: quest.title } : null,
+      faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name } : null,
+      pin: (store.isVisible("pins", pin) && store.isVisible("maps", map)) ? { id: pin.id, label: pin.label || loc("Untitled") } : null
+    },
+    viewers: note.shared ? viewerNames(note) : "",
     title: note.title || loc("Untitled"),
     body: await enrich(note.body),
     author: authorOf(note.author),
