@@ -23,9 +23,23 @@ export function enabledSections() {
   return SECTION_IDS.filter(id => game.settings.get(MODULE_ID, sectionSetting(id)));
 }
 
+/** Which sections show each collection, so a change only re-renders the book when the open section uses it. */
+const SHOWN_IN = {
+  quests: ["quests", "maps", "factions"],
+  notes: ["journal"],
+  pins: ["maps", "quests"],
+  maps: ["maps", "quests"],
+  factions: ["factions", "quests", "maps"],
+  tracked: ["quests", "maps"]
+};
+
+/** How long the book takes to fade away, in milliseconds. */
+const CLOSE_DURATION = 160;
+
 /**
- * The window: an open book of parchment pages in a leather cover, with Oblivion's row of tabs along the bottom.
- * Only one is ever open.
+ * The book: full screen over the game, an open spread of parchment pages under a leather bar of tabs, as Simple
+ * Quest and Oblivion's journal fill the screen. Only one is ever open. Windows (editors, pictures, dialogs) open
+ * above it.
  */
 export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
 
@@ -44,10 +58,19 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "witchwind-codex",
     classes: ["wws", "wws-codex"],
-    window: { icon: "fa-solid fa-book-open-cover", resizable: true },
-    position: { width: 1000, height: 720 },
+    window: { frame: false, positioned: false },
     actions: Object.assign({ section: Codex.#onSection }, ...Object.values(SECTIONS).map(s => s.actions))
   };
+
+  /** Re-render after a change to a collection, if the open section shows it. */
+  static refresh(kind) {
+    const app = this.#instance;
+    if ( app?.rendered && (!kind || SHOWN_IN[kind]?.includes(app.section)) ) app.#scheduleRender();
+  }
+
+  #scheduleRender = foundry.utils.debounce(() => {
+    if ( this.rendered && !this.#closing ) this.render();
+  }, 50);
 
   static PARTS = {
     book: {
@@ -80,6 +103,12 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
   /** The focused text box and its caret, carried across a re-render so typing isn't interrupted. */
   #focus = null;
 
+  /** What the last render showed, to tell which animation this one should play. */
+  #shown = {};
+
+  /** True while fading away. */
+  #closing = false;
+
   get title() {
     return game.i18n.localize(`${L}.Sections.${this.section}`);
   }
@@ -97,17 +126,32 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
       this.#revealInList(this.section, id);
     }
     this.placing = false;
-    if ( this.rendered ) {
-      if ( this.minimized ) this.maximize();
-      this.bringToFront();
-    }
     return this.render({ force: true });
   }
 
-  /** Open or close the window. */
+  /** Open or close the book. */
   toggle(section) {
+    if ( this.#closing ) return;
     if ( this.rendered && (!section || (section === this.section)) ) return this.close();
     return this.open(section);
+  }
+
+  /** Fade the overlay away, then close without core's window-collapsing transition. */
+  async close(options={}) {
+    if ( !this.rendered || this.#closing ) return this;
+    this.#closing = true;
+    try {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if ( !reduced && (options.animate !== false) ) {
+        const fade = this.element.animate([{ opacity: 1 }, { opacity: 0, transform: "scale(1.01)" }],
+          { duration: CLOSE_DURATION, easing: "ease-in", fill: "forwards" });
+        // A page that isn't being drawn never finishes its animations, so don't wait on it for long.
+        await Promise.race([fade.finished, new Promise(r => setTimeout(r, CLOSE_DURATION + 60))]);
+      }
+      return await super.close({ ...options, animate: false });
+    } finally {
+      this.#closing = false;
+    }
   }
 
   /** Jump to a marker on its map, centered, with its card open. */
@@ -164,11 +208,20 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /** @override */
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+    this.element.setAttribute("role", "dialog");
+    this.element.setAttribute("aria-modal", "true");
+    this.element.setAttribute("aria-label", game.i18n.localize(`${L}.Title`));
+  }
+
+  /** @override */
   async _onRender(context, options) {
     await super._onRender(context, options);
-    if ( this.window.title ) this.window.title.textContent = this.title;
-    this.element.dataset.section = this.section ?? "";
-    SECTIONS[this.section]?.onRender?.(this, this.element);
+    const el = this.element;
+    el.dataset.section = this.section ?? "";
+    el.dataset.animate = this.#animationFor(options);
+    SECTIONS[this.section]?.onRender?.(this, el);
 
     // Search boxes re-render the list as you type, keeping the caret where it was.
     for ( const input of this.element.querySelectorAll("input[data-focus-key]") ) {
@@ -185,12 +238,29 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     }
   }
 
+  /**
+   * Which entrance this render plays: the whole book on opening, the pages on changing tab, the right page on
+   * choosing another entry, the card on opening a marker. Re-renders for data changes play nothing, so ticking an
+   * objective doesn't make the page flicker.
+   */
+  #animationFor(options) {
+    const shown = { section: this.section, entry: this.selected[this.section], pin: this.openPin };
+    const before = this.#shown;
+    this.#shown = shown;
+    if ( options.isFirstRender ) return "open";
+    if ( shown.section !== before.section ) return "section";
+    if ( shown.entry !== before.entry ) return "entry";
+    if ( shown.pin && (shown.pin !== before.pin) ) return "card";
+    return "";
+  }
+
   /** @override */
   _onClose(options) {
     super._onClose(options);
     this.mapViewer?.resizeObserver.disconnect();
     this.mapViewer = null;
     this.placing = false;
+    this.#shown = {};
   }
 
   /* -------------------------------------------- */

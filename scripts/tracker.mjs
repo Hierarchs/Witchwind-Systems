@@ -35,7 +35,7 @@ export default class Tracker extends HandlebarsApplicationMixin(ApplicationV2) {
   static refresh() {
     const show = game.settings.get(MODULE_ID, "tracker") && game.settings.get(MODULE_ID, "showQuests");
     if ( show ) this.instance.render({ force: true });
-    else if ( this.#instance?.rendered ) this.#instance.close();
+    else if ( this.#instance?.rendered ) this.#instance.close({ animate: false });
   }
 
   /** @override */

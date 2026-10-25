@@ -71,7 +71,8 @@
       "quests": "Open the quests",
       "journal": "Open the journal notes",
       "maps": "Open the maps",
-      "factions": "Open the factions"
+      "factions": "Open the factions",
+      "dismiss": "Close the book"
     },
 
     "Errors": {

@@ -16,7 +16,7 @@ Hooks.once("init", () => {
 
   const register = (key, data) => game.settings.register(MODULE_ID, key, data);
   const refreshAll = () => {
-    if ( Codex.existing?.rendered ) Codex.existing.render();
+    Codex.refresh();
     Tracker.refresh();
     ui.controls?.render({ reset: true });
   };
@@ -91,6 +91,21 @@ Hooks.once("init", () => {
       }
     });
   }
+
+  // Escape closes the book. Core's own Escape closes framed windows first, so any open window (an editor, a
+  // sheet) is left to it; the book closes on the next press. Without this, core would open its main menu instead.
+  game.keybindings.register(MODULE_ID, "dismiss", {
+    name: `${L}.Keys.dismiss`,
+    uneditable: [{ key: "Escape" }],
+    precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY,
+    onDown: () => {
+      if ( !Codex.existing?.rendered ) return false;
+      const framed = Array.from(foundry.applications.instances.values()).some(app => app.hasFrame && app.rendered);
+      if ( framed || Object.keys(ui.windows ?? {}).length ) return false;
+      Codex.existing.close();
+      return true;
+    }
+  });
 });
 
 /* -------------------------------------------- */
@@ -142,11 +157,14 @@ Hooks.once("ready", () => {
     Codex.instance.open(section, id);
   });
 
-  const refresh = foundry.utils.debounce(() => {
-    if ( Codex.existing?.rendered ) Codex.existing.render();
-    Tracker.refresh();
-  }, 50);
-  store.onChange(refresh);
+  // Re-render only what a change touches: the book when its open section shows that collection, the tracker when
+  // quests or this user's tracked quests change. Other users' tracking changes nothing here.
+  const refreshTracker = foundry.utils.debounce(() => Tracker.refresh(), 50);
+  store.onChange((kind, userId) => {
+    if ( (kind === "tracked") && (userId !== game.user.id) ) return;
+    Codex.refresh(kind);
+    if ( (kind === "quests") || (kind === "tracked") ) refreshTracker();
+  });
   Tracker.refresh();
 
   game.modules.get(MODULE_ID).api = {

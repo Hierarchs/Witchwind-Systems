@@ -206,16 +206,23 @@
 /*  The book                                    */
 /* ============================================ */
 
-.wws-codex {
-  min-width: 640px;
-  min-height: 480px;
-}
-
-.wws-codex .window-content {
-  padding: 12px 12px 0;
-  overflow: hidden;
+/*
+ * The whole screen, over the game and under any windows: a dark leather shade (no backdrop blur, which would
+ * re-blur the live canvas every frame), the tabs across the top, and the open spread filling the rest.
+ */
+#witchwind-codex {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-index-window, 100) - 10);
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgb(22 19 15 / 86%) 0%, rgb(10 8 6 / 95%) 75%),
+    var(--wws-grain);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  pointer-events: auto;
+  animation: wws-fade-in 220ms ease-out;
 }
 
 .wws-book {
@@ -223,91 +230,248 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .wws-pages {
   min-height: 0;
   display: flex;
   flex-direction: column;
+  padding: 22px clamp(12px, 4vw, 72px) 26px;
 }
 
 .wws-pages > * {
   flex: 1;
   min-height: 0;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* -------------------------------------------- */
-/*  Tabs along the bottom                       */
+/*  Tabs across the top                         */
 /* -------------------------------------------- */
 
-/* Oblivion's row of section tabs, set as Witchwind's square slots: gold-ringed under the cursor, solid gold when open. */
+.wws-topbar {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) minmax(0, 6fr) minmax(80px, 1fr);
+  align-items: center;
+  min-height: 64px;
+  padding: 0 16px;
+  background: var(--wws-leather);
+  border-bottom: 1px solid var(--wws-gold-dim);
+  box-shadow: inset 0 -24px 34px -24px rgb(0 0 0 / 65%), var(--wws-double-rule), 0 10px 24px rgb(0 0 0 / 45%);
+}
+
+.wws-topbar-hint {
+  justify-self: start;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  color: var(--wws-ink-faint);
+}
+
+.wws-topbar-hint kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 2px;
+  background: var(--wws-slot-bg);
+  color: var(--wws-ink-muted);
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  box-shadow: none;
+}
+
+/* The section names spread across the bar, as in Simple Quest; the open one is gold over a gold rule and diamond. */
 .wws-tabs {
   display: flex;
-  justify-content: flex-end;
-  gap: 6px;
-  padding: 10px 6px 10px;
+  justify-content: space-evenly;
+  gap: 8px;
 }
 
 .wws button.wws-tab {
   all: unset;
+  position: relative;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  width: 78px;
+  gap: 10px;
+  padding: 16px 18px 15px;
   cursor: pointer;
   color: var(--wws-ink-muted);
-}
-
-.wws-tab-slot {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  box-sizing: border-box;
-  background: var(--wws-grain), var(--wws-slot-bg);
-  border: 1px solid var(--wws-line-strong);
-  border-radius: 3px;
-  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 4px rgb(0 0 0 / 55%);
-  font-size: 18px;
-  transition: border-color 140ms ease-out, box-shadow 180ms ease-out, color 140ms ease-out;
-}
-
-.wws-tab-label {
   font-family: var(--wws-font-display);
-  font-size: 11px;
+  font-size: clamp(16px, 1.6vw, 24px);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 6px rgb(0 0 0 / 90%);
+  transition: color 160ms ease-out;
 }
 
-.wws button.wws-tab:hover .wws-tab-slot {
-  background: var(--wws-grain), var(--wws-raised);
-  border-color: var(--wws-gold);
-  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px var(--wws-gold), 0 0 12px var(--wws-gold-glow);
-  color: var(--wws-ink);
+.wws button.wws-tab i {
+  font-size: 0.75em;
+  color: var(--wws-gold-dim);
+  transition: color 160ms ease-out, transform 200ms ease-out;
+}
+
+.wws button.wws-tab::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--wws-gold) 20%, var(--wws-gold) 80%, transparent);
+  transform: scaleX(0);
+  transition: transform 220ms ease-out;
 }
 
 .wws button.wws-tab:hover {
-  color: var(--wws-ink);
+  color: var(--wws-ivory);
+}
+
+.wws button.wws-tab:hover i {
+  color: var(--wws-gold);
+  transform: translateY(-1px);
+}
+
+.wws button.wws-tab:hover::after {
+  transform: scaleX(0.6);
+  opacity: 0.6;
 }
 
 .wws button.wws-tab.active {
   color: var(--wws-gold);
 }
 
-.wws button.wws-tab.active .wws-tab-slot {
-  background: var(--wws-gold);
-  border-color: var(--wws-gold);
-  box-shadow: 0 0 0 1px var(--wws-dark), 0 0 12px var(--wws-gold-glow);
-  color: var(--wws-on-gold);
+.wws button.wws-tab.active i {
+  color: var(--wws-gold);
 }
 
-.wws button.wws-tab:focus-visible .wws-tab-slot {
+.wws button.wws-tab.active::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* A small gold diamond in the middle of the open tab's rule. */
+.wws button.wws-tab.active::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: var(--wws-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px var(--wws-gold-glow);
+}
+
+.wws button.wws-tab:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: -4px;
+}
+
+/* Close: a leather slot, gold-ringed under the cursor. */
+.wws button.wws-close {
+  all: unset;
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  box-sizing: border-box;
+  background: var(--wws-grain), var(--wws-slot-bg);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 4px rgb(0 0 0 / 55%);
+  color: var(--wws-ink-muted);
+  cursor: pointer;
+  font-size: 18px;
+  transition: border-color 140ms ease-out, box-shadow 180ms ease-out, color 140ms ease-out;
+}
+
+.wws button.wws-close:hover {
+  border-color: var(--wws-gold);
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px var(--wws-gold), 0 0 12px var(--wws-gold-glow);
+  color: var(--wws-gold);
+}
+
+.wws button.wws-close:focus-visible {
   outline: 2px solid var(--wws-gold);
   outline-offset: 2px;
+}
+
+/* -------------------------------------------- */
+/*  Entrances                                   */
+/* -------------------------------------------- */
+
+/*
+ * The book sets data-animate on each render: "open" when it opens, "section" on a new tab, "entry" when another
+ * entry is chosen, "card" when a marker's card opens, and nothing for re-renders that only reflect a change in
+ * the data. The rendered elements are new each time, so these play once per render that asks for them.
+ */
+@keyframes wws-fade-in { from { opacity: 0; } }
+@keyframes wws-drop-in { from { opacity: 0; transform: translateY(-14px); } }
+@keyframes wws-rise-in { from { opacity: 0; transform: translateY(18px) scale(0.985); } }
+@keyframes wws-slide-in { from { opacity: 0; transform: translateX(-12px); } }
+@keyframes wws-fade-up { from { opacity: 0; transform: translateY(8px); } }
+@keyframes wws-pop-in { 0% { opacity: 0; scale: 0.3; } 70% { opacity: 1; scale: 1.15; } 100% { scale: 1; } }
+
+#witchwind-codex[data-animate="open"] .wws-topbar {
+  animation: wws-drop-in 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) .wws-pages > * {
+  animation: wws-rise-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+#witchwind-codex[data-animate="open"] .wws-pages > * {
+  animation-delay: 60ms;
+}
+
+/* List rows file in from the left, one after another. */
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li {
+  animation: wws-slide-in 300ms ease-out both;
+  animation-delay: 140ms;
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(2) { animation-delay: 165ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(3) { animation-delay: 190ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(4) { animation-delay: 215ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(5) { animation-delay: 240ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(6) { animation-delay: 265ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) :is(.wws-list, .wws-map-thumbs) > li:nth-child(n+7) { animation-delay: 290ms; }
+
+/* The tab's rule draws out from its middle. */
+#witchwind-codex:is([data-animate="open"], [data-animate="section"]) .wws-tab.active::after {
+  animation: wws-rule-in 320ms ease-out;
+}
+
+@keyframes wws-rule-in { from { transform: scaleX(0); } }
+
+/* A newly chosen entry rises onto the right page. */
+#witchwind-codex[data-animate="entry"] .wws-detail-scroll > *,
+#witchwind-codex[data-animate="entry"] .wws-map-view {
+  animation: wws-fade-up 260ms ease-out both;
+}
+
+/* Markers pop onto the map. */
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-pin {
+  animation: wws-pop-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: 220ms;
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-pin:nth-of-type(2n) { animation-delay: 260ms; }
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-pin:nth-of-type(3n) { animation-delay: 300ms; }
+
+#witchwind-codex[data-animate="card"] .wws-pin-card {
+  animation: wws-fade-up 180ms ease-out;
+}
+
+/* Editors and the tracker fade in once, when they first appear. */
+.wws-editor,
+#witchwind-tracker {
+  animation: wws-fade-up 200ms ease-out;
 }
 
 /* -------------------------------------------- */
@@ -3279,8 +3443,45 @@
     display: none;
   }
 
-  .wws-tabs {
-    justify-content: center;
+  .wws-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 0 10px;
+  }
+
+  .wws-topbar-hint {
+    display: none;
+  }
+
+  .wws button.wws-tab {
+    padding: 14px 8px 13px;
+  }
+
+  .wws-pages {
+    padding: 12px 10px 14px;
+  }
+}
+
+/* Wide screens: larger type, so the full-screen book reads from a chair. */
+@container wws-book (min-width: 1300px) {
+  .wws-page-head h2 { font-size: 25px; }
+  .wws-row-title { font-size: 18px; }
+  .wws-row-sub { font-size: 14px; }
+  .wws-entry-title { font-size: 32px; }
+  .wws-prose,
+  .wws-objective { font-size: 17px; }
+  .wws button.wws-filter { font-size: 13px; }
+  .wws-spread { grid-template-columns: minmax(300px, 32%) minmax(0, 1fr); }
+  .wws-detail-scroll { padding: 28px 42px 34px; }
+}
+
+/* Narrower still: the tabs keep only their icons. */
+@container wws-book (max-width: 520px) {
+  .wws button.wws-tab span {
+    display: none;
+  }
+
+  .wws button.wws-tab i {
+    font-size: 20px;
   }
 }
 
@@ -3289,7 +3490,18 @@
 /* ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .wws-tab-slot,
+  #witchwind-codex,
+  #witchwind-codex *,
+  #witchwind-codex *::before,
+  #witchwind-codex *::after,
+  .wws-editor,
+  #witchwind-tracker {
+    animation: none !important;
+  }
+
+  .wws button:is(.wws-tab, .wws-close),
+  .wws button.wws-tab::after,
+  .wws button.wws-tab i,
   .wws button:is(.wws-row, .wws-ink, .wws-button, .wws-tool, .wws-slot, .wws-filter, .wws-map-thumb),
   .wws-pin-mark,
   .wws-pin-label,

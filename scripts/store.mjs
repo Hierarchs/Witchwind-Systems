@@ -16,6 +16,13 @@ export const USER_KINDS = ["notes", "pins"];
 
 const listeners = new Set();
 
+/**
+ * Each collection, copied out of its settings or flags once per change rather than on every read: a single render
+ * reads the same collections many times. Entries in it are shared, so they're treated as read-only; get() hands
+ * out a private copy for anything that will be changed.
+ */
+const cache = new Map();
+
 /* -------------------------------------------- */
 /*  Setup                                       */
 /* -------------------------------------------- */
@@ -38,6 +45,11 @@ export function registerData() {
       if ( kind in flags ) emit(kind, user.id);
     }
   });
+
+  // A user arriving or leaving brings or takes their notes and markers with them.
+  for ( const hook of ["createUser", "deleteUser"] ) {
+    Hooks.on(hook, user => USER_KINDS.forEach(kind => emit(kind, user.id)));
+  }
 }
 
 /** Call a function whenever any collection changes, with the collection and the user who changed it. */
@@ -46,6 +58,7 @@ export function onChange(fn) {
 }
 
 function emit(kind, userId) {
+  cache.delete(kind);
   for ( const fn of listeners ) fn(kind, userId);
 }
 
@@ -53,8 +66,13 @@ function emit(kind, userId) {
 /*  Reading                                     */
 /* -------------------------------------------- */
 
-/** Every entry of a collection, as copies that are safe to change. */
+/** Every entry of a collection. The array is new each call; the entries are shared and must not be changed. */
 export function all(kind) {
+  if ( !cache.has(kind) ) cache.set(kind, read(kind));
+  return [...cache.get(kind)];
+}
+
+function read(kind) {
   if ( WORLD_KINDS.includes(kind) ) {
     return Object.values(foundry.utils.deepClone(game.settings.get(MODULE_ID, kind) ?? {}));
   }
@@ -68,13 +86,15 @@ export function all(kind) {
   return entries;
 }
 
+/** One entry, as a private copy that's safe to change. */
 export function get(kind, id) {
   if ( !id ) return null;
   if ( WORLD_KINDS.includes(kind) ) {
     const entry = game.settings.get(MODULE_ID, kind)?.[id];
     return entry ? foundry.utils.deepClone(entry) : null;
   }
-  return all(kind).find(e => e.id === id) ?? null;
+  const entry = all(kind).find(e => e.id === id);
+  return entry ? foundry.utils.deepClone(entry) : null;
 }
 
 /* -------------------------------------------- */

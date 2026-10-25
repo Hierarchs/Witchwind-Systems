@@ -68,7 +68,7 @@
 
     <div class="wws-map-stage{{#if @root.page.placing}} placing{{/if}}" data-map="{{map.id}}">
       <div class="wws-map-layer">
-        <img class="wws-map-image" src="{{map.img}}" alt="" draggable="false">
+        <img class="wws-map-image" src="{{map.img}}" alt="" draggable="false" decoding="async">
         {{#each @root.page.pins}}
         <button type="button" class="wws-pin{{#if open}} open{{/if}}{{#if tracked}} tracked{{/if}}{{#if private}} private{{/if}}{{#if canEdit}} movable{{/if}}"
                 data-id="{{id}}" style="left: {{x}}%; top: {{y}}%; --wws-pin: {{color}};" aria-label="{{label}}">

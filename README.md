@@ -2,7 +2,9 @@
 
 Quests, a shared journal, maps with markers and factions in one book, in the style of [Witchwind Inventory](https://github.com/Hierarchs/Witchwind-Inventory-System-VTT) and [Witchwind UI](https://github.com/Hierarchs/Witchwind-UI): dark leather and gold around Oblivion's parchment pages, Cinzel headings, square slots and gold diamonds. Quests track and announce themselves as in the Elder Scrolls games.
 
-Press **J** to open it (or **M** for the map), click the book among the token tools on the left, or use the button at the top of the Journal tab. Four tabs run along the bottom of the book, as in Oblivion's menu.
+Press **J** to open it (or **M** for the map), click the book among the token tools on the left, or use the button at the top of the Journal tab. It fills the screen, as Simple Quest does: the four tabs run across a leather bar at the top, and the parchment pages fill the rest. Press **Esc** or **J** again to close it. Editors, pictures and dialogs open above it.
+
+- **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
 
 ### Quests
 
@@ -75,6 +77,7 @@ api.announce({ label: "Quest Started", title: "The Hollow Crown", detail: "Speak
 
 ## Notes
 
+- The book only re-renders when something it's showing changes, reads each collection once per change, remembers enriched text, and darkens the game behind it without a backdrop blur (which would re-blur the live canvas every frame).
 - Quests, maps and factions are kept in world settings. Notes and markers are kept on the User of whoever wrote them, so players can write without a GM online (only uploading a picture without upload permission needs a GM connected).
 - Uploaded pictures go to the module's storage folder (`modules/witchwind-systems/storage/`), which survives module updates.
 - Hidden quests, private notes and GM notes are hidden in the interface, but like the rest of a world's data they're sent to every connected client, so a player poking around in the browser console could find them.

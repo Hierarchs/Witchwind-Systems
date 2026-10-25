@@ -18,11 +18,33 @@ export async function showToPlayers(section, id) {
   ui.notifications.info(loc("ShownToPlayers"));
 }
 
-/** Clean stored HTML (it may have come from any player) and enrich its links and rolls for display. */
-export async function enrich(html) {
-  if ( !html ) return "";
+/** How many enriched texts and plain-text extracts are remembered. */
+const MEMO_SIZE = 400;
+
+/** Remember a function's results by their string argument, forgetting the oldest past MEMO_SIZE. */
+function memo(fn) {
+  const results = new Map();
+  return text => {
+    if ( results.has(text) ) return results.get(text);
+    const result = fn(text);
+    results.set(text, result);
+    if ( results.size > MEMO_SIZE ) results.delete(results.keys().next().value);
+    return result;
+  };
+}
+
+/**
+ * Clean stored HTML (it may have come from any player) and enrich its links and rolls for display. Each text is
+ * enriched once and remembered, since every re-render would otherwise enrich every description and entry again.
+ */
+const enrichOnce = memo(html => {
   const TextEditor = foundry.applications.ux.TextEditor.implementation;
-  return TextEditor.enrichHTML(foundry.utils.cleanHTML(html), { secrets: game.user.isGM });
+  const cleaned = foundry.utils.cleanHTML(html);
+  return TextEditor.enrichHTML(cleaned, { secrets: game.user.isGM }).catch(() => cleaned);
+});
+
+export async function enrich(html) {
+  return html ? enrichOnce(html) : "";
 }
 
 /** Plain text typed into a text box, as paragraphs of HTML; text that's already HTML is left alone. */
@@ -32,11 +54,15 @@ export function asHTML(text) {
   return text.split(/\r?\n\s*\r?\n/).map(p => `<p>${foundry.utils.escapeHTML(p.trim()).replace(/\r?\n/g, "<br>")}</p>`).join("");
 }
 
-/** The text of some HTML, for searching and short previews. */
+/** The text of some HTML, for searching and short previews. Parsed without running anything, and remembered. */
+const parser = new DOMParser();
+const plainTextOnce = memo(html => {
+  const text = parser.parseFromString(html, "text/html").body.textContent ?? "";
+  return text.replace(/\s+/g, " ").trim();
+});
+
 export function plainText(html) {
-  const div = document.createElement("div");
-  div.innerHTML = html ?? "";
-  return (div.textContent ?? "").replace(/\s+/g, " ").trim();
+  return html ? plainTextOnce(html) : "";
 }
 
 export function formatDate(ms) {
