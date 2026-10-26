@@ -10,7 +10,7 @@
   {{#unless collapsed}}
   <ol class="wws-tracker-quests">
     {{#each quests}}
-    <li class="wws-tracker-quest">
+    <li class="wws-tracker-quest{{#if fresh}} wws-fresh{{/if}}">
       <div class="wws-tracker-title">
         <button type="button" class="wws-link" data-action="trackerOpen" data-id="{{id}}">{{title}}</button>
         <button type="button" class="wws-tool wws-mini" data-action="trackerUntrack" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Tracker.Untrack">
@@ -20,7 +20,7 @@
       {{#if objectives.length}}
       <ul class="wws-tracker-objectives">
         {{#each objectives}}
-        <li{{#if optional}} class="wws-optional"{{/if}}><i class="wws-diamond" inert></i> {{text}}</li>
+        <li class="{{#if optional}}wws-optional{{/if}}{{#if fresh}} wws-fresh{{/if}}"><i class="wws-diamond" inert></i> {{text}}</li>
         {{/each}}
       </ul>
       {{else if location}}

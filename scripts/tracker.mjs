@@ -38,17 +38,24 @@ export default class Tracker extends HandlebarsApplicationMixin(ApplicationV2) {
     else if ( this.#instance?.rendered ) this.#instance.close({ animate: false });
   }
 
+  /** Quests and objectives shown last time, so newly tracked quests and new objectives can slide in. */
+  #shown = null;
+
   /** @override */
   async _prepareContext(options) {
+    const before = this.#shown;
     const quests = store.tracked()
       .map(id => store.get("quests", id))
       .filter(q => store.isVisible("quests", q) && ((q.status ?? "active") === "active"))
       .map(q => ({
         id: q.id,
         title: q.title,
-        objectives: (q.objectives ?? []).filter(o => !o.hidden && !o.done && !o.failed),
+        fresh: !!before && !before.has(q.id),
+        objectives: (q.objectives ?? []).filter(o => !o.hidden && !o.done && !o.failed)
+          .map(o => ({ ...o, fresh: !!before && before.has(q.id) && !before.has(`${q.id}.${o.id}`) })),
         location: q.location
       }));
+    this.#shown = new Set(quests.flatMap(q => [q.id, ...q.objectives.map(o => `${q.id}.${o.id}`)]));
     return { quests, collapsed: game.settings.get(MODULE_ID, "trackerCollapsed") };
   }
 

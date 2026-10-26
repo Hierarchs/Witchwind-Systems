@@ -35,7 +35,7 @@ export default {
       rows,
       empty: !rows.length,
       canCreate: game.user.isGM,
-      faction: faction ? await detail(faction) : null
+      faction: faction ? await detail(faction, app) : null
     };
   },
 
@@ -190,12 +190,18 @@ function members(faction) {
   });
 }
 
-async function detail(faction) {
+async function detail(faction, app) {
   const isGM = game.user.isGM;
   const ranks = ranksOf(faction);
   const list = members(faction);
   const standing = Math.clamp(faction.standing ?? 0, -100, 100);
   const tier = standingTier(standing);
+
+  // Compared with the last time this faction was shown: the standing marker slides from where it was, and anyone
+  // whose rank changed glows once.
+  const before = app.factionShown?.id === faction.id ? app.factionShown : null;
+  app.factionShown = { id: faction.id, standing, ranks: new Map(list.map(m => [m.uuid, m.rank])) };
+  for ( const m of list ) m.moved = !!before && before.ranks.has(m.uuid) && (before.ranks.get(m.uuid) !== m.rank);
   const related = ids => (ids ?? []).map(id => store.get("factions", id))
     .filter(f => store.isVisible("factions", f)).map(f => ({ id: f.id, name: f.name, img: f.img }));
   const quests = store.all("quests").filter(q => (q.faction === faction.id) && store.isVisible("quests", q))
@@ -208,6 +214,7 @@ async function detail(faction) {
     standing,
     standingLabel: standing > 0 ? `+${standing}` : String(standing),
     standingPercent: (standing + 100) / 2,
+    standingFrom: (before && (before.standing !== standing)) ? (before.standing + 100) / 2 : null,
     tier,
     tierLabel: `${L}.Factions.Tiers.${tier}`,
     // Highest rank first, as a guild's ladder reads from the top.

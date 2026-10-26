@@ -30,7 +30,7 @@
       <h3 class="wws-group" {{#if @root.isGM}}data-drop-group="{{id}}"{{/if}}>{{label}}</h3>
       <ol class="wws-list">
         {{#each quests}}
-        <li class="wws-quest-item{{#if depth}} wws-step{{/if}}" style="--wws-depth: {{depth}};">
+        <li class="wws-quest-item{{#if depth}} wws-step{{/if}}{{#if appearing}} wws-appearing{{/if}}" style="--wws-depth: {{depth}};">
           {{#if hasSteps}}
           <button type="button" class="wws-caret{{#if collapsed}} collapsed{{/if}}" data-action="questCollapse" data-id="{{id}}"
                   aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Quests.ToggleSteps"}}">
@@ -101,7 +101,7 @@
           <p class="wws-kicker">
             {{localize quest.kindLabel}}
             <span class="wws-sep" aria-hidden="true">◆</span>
-            <span class="wws-status-word">{{localize quest.statusLabel}}</span>
+            <span class="wws-status-word{{#if quest.statusChanged}} wws-stamp{{/if}}">{{localize quest.statusLabel}}</span>
           </p>
           <h1 class="wws-entry-title">{{quest.title}}</h1>
         </header>
@@ -196,7 +196,7 @@
         <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Objectives"}}</h3>
         <ol class="wws-objectives">
           {{#each quest.objectives}}
-          <li class="wws-objective wws-{{state}}{{#if hidden}} wws-is-hidden{{/if}}">
+          <li class="wws-objective wws-{{state}}{{#if hidden}} wws-is-hidden{{/if}}{{#if fresh}} wws-fresh{{/if}}">
             {{#if @root.isGM}}
             <button type="button" class="wws-check" data-action="questObjective" data-id="{{quest.id}}" data-row="{{id}}"
                     data-tooltip="WITCHWIND_SYSTEMS.Quests.ToggleDone" aria-pressed="{{#if done}}true{{else}}false{{/if}}">

@@ -245,7 +245,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // The book opens with its own sound and turns a page for each new tab or entry.
     if ( animation === "open" ) playSound("open");
-    else if ( (animation === "section") || (animation === "entry") ) playSound("page");
+    else if ( ["section", "entry", "list"].includes(animation) ) playSound("page");
     if ( animation === "entry" ) {
       el.querySelector(".wws-page-list .selected, .wws-map-thumb.selected")?.scrollIntoView({ block: "nearest" });
     }
@@ -271,21 +271,28 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
    * objective doesn't make the page flicker.
    */
   #animationFor(options) {
-    const shown = { section: this.section, entry: this.selected[this.section], pin: this.openPin };
+    const shown = { section: this.section, entry: this.selected[this.section], pin: this.openPin, filter: this.filters[this.section] };
     const before = this.#shown;
+    const requested = this.nextAnimation;
     this.#shown = shown;
+    this.nextAnimation = null;
     if ( options.isFirstRender ) return "open";
     if ( shown.section !== before.section ) return "section";
+    if ( shown.filter !== before.filter ) return "list";
     if ( shown.entry !== before.entry ) return "entry";
     if ( shown.pin && (shown.pin !== before.pin) ) return "card";
-    return "";
+    return requested ?? "";
   }
+
+  /** An entrance for the next render only, such as "panel" when the map legend opens or "steps" when steps unfold. */
+  nextAnimation = null;
 
   /** @override */
   _onClose(options) {
     super._onClose(options);
     this.mapViewer?.resizeObserver.disconnect();
     this.mapViewer = null;
+    this.mapImage = null;
     this.placing = false;
     this.#shown = {};
   }

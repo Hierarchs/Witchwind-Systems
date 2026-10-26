@@ -193,6 +193,7 @@ export default {
 
     mapLegendToggle() {
       this.mapLegend = !this.mapLegend;
+      if ( this.mapLegend ) this.nextAnimation = "panel";
       this.render();
     },
 
@@ -211,6 +212,7 @@ export default {
 
     mapPlace() {
       this.placing = !this.placing;
+      if ( this.placing ) this.nextAnimation = "panel";
       this.openPin = null;
       this.render();
     },
@@ -289,8 +291,18 @@ class MapViewer {
     this.card = stage.querySelector(".wws-pin-card");
     this.mapId = stage.dataset.map;
     app.mapViewer?.resizeObserver.disconnect();
+    if ( app.mapViewer?.frame ) cancelAnimationFrame(app.mapViewer.frame);
     app.mapViewer = this;
     stage.classList.toggle("wws-labels", !!app.mapLabels);
+
+    // Keep the picture already decoded by the last render, so a large map doesn't blink out and decode again
+    // every time anything on the page changes.
+    const kept = app.mapImage;
+    if ( kept && (kept !== this.image) && kept.complete && kept.naturalWidth && (kept.src === this.image.src) ) {
+      this.image.replaceWith(kept);
+      this.image = kept;
+    }
+    app.mapImage = this.image;
 
     stage.addEventListener("wheel", this.#onWheel.bind(this), { passive: false });
     stage.addEventListener("pointerdown", this.#onPointerDown.bind(this));
@@ -327,6 +339,18 @@ class MapViewer {
     this.#placeCard();
   }
 
+  /**
+   * Apply the view on the next frame. Wheel and pointer events can arrive several times a frame; drawing once per
+   * frame keeps panning and zooming smooth on large maps.
+   */
+  #schedule() {
+    if ( this.frame ) return;
+    this.frame = requestAnimationFrame(() => {
+      this.frame = null;
+      if ( this.view ) this.#apply();
+    });
+  }
+
   fit() {
     if ( !this.width ) return;
     const { clientWidth: w, clientHeight: h } = this.stage;
@@ -342,7 +366,7 @@ class MapViewer {
     const next = Math.clamp(scale * factor, MIN_ZOOM, MAX_ZOOM);
     const k = next / scale;
     this.app.mapViews[this.mapId] = { scale: next, x: cx - ((cx - x) * k), y: cy - ((cy - y) * k) };
-    this.#apply();
+    this.#schedule();
   }
 
   /** Bring a marker to the middle of the stage, zooming in to at least full size. */
@@ -419,7 +443,7 @@ class MapViewer {
         this.#placeCard();
       } else {
         this.app.mapViews[this.mapId] = { ...start.view, x: start.view.x + dx, y: start.view.y + dy };
-        this.#apply();
+        this.#schedule();
         this.stage.classList.add("panning");
       }
     };

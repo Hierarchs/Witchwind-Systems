@@ -4,7 +4,8 @@ Quests, a shared journal, maps with markers and factions in one book, in the sty
 
 Press **J** to open it (or **M** for the map), click the book among the token tools on the left, or use the button at the top of the Journal tab. It fills the screen, as Simple Quest does: the four tabs run across a leather bar at the top, and the parchment pages fill the rest. Press **Esc** or **J** again to close it. Editors, pictures and dialogs open above it.
 
-- **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
+- **Big screens.** On 1440p and 4K screens the whole menu scales up together and fills the screen, and the map takes the full width.
+- **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab and filter, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. A ticked objective's diamond fills with a pop of gold, a quest's new status stamps onto the page, a faction's standing marker slides to its new place, a promoted member's portrait glows, unfolded steps drop into place, and new quests and objectives slide into the tracker. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
 - **Sounds.** The book can play a sound as it opens and closes, turn a page on each new tab or entry, and sound a fanfare with quest banners. No sounds ship with the module: upload your own audio files to your Foundry server and choose them under **Configure Settings > Witchwind Systems**. Each player sets their own volume, or turns it to zero.
 - **Keyboard.** Up and Down move through the list, Left and Right change tab, Esc closes. While the book is open they don't pan the map underneath.
 
@@ -102,7 +103,7 @@ api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave rob
 
 ## Notes
 
-- The book only re-renders when something it's showing changes, reads each collection once per change, remembers enriched text, and darkens the game behind it without a backdrop blur (which would re-blur the live canvas every frame).
+- The book only re-renders when something it's showing changes, reads each collection once per change, remembers enriched text, and darkens the game behind it without a backdrop blur (which would re-blur the live canvas every frame). The map keeps its decoded picture across re-renders, so large maps don't blink when something changes, and panning and zooming draw once per frame.
 - Quests, maps and factions are kept in world settings. Notes and markers are kept on the User of whoever wrote them, so players can write without a GM online (only uploading a picture without upload permission needs a GM connected).
 - Uploaded pictures go to the module's storage folder (`modules/witchwind-systems/storage/`), which survives module updates.
 - Hidden quests, private notes and GM notes are hidden in the interface, but like the rest of a world's data they're sent to every connected client, so a player poking around in the browser console could find them.

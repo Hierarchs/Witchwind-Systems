@@ -96,7 +96,8 @@
           </div>
           <div class="wws-standing-bar" role="meter" aria-valuemin="-100" aria-valuemax="100" aria-valuenow="{{faction.standing}}"
                aria-label="{{localize "WITCHWIND_SYSTEMS.Factions.Standing"}}">
-            <span class="wws-standing-mark" style="left: {{faction.standingPercent}}%"></span>
+            <span class="wws-standing-mark{{#if (ne faction.standingFrom null)}} wws-sliding{{/if}}"
+                  style="left: {{faction.standingPercent}}%;{{#if (ne faction.standingFrom null)}} --wws-from: {{faction.standingFrom}}%;{{/if}}"></span>
           </div>
         </section>
 
@@ -152,7 +153,7 @@
             <span class="wws-rung-name">{{name}}</span>
             <span class="wws-rung-members">
               {{#each members}}
-              <span class="wws-member{{#if yours}} yours{{/if}}">
+              <span class="wws-member{{#if yours}} yours{{/if}}{{#if moved}} wws-moved{{/if}}">
                 <button type="button" class="wws-member-face wws-tier-{{tier}}" data-action="factionMember" data-uuid="{{uuid}}"
                         data-tooltip="{{name}}{{#if personal}} · {{localize tierLabel}} ({{standingLabel}}){{/if}}">
                   <img src="{{img}}" alt="{{name}}">

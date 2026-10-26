@@ -44,7 +44,7 @@ export default {
       empty: !listed.length,
       emptyLabel: `${L}.Quests.Empty.${filter}`,
       canCreate: game.user.isGM,
-      quest: quest ? await detail(quest, quests, groups, tracked) : null
+      quest: quest ? await detail(quest, quests, groups, tracked, app) : null
     };
   },
 
@@ -94,8 +94,13 @@ export default {
     /** Fold a quest's steps away under it, or show them again. */
     questCollapse(event, target) {
       const collapsed = this.collapsed ??= new Set();
-      if ( collapsed.has(target.dataset.id) ) collapsed.delete(target.dataset.id);
-      else collapsed.add(target.dataset.id);
+      const id = target.dataset.id;
+      if ( collapsed.has(id) ) {
+        collapsed.delete(id);
+        this.expandedQuest = id;
+        this.nextAnimation = "steps";
+      }
+      else collapsed.add(id);
       this.render();
     },
 
@@ -259,6 +264,7 @@ function groupedList(shown, groups, tracked, app, showEmpty) {
       depth,
       hasSteps: steps.length > 0,
       collapsed: collapsed.has(quest.id),
+      appearing: !!quest.parent && (quest.parent === app.expandedQuest),
       stepCount: steps.length,
       stepsDone: steps.filter(s => statusOf(s) === "completed").length
     };
@@ -273,13 +279,18 @@ function groupedList(shown, groups, tracked, app, showEmpty) {
   }).filter(g => g.quests.length || (showEmpty && game.user.isGM));
 }
 
-async function detail(quest, quests, groups, tracked) {
+async function detail(quest, quests, groups, tracked, app) {
   const isGM = game.user.isGM;
   const status = statusOf(quest);
 
+  // Compared with the last time this quest was shown, so a newly ticked objective or a new status can play once.
+  const before = app.questShown?.id === quest.id ? app.questShown : null;
+  app.questShown = { id: quest.id, status, done: new Set((quest.objectives ?? []).filter(o => o.done).map(o => o.id)) };
+
   const objectives = (quest.objectives ?? []).filter(o => isGM || !o.hidden).map(o => ({
     ...o,
-    state: o.failed ? "failed" : (o.done ? "done" : "open")
+    state: o.failed ? "failed" : (o.done ? "done" : "open"),
+    fresh: !!before && o.done && !before.done.has(o.id)
   }));
 
   const log = await Promise.all((quest.log ?? []).filter(e => isGM || !e.hidden)
@@ -300,6 +311,7 @@ async function detail(quest, quests, groups, tracked) {
     title: quest.title || loc("Untitled"),
     status,
     statusLabel: `${L}.Quests.Status.${status}`,
+    statusChanged: !!before && (before.status !== status),
     kindLabel: groupName(groups.find(g => g.id === groupOf(quest, groups))),
     isActive: status === "active",
     isTracked: tracked.includes(quest.id),
