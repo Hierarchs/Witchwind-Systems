@@ -68,7 +68,15 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( !party?.rendered || !party.#memberIds.has(actor.id) ) return;
       if ( ("name" in changes) || ("img" in changes) ) return redraw();
       if ( changes.system?.attributes?.hp !== undefined ) party.#updateMember(actor);
+      if ( changes.system?.attributes?.exhaustion !== undefined ) party.#updateEffects(actor);
     });
+    // Conditions and other effects change one box's icons in place.
+    const onEffect = effect => {
+      const actor = (effect.parent?.documentName === "Actor") ? effect.parent : effect.parent?.parent;
+      const party = this.#instance;
+      if ( shown() && actor && party?.rendered && party.#memberIds.has(actor.id) ) party.#updateEffects(actor);
+    };
+    for ( const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"] ) Hooks.on(hook, onEffect);
     for ( const hook of ["createActor", "deleteActor"] ) Hooks.on(hook, () => shown() && redraw());
     Hooks.on("updateUser", (user, changes) => {
       if ( shown() && ("character" in changes) ) redraw();
@@ -134,6 +142,14 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( max ) max.textContent = `/${card.max}`;
     }
     if ( card.value !== was.value ) flash(box, card.value < was.value ? "hit" : "heal");
+  }
+
+  /** Bring one character's effect icons up to date in place; any that are new pop in. */
+  #updateEffects(actor) {
+    const row = this.element?.querySelector(`.wws-party-member[data-actor-id="${actor.id}"] .wws-party-effects`);
+    if ( !row ) return;
+    const before = new Set(Array.from(row.children, li => li.dataset.effectId));
+    row.replaceChildren(...effectsOf(actor).map(effect => effectNode(effect, !before.has(effect.id))));
   }
 
   /** Where it starts until it's dragged: just right of the scene controls, level with their top. */
@@ -270,8 +286,49 @@ function cardOf(actor) {
     tempRatio,
     pct,
     tempPct: Math.round(tempRatio * 1000) / 10,
-    state
+    state,
+    effects: effectsOf(actor)
   };
+}
+
+/**
+ * The effects showing on a character, as their token shows them: conditions such as Charmed or Prone, and effects
+ * that last a while, such as Bless or Concentrating. Exhaustion carries its level. Names are escaped for tooltips,
+ * which Foundry shows as HTML.
+ */
+function effectsOf(actor) {
+  const exhaustion = Number(actor.system?.attributes?.exhaustion) || 0;
+  return Array.from(actor.temporaryEffects ?? []).flatMap(effect => {
+    const img = effect.img ?? effect.icon;
+    if ( !img ) return [];
+    const name = effect.name ?? "";
+    return [{
+      id: effect.uuid ?? effect.id,
+      img,
+      name,
+      tooltip: foundry.utils.escapeHTML(name),
+      level: (exhaustion && effect.statuses?.has?.("exhaustion")) ? exhaustion : null
+    }];
+  });
+}
+
+/** One effect's icon, built for an in-place update as the template builds it for a full one. */
+function effectNode({ id, img, name, tooltip, level }, fresh) {
+  const li = document.createElement("li");
+  li.className = fresh ? "wws-party-effect wws-new" : "wws-party-effect";
+  li.dataset.effectId = id;
+  li.dataset.tooltip = tooltip;
+  const icon = document.createElement("img");
+  icon.src = img;
+  icon.alt = name;
+  li.append(icon);
+  if ( level ) {
+    const badge = document.createElement("span");
+    badge.className = "wws-party-effect-level";
+    badge.textContent = level;
+    li.append(badge);
+  }
+  return li;
 }
 
 /** A bar's value for screen readers: the number if the viewer may see it, otherwise a percentage. */

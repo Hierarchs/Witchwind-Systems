@@ -726,7 +726,8 @@
       "Rename": "Rename the party",
       "RenameHint": "Shown to everyone at the top of the party frame. Leave it empty to use the default.",
       "HP": "HP",
-      "TempShort": "TEMP"
+      "TempShort": "TEMP",
+      "Effects": "Effects"
     }
   }
 }

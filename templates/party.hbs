@@ -59,6 +59,7 @@
         <span class="wws-party-fill"></span>
       </div>
       {{/if}}
+      <ul class="wws-party-effects" aria-label="{{localize "WITCHWIND_SYSTEMS.Party.Effects"}}">{{#each effects}}<li class="wws-party-effect" data-effect-id="{{id}}" data-tooltip="{{tooltip}}"><img src="{{img}}" alt="{{name}}">{{#if level}}<span class="wws-party-effect-level">{{level}}</span>{{/if}}</li>{{/each}}</ul>
     </li>
     {{/each}}
   </ol>
