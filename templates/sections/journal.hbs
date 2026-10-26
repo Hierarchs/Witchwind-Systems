@@ -1,23 +1,37 @@
-<div class="wws-spread wws-journal">
+<div class="wws-spread wws-journal" data-mode="{{page.mode}}">
 
-  {{!-- Left page: notes and letters, in one list --}}
+  {{!-- Left page: the notes, or the letters, each under its own tab --}}
   <section class="wws-page wws-page-list">
     <header class="wws-page-head">
       <h2>{{localize "WITCHWIND_SYSTEMS.Sections.journal"}}</h2>
       <span class="wws-head-tools">
+        {{#if page.isLetters}}
         {{#if page.canLetter}}
-        <button type="button" class="wws-tool" data-action="letterNew" data-tooltip="WITCHWIND_SYSTEMS.Journal.NewLetter">
-          <i class="fa-solid fa-envelope" inert></i>
+        <button type="button" class="wws-ink" data-action="letterNew">
+          <i class="fa-solid fa-envelope" inert></i> {{localize "WITCHWIND_SYSTEMS.Letters.New"}}
         </button>
         {{/if}}
+        {{else}}
         {{#if page.canCreate}}
         <button type="button" class="wws-ink" data-action="noteNew">
-          <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.NewShort"}}
+          <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.New"}}
         </button>
+        {{/if}}
         {{/if}}
       </span>
     </header>
 
+    <nav class="wws-modes" aria-label="{{localize "WITCHWIND_SYSTEMS.Sections.journal"}}">
+      {{#each page.modes}}
+      <button type="button" class="wws-mode{{#if active}} active{{/if}}" data-action="noteFilter" data-filter="{{filter}}"
+              data-tooltip="{{hint}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+        <i class="{{icon}}" inert></i> {{localize label}} <span class="wws-count">{{count}}</span>
+        {{#if unread}}<span class="wws-mode-unread">{{unread}} {{localize "WITCHWIND_SYSTEMS.Letters.Unread"}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </nav>
+
+    {{#unless page.isLetters}}
     <nav class="wws-filters wws-filters-icons">
       {{#each page.filters}}
       <button type="button" class="wws-filter{{#if active}} active{{/if}}" data-action="noteFilter" data-filter="{{id}}"
@@ -26,6 +40,7 @@
       </button>
       {{/each}}
     </nav>
+    {{/unless}}
 
     <label class="wws-search">
       <i class="fa-solid fa-magnifying-glass" inert></i>
@@ -35,17 +50,17 @@
 
     <div class="wws-list-scroll">
       {{#if page.empty}}
-      <p class="wws-empty">{{#if page.search}}{{localize "WITCHWIND_SYSTEMS.Journal.NoMatches"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Journal.Empty"}}{{/if}}</p>
+      <p class="wws-empty">{{#if page.search}}{{localize "WITCHWIND_SYSTEMS.Journal.NoMatches"}}{{else if page.isLetters}}{{#if page.canLetter}}{{localize "WITCHWIND_SYSTEMS.Letters.Empty"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Letters.NoneHint"}}{{/if}}{{else}}{{localize "WITCHWIND_SYSTEMS.Journal.Empty"}}{{/if}}</p>
       {{/if}}
       <ol class="wws-list">
         {{#each page.rows}}
         <li>
           {{#if (eq type "letter")}}
           <button type="button" class="wws-row wws-letter-row{{#if selected}} selected{{/if}}{{#if unread}} wws-unread{{/if}}" data-action="noteSelect" data-id="{{id}}">
-            <i class="{{icon}} wws-row-icon" inert></i>
+            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="" loading="lazy">{{else}}<i class="{{icon}} wws-row-icon" inert></i>{{/if}}
             <span class="wws-row-text">
               <span class="wws-row-title">{{title}}</span>
-              <span class="wws-row-sub">{{#if sender}}{{sender}} · {{/if}}{{dateLabel}}</span>
+              <span class="wws-row-sub">{{#if sender}}{{localize "WITCHWIND_SYSTEMS.Letters.Sender"}} {{sender}} · {{/if}}{{dateLabel}}</span>
             </span>
             {{#if unread}}<i class="wws-unread-mark" data-tooltip="WITCHWIND_SYSTEMS.Letters.Unread"></i>{{/if}}
             {{#if pending}}<i class="fa-solid fa-hourglass-half wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Letters.NotDelivered"></i>{{/if}}
@@ -67,7 +82,9 @@
     </div>
 
     {{#if page.canCreate}}
+    {{#unless page.isLetters}}
     <p class="wws-drop-hint"><i class="fa-solid fa-file-import" inert></i> {{localize "WITCHWIND_SYSTEMS.Journal.DropHint"}}</p>
+    {{/unless}}
     {{/if}}
   </section>
 
@@ -175,8 +192,12 @@
       </article>
       {{else}}
       <p class="wws-empty wws-empty-page">
-        <i class="fa-solid fa-feather-pointed" inert></i>
+        <i class="{{#if page.isLetters}}fa-solid fa-envelope{{else}}fa-solid fa-feather-pointed{{/if}}" inert></i>
+        {{#if page.isLetters}}
+        {{#if page.canLetter}}{{localize "WITCHWIND_SYSTEMS.Letters.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Letters.NoneHint"}}{{/if}}
+        {{else}}
         {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Journal.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Journal.NoneHint"}}{{/if}}
+        {{/if}}
       </p>
       {{/with}}
       {{/with}}

@@ -202,7 +202,8 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( quest && (this.filters.quests !== "updates") ) this.filters.quests = quest.status ?? "active";
     }
     if ( section === "journal" ) {
-      this.filters.journal = "all";
+      // A letter opens on the letters tab, and anything else on the notes.
+      this.filters.journal = store.get("letters", id) ? "letters" : "all";
       this.search.journal = "";
     }
   }

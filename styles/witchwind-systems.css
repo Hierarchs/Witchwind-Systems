@@ -5107,3 +5107,62 @@ ul.wws-chips {
 .wws button.wws-tab {
   white-space: nowrap;
 }
+
+/* ============================================ */
+/*  The journal: notes and letters, two tabs    */
+/* ============================================ */
+
+/* The journal's two kinds of writing sit on tabs above the list, styled like the page tabs of the book. */
+.wws-modes {
+  display: flex;
+  gap: 18px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid rgb(90 62 30 / 22%);
+}
+
+.wws button.wws-mode {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0 6px;
+  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--wws-parch-faint);
+  transition: color 140ms ease-out, border-color 140ms ease-out;
+}
+
+.wws button.wws-mode:hover {
+  color: var(--wws-parch-ink);
+}
+
+.wws button.wws-mode.active {
+  color: var(--wws-parch-head);
+  border-bottom-color: var(--wws-gold-dim);
+}
+
+.wws button.wws-mode:focus-visible {
+  outline: 2px solid var(--wws-gold-dim);
+  outline-offset: 2px;
+}
+
+/* Letters nobody has opened yet, shown on the Letters tab. */
+.wws-mode-unread {
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--wws-gold-dim);
+  color: var(--wws-on-gold);
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}

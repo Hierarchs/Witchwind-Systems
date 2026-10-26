@@ -5,14 +5,15 @@ import { uploadImage, readTextFile } from "../uploads.mjs";
 import { enrich, plainText, formatDate, loc, authorOf, confirmDelete, showImage, showToPlayers, viewerNames, worldDate, worldNow } from "../helpers.mjs";
 
 /*
- * The journal: everyone's notes and the letters the GM sends, in one list. Notes belong to whoever wrote them. A
- * letter can be held back for a later day, and players see which they haven't opened (store.isVisible, markRead).
+ * The journal, in two tabs. Notes are the table's own: the session notes everyone writes and can share. Letters are
+ * in-world things the GM writes and hands out: letters, books, notices and orders, which a player receives or finds.
+ * A letter can be held back for a later day, and players see which they haven't opened (store.isVisible, markRead).
  */
 
-/** The filter that shows only letters. */
+/** The filter that switches the journal to its letters tab. The other filters are note filters. */
 const LETTERS = "letters";
 
-const ICONS = { all: "fa-solid fa-book-open", mine: "fa-solid fa-user-pen", [LETTERS]: LETTER_ICONS.letter };
+const ICONS = { all: "fa-solid fa-book-open", mine: "fa-solid fa-user-pen" };
 
 export default {
   id: "journal",
@@ -23,19 +24,19 @@ export default {
     const notes = store.all("notes").filter(n => store.isVisible("notes", n));
     const letters = store.all("letters").filter(l => store.isVisible("letters", l));
     const read = new Set(store.readLetters());
-    const filters = ["all", "mine", LETTERS, ...NOTE_KINDS];
-    const filter = filters.includes(app.filters.journal) ? app.filters.journal : "all";
+    const filters = ["all", "mine", ...NOTE_KINDS];
+    const filter = [...filters, LETTERS].includes(app.filters.journal) ? app.filters.journal : "all";
+    const mode = (filter === LETTERS) ? LETTERS : "notes";
     const search = (app.search.journal ?? "").trim().toLowerCase();
     const matches = text => !search || text.toLowerCase().includes(search);
 
     const noteShown = n => (filter === "all") || ((filter === "mine") ? (n.author === game.user.id) : (kindOf(n) === filter));
-    const letterShown = () => (filter === "all") || (filter === LETTERS);
-    const items = [
-      ...notes.filter(noteShown).filter(n => matches(`${n.title} ${plainText(n.body)}`))
-        .map(n => ({ type: "note", id: n.id, time: n.updated ?? 0, n })),
-      ...(letterShown() ? letters.filter(l => matches(`${l.title} ${l.sender ?? ""} ${plainText(l.body)}`)) : [])
+    const items = (mode === LETTERS
+      ? letters.filter(l => matches(`${l.title} ${l.sender ?? ""} ${plainText(l.body)}`))
         .map(l => ({ type: "letter", id: l.id, time: sentOn(l), l }))
-    ].sort((a, b) => b.time - a.time);
+      : notes.filter(noteShown).filter(n => matches(`${n.title} ${plainText(n.body)}`))
+        .map(n => ({ type: "note", id: n.id, time: n.updated ?? 0, n }))
+    ).sort((a, b) => b.time - a.time);
 
     if ( !items.some(i => i.id === app.selected.journal) ) app.selected.journal = items[0]?.id ?? null;
     const sel = app.selected.journal;
@@ -56,6 +57,7 @@ export default {
       id: l.id,
       title: l.title || loc("Untitled"),
       icon: LETTER_ICONS[l.kind] ?? LETTER_ICONS.letter,
+      img: l.img,
       sender: l.sender,
       dateLabel: worldDate(time),
       unread: !isGM && !read.has(l.id),
@@ -63,22 +65,31 @@ export default {
       selected: l.id === sel
     });
 
-    const counts = {
-      all: notes.length + letters.length,
-      mine: notes.filter(n => n.author === game.user.id).length,
-      [LETTERS]: letters.length
+    const noteCount = id => {
+      if ( id === "all" ) return notes.length;
+      if ( id === "mine" ) return notes.filter(n => n.author === game.user.id).length;
+      return notes.filter(n => kindOf(n) === id).length;
     };
-    const filterRows = filters.map(id => ({
+    const modes = [
+      { id: "notes", filter: "all", label: `${L}.Journal.Modes.notes`, hint: `${L}.Journal.Modes.notesHint`, icon: NOTE_ICONS.general,
+        count: notes.length, active: mode === "notes" },
+      { id: LETTERS, filter: LETTERS, label: `${L}.Journal.Modes.letters`, hint: `${L}.Journal.Modes.lettersHint`, icon: LETTER_ICONS.letter,
+        count: letters.length, unread: isGM ? 0 : letters.filter(l => !read.has(l.id)).length, active: mode === LETTERS }
+    ];
+    const noteFilters = (mode === "notes") ? filters.map(id => ({
       id,
       icon: ICONS[id] ?? NOTE_ICONS[id],
       label: `${L}.Journal.Kinds.${id}`,
-      count: (id in counts) ? counts[id] : notes.filter(n => kindOf(n) === id).length,
+      count: noteCount(id),
       active: id === filter
-    }));
+    })) : [];
 
     const selected = items.find(i => i.id === sel);
     return {
-      filters: filterRows,
+      mode,
+      isLetters: mode === LETTERS,
+      modes,
+      filters: noteFilters,
       rows,
       search: app.search.journal ?? "",
       empty: !rows.length,
@@ -89,13 +100,13 @@ export default {
     };
   },
 
-  /** Drop a picture or a text file anywhere on the journal to start a note from it; open a letter marks it read. */
+  /** Drop a picture or a text file anywhere on the notes to start a note from it; open a letter marks it read. */
   onRender(app, element) {
     const unread = element.querySelector(".wws-letter[data-unread]")?.dataset.id;
     if ( unread ) store.markRead(unread);
 
     const page = element.querySelector(".wws-journal");
-    if ( !page || !store.canCreate("notes") ) return;
+    if ( !page || (page.dataset.mode !== "notes") || !store.canCreate("notes") ) return;
     page.addEventListener("dragover", event => {
       if ( !event.dataTransfer?.types?.includes("Files") ) return;
       event.preventDefault();

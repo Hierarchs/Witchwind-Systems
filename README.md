@@ -48,7 +48,7 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 
 ### Journal and letters
 
-The Journal holds everyone's notes and the letters the GM sends, in one list. Filter it to **Letters** to see only those. The rest of the letter details are below.
+The Journal has two tabs. **Notes** are the table's own session notes, which anyone can write and share. **Letters** are in-world things the GM writes and hands out, such as letters, books, notices and orders. **New Note** writes a note on the Notes tab, and the GM uses **New Letter** on the Letters tab. The rest of the letter details are below.
 
 - **In-world letters, books, notices and orders** the GM writes and hands out, read inside the book on a sheet of paper with a seal or picture, signed by the sender.
 - **Delivered on a day.** A letter can arrive now or a set number of days later in the world's calendar. It stays hidden until the world's clock reaches that day, then arrives with a "Letter Arrived" pop-up and a **Read Letter** button. The GM can deliver one early.

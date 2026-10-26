@@ -228,8 +228,8 @@
       "NewShort": "New",
       "Create": "Add to Journal",
       "Edit": "Edit {name}",
-      "Search": "Search notes",
-      "NoMatches": "No notes match your search.",
+      "Search": "Search this list",
+      "NoMatches": "Nothing matches your search.",
       "Empty": "No notes here yet.",
       "Private": "Only you and the GM",
       "Shared": "Shared with the party",
@@ -257,7 +257,13 @@
       "Linked": "Notes",
       "LinksTitle": "Links",
       "LinkPin": "Map marker",
-      "NewLetter": "New letter"
+      "NewLetter": "New letter",
+      "Modes": {
+        "notes": "Notes",
+        "letters": "Letters",
+        "notesHint": "Session notes the table writes and shares",
+        "lettersHint": "In-world letters, books, notices and orders the GM hands out"
+      }
     },
     "Maps": {
       "Upload": "Upload",
@@ -501,7 +507,7 @@
       "NotDelivered": "Not delivered yet",
       "Arrives": "Arrives on {date}",
       "DeliverNow": "Deliver now",
-      "StartHint": "No letters yet. Use New to write the first; it can arrive today or on a later day.",
+      "StartHint": "No letters yet. Use New Letter to write the first. It can arrive today or on a later day.",
       "NoneHint": "No letters have reached you yet.",
       "Kinds": {
         "letter": "Letter",
