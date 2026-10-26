@@ -9,7 +9,7 @@ import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
  */
 
 /** Collections the GM keeps in world settings. */
-export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary"];
+export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary", "notices"];
 
 /** Collections each user keeps on their own User document. */
 export const USER_KINDS = ["notes", "pins"];
@@ -37,6 +37,15 @@ export function registerData() {
       onChange: (value, options, userId) => emit(kind, userId)
     });
   }
+
+  // The regions notices are posted in, each { id, name }, in the order the GM set them.
+  game.settings.register(MODULE_ID, "noticeRegions", {
+    scope: "world",
+    config: false,
+    type: Array,
+    default: [],
+    onChange: (value, options, userId) => emit("noticeRegions", userId)
+  });
 
   // The GM's own quest groups, in order. Empty means the four defaults.
   game.settings.register(MODULE_ID, "questGroups", {
@@ -262,6 +271,16 @@ export async function removePinsOnMap(mapId) {
 /* -------------------------------------------- */
 /*  Quest groups                                */
 /* -------------------------------------------- */
+
+/** The notice board's regions, each { id, name }. */
+export function noticeRegions() {
+  const regions = game.settings.get(MODULE_ID, "noticeRegions");
+  return Array.isArray(regions) ? foundry.utils.deepClone(regions) : [];
+}
+
+export function setNoticeRegions(regions) {
+  return game.settings.set(MODULE_ID, "noticeRegions", regions);
+}
 
 /** The quest groups in order, each { id, name }; a blank name shows the default group's translated name. */
 export function questGroups() {

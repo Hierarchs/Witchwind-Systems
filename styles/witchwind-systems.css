@@ -4708,3 +4708,297 @@ ul.wws-chips {
     100% { opacity: 0; }
   }
 }
+
+/* ============================================ */
+/*  The notice board                            */
+/* ============================================ */
+
+/* The board is a wooden board on the left-hand page, with notices pinned to it. The notice read on the right is an entry. */
+.wws-spread > .wws-board {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  color: #e3cfa6;
+  background:
+    repeating-linear-gradient(92deg, rgb(255 230 180 / 3%) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(90deg, rgb(20 12 6 / 40%) 0 1px, transparent 1px 180px),
+    linear-gradient(180deg, #4a3020 0%, #3a2416 100%);
+  box-shadow: inset 0 0 50px rgb(0 0 0 / 60%), inset -6px 0 14px -8px rgb(0 0 0 / 70%);
+}
+
+.wws-board-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px 8px 20px;
+  border-bottom: 3px double #7a5a30;
+}
+
+.wws-board-head h2 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-gold-bright);
+  text-shadow: 0 2px 4px rgb(0 0 0 / 80%);
+}
+
+.wws-region-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 18px 10px 20px;
+}
+
+.wws button.wws-region {
+  all: unset;
+  box-sizing: border-box;
+  padding: 4px 10px;
+  border: 1px solid #7a5a30;
+  border-radius: 2px;
+  background: rgb(0 0 0 / 25%);
+  color: #e3cfa6;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out, color 140ms ease-out;
+}
+
+.wws button.wws-region:hover {
+  border-color: var(--wws-gold);
+  color: var(--wws-ivory);
+}
+
+.wws button.wws-region.active {
+  background: var(--wws-gold);
+  border-color: var(--wws-gold);
+  color: var(--wws-on-gold);
+}
+
+.wws button.wws-region:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws-board .wws-list-scroll {
+  margin-right: 0;
+  padding: 8px 18px 22px 20px;
+}
+
+.wws-board-empty {
+  margin: 30px 20px;
+  font-family: var(--wws-font-body);
+  font-style: italic;
+  text-align: center;
+  color: #d8c7a0;
+}
+
+.wws-pinboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 26px 20px;
+  margin: 0;
+  padding: 6px 4px 0;
+  list-style: none;
+}
+
+/* A notice: a parchment slip with a red pin in its top edge and its difficulty as a strip along the bottom. */
+.wws button.wws-notice-card {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  min-height: 118px;
+  padding: 16px 12px 14px;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border-radius: 2px;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 55%), inset 0 0 26px rgb(120 84 40 / 30%);
+  transform: rotate(var(--wws-tilt, 0deg));
+  cursor: pointer;
+  transition: transform 220ms ease-out, box-shadow 220ms ease-out;
+}
+
+.wws-notice-card::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e0644f, #7a1f12 70%);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 60%);
+}
+
+.wws-notice-card::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 4px;
+  background: var(--wws-diff, var(--wws-gold-dim));
+}
+
+.wws button.wws-notice-card:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 12px 20px rgb(0 0 0 / 60%), inset 0 0 26px rgb(120 84 40 / 30%);
+}
+
+.wws button.wws-notice-card.selected {
+  transform: rotate(0deg) scale(1.03);
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 3px;
+}
+
+.wws button.wws-notice-card:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 3px;
+}
+
+.wws-notice-title {
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--wws-parch-head);
+  overflow-wrap: anywhere;
+}
+
+.wws-notice-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-diff-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--wws-diff, var(--wws-gold-dim));
+  transform: rotate(45deg);
+}
+
+.wws-notice-reward {
+  font-family: var(--wws-font-body);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* Taken, expired or taken down: a stamp across the slip. */
+.wws-notice-stamp {
+  position: absolute;
+  right: 8px;
+  bottom: 12px;
+  padding: 2px 8px;
+  border: 2px solid #8a2a1a;
+  border-radius: 2px;
+  background: rgb(232 219 189 / 85%);
+  color: #8a2a1a;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: rotate(-12deg);
+}
+
+.wws button.wws-notice-card.wws-status-closed {
+  opacity: 0.6;
+}
+
+.wws button.wws-notice-card.wws-status-taken .wws-notice-title,
+.wws button.wws-notice-card.wws-status-expired .wws-notice-title {
+  text-decoration: line-through;
+  text-decoration-color: rgb(138 42 26 / 50%);
+}
+
+.wws-notice-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+/* The difficulty seal: a wax disc in the difficulty colour, with its name pressed into it. */
+.wws-seal-diff {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--wws-diff) 70%, white), var(--wws-diff) 60%, color-mix(in srgb, var(--wws-diff) 60%, black));
+  box-shadow: inset 0 0 0 3px rgb(255 240 210 / 35%), 0 3px 8px rgb(60 20 10 / 45%);
+  text-align: center;
+}
+
+.wws-seal-diff span {
+  padding: 0 6px;
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff6e2;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+}
+
+.wws-notice-facts {
+  margin-bottom: 8px;
+}
+
+.wws-notice-status {
+  display: inline-block;
+  margin: 4px 0 10px;
+  padding: 3px 10px;
+  border: 2px solid #8a2a1a;
+  border-radius: 2px;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a2a1a;
+}
+
+.wws-notice-status.wws-status-open {
+  border-color: var(--wws-good);
+  color: var(--wws-good);
+}
+
+.wws-notice-status.wws-status-closed {
+  color: var(--wws-parch-muted);
+  border-color: var(--wws-parch-muted);
+}
+
+/* Each notice on the board comes in with a small pop, one after another. */
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li {
+  animation: wws-pop-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: 120ms;
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li:nth-child(3n + 2) {
+  animation-delay: 190ms;
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li:nth-child(3n) {
+  animation-delay: 260ms;
+}

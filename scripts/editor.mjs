@@ -1,4 +1,4 @@
-import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, DEFAULT_RANKS } from "./config.mjs";
+import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS } from "./config.mjs";
 import * as store from "./store.mjs";
 import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
 import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "./helpers.mjs";
@@ -6,7 +6,7 @@ import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -22,7 +22,8 @@ const VISIBILITY = {
   pin: { field: "shared", label: "Editor.SharedPin" },
   letter: { field: "visible", label: "Editor.VisibleLetter" },
   merchant: { field: "visible", label: "Editor.VisibleMerchant" },
-  creature: { field: "visible", label: "Editor.VisibleCreature" }
+  creature: { field: "visible", label: "Editor.VisibleCreature" },
+  notice: { field: "visible", label: "Editor.VisibleNotice" }
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
@@ -133,6 +134,17 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.factions = factionChoices(entry.faction);
         context.stock = entry.stock ?? [];
         break;
+      case "notice":
+        context.regions = store.noticeRegions().map(r => ({ id: r.id, name: r.name, selected: entry.region === r.id }));
+        context.difficulties = NOTICE_DIFFICULTIES.map(d => ({
+          id: d.id, label: `${L}.Notices.Difficulty.${d.id}`, selected: (entry.difficulty ?? "easy") === d.id
+        }));
+        context.factions = factionChoices(entry.faction);
+        context.expiresIn = daysUntil(entry.expires);
+        break;
+      case "regions":
+        context.regions = (entry.regions ?? []).map(r => ({ ...r }));
+        break;
       case "groups":
         context.groups = (entry.groups ?? []).map(g => ({ ...g, placeholder: game.i18n.localize(`${L}.Quests.Kinds.${g.id}`) }));
         break;
@@ -206,6 +218,20 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       data.stock = (data.stock ?? []).filter(s => s.name).map(s => ({
         ...s, id: s.id || foundry.utils.randomID(), price: Math.max(0, Number(s.price) || 0), qty: count(s.qty), max: count(s.max) ?? count(s.qty)
       }));
+    }
+    if ( this.kind === "notice" ) {
+      // Stays up that many days from now; unchanged, it keeps the day it already had.
+      const days = Math.max(0, Number(data.expiresIn) || 0);
+      delete data.expiresIn;
+      if ( days && (days === daysUntil(this.entry.expires)) ) data.expires = this.entry.expires;
+      else data.expires = days ? worldNow() + (days * secondsPerDay()) : null;
+      data.visible = !!data.visible;
+      data.difficulty = data.difficulty || "easy";
+    }
+    if ( this.kind === "regions" ) {
+      data.regions = (data.regions ?? [])
+        .map(r => ({ id: r.id || foundry.utils.randomID(), name: String(r.name ?? "").trim() }))
+        .filter(r => r.name);
     }
     if ( this.kind === "groups" ) {
       data.groups = (data.groups ?? []).map(g => ({ id: g.id || foundry.utils.randomID(), name: g.name ?? "" }));

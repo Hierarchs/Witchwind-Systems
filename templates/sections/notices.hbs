@@ -1,0 +1,108 @@
+<div class="wws-spread wws-notices">
+
+  {{!-- The board: notices pinned up under their regions --}}
+  <section class="wws-page wws-page-list wws-board">
+    <header class="wws-board-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.notices"}}</h2>
+      {{#if page.canManage}}
+      <span class="wws-head-tools">
+        <button type="button" class="wws-tool" data-action="noticeRegions" data-tooltip="WITCHWIND_SYSTEMS.Notices.Regions"
+                aria-label="{{localize "WITCHWIND_SYSTEMS.Notices.Regions"}}"><i class="fa-solid fa-map-location-dot" inert></i></button>
+        <button type="button" class="wws-ink" data-action="noticeNew">
+          <i class="fa-solid fa-thumbtack" inert></i> {{localize "WITCHWIND_SYSTEMS.Notices.NewShort"}}
+        </button>
+      </span>
+      {{/if}}
+    </header>
+
+    <nav class="wws-region-chips" aria-label="{{localize "WITCHWIND_SYSTEMS.Notices.Regions"}}">
+      {{#each page.regions}}
+      <button type="button" class="wws-region{{#if active}} active{{/if}}" data-action="noticeRegion" data-region="{{id}}"
+              aria-pressed="{{#if active}}true{{else}}false{{/if}}">{{name}}{{#if count}} <span class="wws-count">{{count}}</span>{{/if}}</button>
+      {{/each}}
+    </nav>
+
+    <div class="wws-list-scroll">
+      {{#if page.empty}}
+      <p class="wws-board-empty">{{#if page.canManage}}{{localize "WITCHWIND_SYSTEMS.Notices.EmptyGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Notices.Empty"}}{{/if}}</p>
+      {{/if}}
+      <ol class="wws-pinboard">
+        {{#each page.notices}}
+        <li>
+          <button type="button" class="wws-notice-card{{#if selected}} selected{{/if}} wws-status-{{status}}"
+                  data-action="noticeSelect" data-id="{{id}}" style="--wws-tilt: {{tilt}}deg; --wws-diff: {{diffColor}};">
+            <span class="wws-notice-title">{{title}}</span>
+            <span class="wws-notice-meta"><span class="wws-diff-dot" aria-hidden="true"></span>{{diffLabel}}{{#if region}} · {{region}}{{/if}}</span>
+            {{#if reward}}<span class="wws-notice-reward">{{reward}}</span>{{/if}}
+            {{#unless (eq status "open")}}<span class="wws-notice-stamp">{{statusLabel}}</span>{{/unless}}
+            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+  </section>
+
+  {{!-- The notice itself, read on the right-hand page --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.notice as |n|}}
+      <article class="wws-entry wws-notice-entry" data-id="{{n.id}}">
+        {{#if n.hidden}}<p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>
+        {{else if n.viewers}}<p class="wws-ribbon"><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=n.viewers}}</p>{{/if}}
+
+        {{#if @root.page.canManage}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="noticeEdit" data-id="{{n.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit"><i class="fa-solid fa-pen-to-square" inert></i></button>
+          <button type="button" class="wws-tool" data-action="noticeVisible" data-id="{{n.id}}"
+                  data-tooltip="{{#if n.hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+            <i class="fa-solid {{#if n.hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i>
+          </button>
+          {{#unless (eq n.status "taken")}}
+          <button type="button" class="wws-tool" data-action="noticeClose" data-id="{{n.id}}"
+                  data-tooltip="{{#if n.isClosed}}WITCHWIND_SYSTEMS.Notices.PutBack{{else}}WITCHWIND_SYSTEMS.Notices.TakeDown{{/if}}">
+            <i class="fa-solid {{#if n.isClosed}}fa-thumbtack{{else}}fa-box-archive{{/if}}" inert></i>
+          </button>
+          {{/unless}}
+          <span class="wws-gm-gap"></span>
+          <button type="button" class="wws-tool wws-bad" data-action="noticeDelete" data-id="{{n.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+        </div>
+        {{/if}}
+
+        <header class="wws-notice-head">
+          <span class="wws-seal-diff" style="--wws-diff: {{n.diffColor}};"><span>{{n.diffLabel}}</span></span>
+          <div>
+            {{#if n.region}}<p class="wws-kicker">{{n.region}}</p>{{/if}}
+            <h1 class="wws-entry-title">{{n.title}}</h1>
+          </div>
+        </header>
+
+        <dl class="wws-facts wws-notice-facts">
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Notices.Requester"}}</dt><dd>{{#if n.requester}}{{n.requester}}{{else}}—{{/if}}{{#if n.faction}} · {{n.faction}}{{/if}}</dd></div>
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Notices.Reward"}}</dt><dd>{{#if n.reward}}{{n.reward}}{{else}}—{{/if}}</dd></div>
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Notices.Posted"}}</dt><dd>{{n.postedLabel}}</dd></div>
+          <div><dt>{{localize "WITCHWIND_SYSTEMS.Notices.Ends"}}</dt><dd>{{n.endsLabel}}</dd></div>
+        </dl>
+
+        <p class="wws-notice-status wws-status-{{n.status}}">{{#if n.takenBy}}{{localize "WITCHWIND_SYSTEMS.Notices.TakenBy" name=n.takenBy}}{{else}}{{n.statusLabel}}{{/if}}</p>
+
+        {{#if n.canTake}}
+        <div class="wws-actions">
+          <button type="button" class="wws-ink" data-action="noticeTake" data-id="{{n.id}}">
+            <i class="fa-solid fa-handshake-angle" inert></i> {{localize "WITCHWIND_SYSTEMS.Notices.Take"}}
+          </button>
+        </div>
+        {{/if}}
+
+        {{#if n.body}}<div class="wws-prose">{{{n.body}}}</div>{{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page">
+        <i class="fa-solid fa-thumbtack" inert></i>
+        {{#if page.canManage}}{{localize "WITCHWIND_SYSTEMS.Notices.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Notices.NoneHint"}}{{/if}}
+      </p>
+      {{/with}}
+    </div>
+  </section>
+</div>

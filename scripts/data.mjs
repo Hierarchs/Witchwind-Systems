@@ -61,7 +61,8 @@ export default class DataManager extends HandlebarsApplicationMixin(ApplicationV
       version: game.modules.get(MODULE_ID)?.version,
       world: game.world?.id,
       exported: new Date().toISOString(),
-      questGroups: store.questGroups()
+      questGroups: store.questGroups(),
+      noticeRegions: store.noticeRegions()
     };
     for ( const kind of [...WORLD, ...OWNED] ) data[kind] = store.all(kind);
     const date = new Date().toISOString().slice(0, 10);
@@ -97,6 +98,7 @@ export default class DataManager extends HandlebarsApplicationMixin(ApplicationV
       await store.replaceWorld(kind, [...kept, ...incoming].map(e => foundry.utils.deepClone(e)));
     }
     if ( Array.isArray(data.questGroups) && data.questGroups.length ) await store.setQuestGroups(data.questGroups);
+    if ( Array.isArray(data.noticeRegions) && data.noticeRegions.length ) await store.setNoticeRegions(data.noticeRegions);
     for ( const kind of OWNED ) await store.importOwned(kind, Array.isArray(data[kind]) ? data[kind] : [], replace);
     ui.notifications.info(loc("Data.Restored"));
     this.render();

@@ -65,6 +65,15 @@ The Journal holds everyone's notes and the letters the GM sends, in one list. Fi
 
 A creature's record is copied, not linked, so it stays whole if the compendium changes. Like everything else in the module, the facts you haven't revealed are stored in the world, so a player who looked in the browser's console could find them.
 
+### Notice board
+
+- **Notices pinned up by region.** The GM posts contracts and bounties under regions, such as Ravensmoor or Millbrook, each with a difficulty, a reward and who is asking. They are pinned to a wooden board, and the one you choose opens on the right.
+- **Regions.** Set your regions with the map button on the board. Renaming one keeps its notices. Removing one leaves its notices unfiled.
+- **Hidden or limited.** A notice can be hidden until you reveal it, or limited to chosen players, as with other entries.
+- **Staying up.** Choose how many days a notice stays up. 0 keeps it up until it is taken or taken down.
+- **Taking a contract.** A player can take an open notice. It becomes a quest in their Quests, shared with the players who could see the notice, and the board shows who took it. This needs a GM online, since the quest is made on the GM's screen.
+- **Taken down.** The GM can take a notice down, and put it back up while nobody has taken it.
+
 ### Renown
 
 - **A card for each character** with the titles they've earned, such as "Warden of the Vale": what the title means, what earned it, the date in the world's calendar, and the quest behind it. Below that, their rank and standing in each faction they're known to.
@@ -113,7 +122,7 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Bestiary, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Bestiary, Notice board, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
 | Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |

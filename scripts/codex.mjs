@@ -6,6 +6,7 @@ import journal from "./sections/journal.mjs";
 import maps from "./sections/maps.mjs";
 import factions from "./sections/factions.mjs";
 import bestiary from "./sections/bestiary.mjs";
+import notices from "./sections/notices.mjs";
 import renown from "./sections/renown.mjs";
 import merchants from "./sections/merchants.mjs";
 
@@ -15,7 +16,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * Each section is a self-contained module: its template, the context it prepares, its actions and anything it wires up
  * after rendering. Adding a fifth means writing one more of these and listing it here.
  */
-export const SECTIONS = { quests, journal, bestiary, maps, factions, renown, merchants };
+export const SECTIONS = { quests, journal, bestiary, notices, maps, factions, renown, merchants };
 
 /** The world setting that switches a section on or off: showQuests, showJournal, showMaps, showFactions. */
 export function sectionSetting(id) {
@@ -40,6 +41,8 @@ const SHOWN_IN = {
   titles: ["renown"],
   merchants: ["merchants"],
   bestiary: ["bestiary"],
+  notices: ["notices"],
+  noticeRegions: ["notices"],
   time: ["journal", "renown", "merchants"]
 };
 
@@ -149,7 +152,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Choose the next (1) or previous (-1) entry in the open list, as the arrow keys do. */
   step(delta) {
     const rows = Array.from(this.element?.querySelectorAll(
-      ".wws-page-list button.wws-row[data-id], .wws-map-list button.wws-map-thumb[data-id]") ?? []);
+      ".wws-page-list button.wws-row[data-id], .wws-map-list button.wws-map-thumb[data-id], .wws-board button.wws-notice-card[data-id]") ?? []);
     if ( !rows.length ) return;
     const current = rows.findIndex(r => r.classList.contains("selected"));
     const next = rows[Math.clamp(current + delta, 0, rows.length - 1)] ?? rows[0];

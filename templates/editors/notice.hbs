@@ -1,0 +1,61 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Notices.TitleLabel"}}</label>
+    <input type="text" name="title" value="{{entry.title}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Notices.TitlePlaceholder"}}">
+  </div>
+
+  <div class="wws-form-row">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Notices.Region"}}</label>
+      <select name="region">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+        {{#each regions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Notices.DifficultyLabel"}}</label>
+      <select name="difficulty">
+        {{#each difficulties}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+    </div>
+  </div>
+  {{#unless regions.length}}<p class="hint">{{localize "WITCHWIND_SYSTEMS.Notices.NoRegions"}}</p>{{/unless}}
+
+  <div class="wws-form-row">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Notices.Requester"}}</label>
+      <input type="text" name="requester" value="{{entry.requester}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Notices.RequesterPlaceholder"}}">
+    </div>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Quests.Faction"}}</label>
+      <select name="faction">
+        <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+        {{#each factions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Notices.Reward"}}</label>
+    <input type="text" name="reward" value="{{entry.reward}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Notices.RewardPlaceholder"}}">
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Notices.ExpiresIn"}}</label>
+    <input type="number" name="expiresIn" value="{{expiresIn}}" min="0" step="1">
+  </div>
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Notices.ExpiresHint"}}</p>
+
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Notices.Body"}}</label>
+    <prose-mirror name="body" value="{{entry.body}}"></prose-mirror>
+  </div>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-thumbtack" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Notices.Pin"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

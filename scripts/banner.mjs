@@ -26,13 +26,14 @@ let showing = false;
 export function initBanners() {
   seen = snapshot();
   store.onChange((kind, userId) => {
-    if ( !["quests", "factions", "letters", "titles", "bestiary"].includes(kind) ) return;
+    if ( !["quests", "factions", "letters", "titles", "bestiary", "notices"].includes(kind) ) return;
     const before = seen;
     seen = snapshot();
     // Whoever made the change already knows about it.
     if ( (userId === game.user.id) || !game.settings.get(MODULE_ID, "announce") ) return;
     if ( kind === "letters" ) return letterArrivals(before.letters, seen.letters);
     if ( kind === "bestiary" ) return creatureNews(before.bestiary, seen.bestiary);
+    if ( kind === "notices" ) return noticesNews(before.notices, seen.notices);
     if ( kind === "titles" ) return titleAwards(before.titles, seen.titles);
     const events = kind === "quests" ? questEvents(before.quests, seen.quests, seen.factions)
       : factionEvents(before.factions, seen.factions);
@@ -45,6 +46,20 @@ export function onWorldTime() {
   const before = seen;
   seen = snapshot();
   if ( game.settings.get(MODULE_ID, "announce") ) letterArrivals(before.letters, seen.letters);
+}
+
+/** A notice newly pinned up on the board for this player. */
+function noticesNews(before, after) {
+  if ( game.user.isGM ) return;
+  for ( const notice of after.values() ) {
+    if ( before.has(notice.id) ) continue;
+    announce({
+      label: game.i18n.localize(`${L}.Banners.Notice`),
+      title: notice.title || game.i18n.localize(`${L}.Untitled`),
+      detail: notice.reward || "",
+      icon: "fa-solid fa-thumbtack"
+    });
+  }
 }
 
 /** A creature the party has just met, and each fact about one that's just been revealed to this player. */
@@ -144,7 +159,7 @@ function snapshot() {
   const visible = kind => new Map(store.all(kind).filter(e => store.isVisible(kind, e)).map(e => [e.id, e]));
   return {
     quests: visible("quests"), factions: visible("factions"), letters: visible("letters"), titles: visible("titles"),
-    bestiary: visible("bestiary")
+    bestiary: visible("bestiary"), notices: visible("notices")
   };
 }
 

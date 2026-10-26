@@ -29,7 +29,8 @@
       "letters": "Letters",
       "renown": "Renown",
       "merchants": "Merchants",
-      "bestiary": "Bestiary"
+      "bestiary": "Bestiary",
+      "notices": "Notice Board"
     },
     "Settings": {
       "Sections": {
@@ -64,6 +65,10 @@
         "bestiary": {
           "Name": "Bestiary tab",
           "Hint": "Show the Bestiary tab, with the creatures the party has met and what it has learned about each, for everyone in this world."
+        },
+        "notices": {
+          "Name": "Notice board tab",
+          "Hint": "Show the notice board, with contracts and bounties by region, for everyone in this world."
         }
       },
       "PlayerNotes": {
@@ -139,7 +144,8 @@
       "letters": "Open the letters",
       "renown": "Open renown",
       "merchants": "Open the merchants",
-      "bestiary": "Open the bestiary"
+      "bestiary": "Open the bestiary",
+      "notices": "Open the notice board"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -413,7 +419,8 @@
       "GroupPlaceholder": "Companions",
       "VisibleLetter": "Deliver to players",
       "VisibleMerchant": "Players can see this merchant",
-      "VisibleCreature": "Players can see this creature"
+      "VisibleCreature": "Players can see this creature",
+      "VisibleNotice": "Players can see this notice"
     },
     "Banners": {
       "Started": "Quest Started",
@@ -427,7 +434,8 @@
       "StandingUp": "Standing Rises",
       "StandingDown": "Standing Falls",
       "NewCreature": "New Creature",
-      "Learned": "Learned"
+      "Learned": "Learned",
+      "Notice": "New Notice"
     },
     "Tracker": {
       "Title": "Tracked Quests",
@@ -621,6 +629,57 @@
         "traits": "Traits",
         "spells": "Spells",
         "habitat": "Habitat"
+      }
+    },
+    "Notices": {
+      "NewShort": "Pin up",
+      "New": "New Notice",
+      "Edit": "Edit {name}",
+      "Regions": "Regions",
+      "RegionsHint": "The regions notices are posted under. Renaming one keeps the notices in it. Remove one and its notices are left unfiled.",
+      "AddRegion": "Add region",
+      "RegionPlaceholder": "Millbrook",
+      "NoRegions": "Add regions first, with the map button above the board.",
+      "AllRegions": "All regions",
+      "EmptyGM": "Nothing pinned up here yet. Use Pin up to post a notice.",
+      "Empty": "No notices here yet.",
+      "NoneHint": "No notices have been pinned up for you yet.",
+      "StartHint": "Pick a notice from the board to read it here.",
+      "TitleLabel": "Title",
+      "TitlePlaceholder": "Wolves in the Millbrook barn",
+      "Region": "Region",
+      "DifficultyLabel": "Difficulty",
+      "Requester": "Requested by",
+      "RequesterPlaceholder": "Reeve Tomas Brandt",
+      "Reward": "Reward",
+      "RewardPlaceholder": "150 gold and a letter of thanks",
+      "ExpiresIn": "Stays up for (days)",
+      "ExpiresHint": "0 keeps it up until it’s taken or taken down.",
+      "Body": "Notice",
+      "Pin": "Pin it up",
+      "Posted": "Posted",
+      "Ends": "Ends",
+      "Until": "Until {date}",
+      "NoEnd": "Until taken or taken down",
+      "Expired": "Expired",
+      "Take": "Take this contract",
+      "Taken": "You took the contract. It’s in your Quests.",
+      "TakenBy": "Taken by {name}",
+      "NotOpen": "That notice is no longer open.",
+      "PutBack": "Put back up",
+      "TakeDown": "Take down",
+      "Status": {
+        "open": "Open",
+        "taken": "Taken",
+        "expired": "Expired",
+        "closed": "Taken down"
+      },
+      "Difficulty": {
+        "trivial": "Trivial",
+        "easy": "Easy",
+        "moderate": "Moderate",
+        "hard": "Hard",
+        "deadly": "Deadly"
       }
     }
   }

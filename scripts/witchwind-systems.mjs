@@ -6,6 +6,7 @@ import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
 import { initBanners, announce, onWorldTime } from "./banner.mjs";
 import { registerSheet } from "./sheet.mjs";
+import { registerNoticeBoard } from "./sections/notices.mjs";
 import { restockDue } from "./sections/merchants.mjs";
 import { registerSounds, playSound } from "./sounds.mjs";
 import { showNotice } from "./notice.mjs";
@@ -130,7 +131,7 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, maps: "KeyM", factions: null, renown: null, merchants: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, notices: null, maps: "KeyM", factions: null, renown: null, merchants: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,
@@ -231,6 +232,7 @@ Hooks.once("ready", () => {
   });
   Tracker.refresh();
   registerSheet();
+  registerNoticeBoard();
 
   // As the world's clock moves, held-back letters arrive and merchants restock.
   Hooks.on("updateWorldTime", () => {

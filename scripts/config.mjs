@@ -5,12 +5,13 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "bestiary", "maps", "factions", "renown", "merchants"];
+export const SECTION_IDS = ["quests", "journal", "bestiary", "notices", "maps", "factions", "renown", "merchants"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
   journal: "fa-solid fa-feather-pointed",
   bestiary: "fa-solid fa-dragon",
+  notices: "fa-solid fa-thumbtack",
   maps: "fa-solid fa-map",
   factions: "fa-solid fa-chess-rook",
   renown: "fa-solid fa-crown",
@@ -21,6 +22,22 @@ export const SECTION_ICONS = {
  * The bestiary: what the party can learn about a creature, one fact at a time. Each is revealed to everyone or to
  * chosen players, and shown in this order. "basics" is revealed as soon as the party meets the creature.
  */
+/*
+ * How dangerous a notice's job is, from the lowest to the highest. The colour is the notice's mark on the board and
+ * the seal on its sheet; the colours are dark enough to read on parchment.
+ */
+export const NOTICE_DIFFICULTIES = [
+  { id: "trivial", color: "#4f8f49" },
+  { id: "easy", color: "#3f7fc4" },
+  { id: "moderate", color: "#9a7a2c" },
+  { id: "hard", color: "#c97d24" },
+  { id: "deadly", color: "#8a2a1a" }
+];
+
+export function difficultyOf(id) {
+  return NOTICE_DIFFICULTIES.find(d => d.id === id) ?? NOTICE_DIFFICULTIES[1];
+}
+
 export const BESTIARY_FACTS = [
   { key: "basics", icon: "fa-solid fa-paw" },
   { key: "threat", icon: "fa-solid fa-skull" },
