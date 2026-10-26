@@ -1,0 +1,55 @@
+<div class="wws-party-frame{{#if collapsed}} collapsed{{/if}}" style="--wws-party-scale: {{scale}};">
+  <header class="wws-party-head" data-tooltip="WITCHWIND_SYSTEMS.Party.DragHint">
+    <i class="fa-solid fa-users" inert></i>
+    <h2>{{localize "WITCHWIND_SYSTEMS.Party.Title"}}</h2>
+    <button type="button" class="wws-tool wws-mini" data-action="partySize" data-delta="-1" data-tooltip="WITCHWIND_SYSTEMS.Party.Smaller"
+            aria-label="{{localize "WITCHWIND_SYSTEMS.Party.Smaller"}}" {{#if atMin}}disabled{{/if}}>
+      <i class="fa-solid fa-minus" inert></i>
+    </button>
+    <button type="button" class="wws-tool wws-mini" data-action="partySize" data-delta="1" data-tooltip="WITCHWIND_SYSTEMS.Party.Larger"
+            aria-label="{{localize "WITCHWIND_SYSTEMS.Party.Larger"}}" {{#if atMax}}disabled{{/if}}>
+      <i class="fa-solid fa-plus" inert></i>
+    </button>
+    <button type="button" class="wws-tool wws-mini" data-action="partyCollapse"
+            aria-label="{{localize "WITCHWIND_SYSTEMS.Party.Collapse"}}" aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}">
+      <i class="fa-solid {{#if collapsed}}fa-chevron-down{{else}}fa-chevron-up{{/if}}" inert></i>
+    </button>
+    <button type="button" class="wws-tool wws-mini" data-action="partyHide" data-tooltip="WITCHWIND_SYSTEMS.Party.Hide"
+            aria-label="{{localize "WITCHWIND_SYSTEMS.Party.Hide"}}">
+      <i class="fa-solid fa-xmark" inert></i>
+    </button>
+  </header>
+
+  {{#unless collapsed}}
+  {{#if empty}}
+  <p class="wws-party-empty">{{localize "WITCHWIND_SYSTEMS.Party.Empty"}}</p>
+  {{else}}
+  <ol class="wws-party-list">
+    {{#each members}}
+    <li class="wws-party-member wws-hp-{{state}}{{#if change}} wws-party-{{change}}{{/if}}">
+      <button type="button" class="wws-party-portrait" data-action="partySheet" data-uuid="{{uuid}}"
+              aria-label="{{name}}" {{#unless canOpen}}disabled{{/unless}}>
+        <img src="{{img}}" alt="">
+      </button>
+      <div class="wws-party-info">
+        <div class="wws-party-line">
+          <span class="wws-party-name">{{name}}</span>
+          {{#if temp}}{{#if showNumbers}}
+          <span class="wws-party-temp-value" data-tooltip="WITCHWIND_SYSTEMS.Party.Temp"><i class="fa-solid fa-shield-halved" inert></i> {{temp}}</span>
+          {{/if}}{{/if}}
+        </div>
+        {{#if hasHp}}
+        <div class="wws-party-bar" role="meter" aria-label="{{localize "WITCHWIND_SYSTEMS.Party.HitPoints"}}" aria-valuemin="0"
+             {{#if showNumbers}}aria-valuemax="{{max}}" aria-valuenow="{{value}}"{{else}}aria-valuemax="100" aria-valuenow="{{pct}}"{{/if}}>
+          <span class="wws-party-fill{{#if slide}} wws-sliding{{/if}}" style="width: {{pct}}%;{{#if slide}} --wws-from: {{fromPct}}%;{{/if}}"></span>
+          {{#if temp}}<span class="wws-party-temp{{#if slideTemp}} wws-sliding{{/if}}" style="width: {{tempPct}}%;{{#if slideTemp}} --wws-from: {{fromTemp}}%;{{/if}}"></span>{{/if}}
+          {{#if showNumbers}}<span class="wws-party-hp">{{value}} / {{max}}</span>{{/if}}
+        </div>
+        {{/if}}
+      </div>
+    </li>
+    {{/each}}
+  </ol>
+  {{/if}}
+  {{/unless}}
+</div>

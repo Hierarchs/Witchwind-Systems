@@ -89,6 +89,13 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 - **Who sells what**: each merchant's wares as slots with prices and how many are left, their location and faction. Players browse; the GM marks sales with − and + on the page, or edits the stock.
 - **Restocking.** A merchant can restock every so many days of the world's calendar, refilling each ware to its usual amount as the clock passes; the GM can restock early. Drop items from the sidebar or a compendium into the stock to add them with their picture and price.
 
+### Party frame
+
+- **The party at a glance.** A small leather card at the left of the screen, beside the scene controls, with each character's portrait, name, hit points and temporary hit points. The bar turns orange below half and red below a quarter, and slides when hit points change. The portrait flashes red for a hit or green for healing, and greys out at 0.
+- **Who's in it.** The members of dnd5e's primary party if you've set one, otherwise the characters assigned to players, otherwise every character a player owns.
+- **What players see.** The numbers only for characters they can observe. For the rest, just the bar.
+- **Each player's own.** Show or hide it with the party button in the token controls, the × on the frame, or a key of your choosing. Make it smaller or larger with − and + on the frame (or the size setting), fold it, and drag it by its title.
+
 ### The Xerseraya calendar
 
 The world runs on the Xerseraya calendar: seven days to the week (Dawnwake, Morrow, Highsun, Waning, Evenfall, Deepnight, Stillhour) and twelve months of thirty days (First Light, Snow's End, Soils Break, Seeds Rest, Guiding Rain, Cloudbreak, Sun's Mantle, First Harvest, Harvest's End, Waning Sun, Flakefall, Last Light), 360 days a year with no leap years. Pop-ups, letters, titles and restocks give dates in it ("Highsun, 27th of First Harvest, 433"), and so does Foundry's own clock. **World calendar** in the settings switches back to Foundry's calendar, or another calendar module's.
@@ -132,12 +139,14 @@ Under **Configure Settings > Witchwind Systems**:
 | Players can place map markers | Lets players place markers, and move or delete their own. |
 | Announce quest updates | The Elder Scrolls style banners for quest and faction changes. |
 | Show the quest tracker | Each player's own choice. |
+| Party frame | The party's portraits, names and hit points at the left of the screen. Each player's own choice. |
+| Party frame size | How large the party frame is; − and + on the frame change it too. Each player's own choice. |
 | Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
 | Sounds: book opens, closes, page turns (two), quest updates | Audio files on your server, chosen by the GM. Empty plays nothing. |
 | Sound volume | Each player's own volume; zero turns the sounds off. |
 | Backups and Imports | Download, restore or import from the Journal (GM only). |
 
-Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the book, M opens the maps, and the other sections can be given keys of their own.
+Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the book, M opens the maps, and the other sections and the party frame can be given keys of their own.
 
 ## For macros and other modules
 

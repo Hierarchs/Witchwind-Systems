@@ -2,6 +2,7 @@ import { MODULE_ID, L, SECTION_IDS, XERSERAYA_CALENDAR } from "./config.mjs";
 import * as store from "./store.mjs";
 import Codex, { enabledSections, sectionSetting } from "./codex.mjs";
 import Tracker from "./tracker.mjs";
+import Party, { PARTY_SCALE } from "./party.mjs";
 import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
 import { initBanners, announce, onWorldTime } from "./banner.mjs";
@@ -114,6 +115,31 @@ Hooks.once("init", () => {
     default: true
   });
 
+  // Client: the party frame at the left of the screen, and how large it is.
+  register("party", {
+    name: `${L}.Settings.Party.Name`,
+    hint: `${L}.Settings.Party.Hint`,
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => {
+      Party.refresh();
+      ui.controls?.render({ reset: true });
+    }
+  });
+
+  register("partyScale", {
+    name: `${L}.Settings.PartyScale.Name`,
+    hint: `${L}.Settings.PartyScale.Hint`,
+    scope: "client",
+    config: true,
+    type: Number,
+    range: { ...PARTY_SCALE },
+    default: 1,
+    onChange: () => Party.refresh()
+  });
+
   registerSounds();
 
   // Backups, restores and journal imports, behind a button in Configure Settings.
@@ -128,6 +154,8 @@ Hooks.once("init", () => {
 
   register("trackerCollapsed", { scope: "client", config: false, type: Boolean, default: false, onChange: () => Tracker.refresh() });
   register("trackerPosition", { scope: "client", config: false, type: Object, default: {} });
+  register("partyCollapsed", { scope: "client", config: false, type: Boolean, default: false, onChange: () => Party.refresh() });
+  register("partyPosition", { scope: "client", config: false, type: Object, default: {} });
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
@@ -143,6 +171,16 @@ Hooks.once("init", () => {
       }
     });
   }
+
+  // The party frame has a key of its own, left unbound until a player chooses one.
+  game.keybindings.register(MODULE_ID, "party", {
+    name: `${L}.Keys.party`,
+    editable: [],
+    onDown: () => {
+      game.settings.set(MODULE_ID, "party", !game.settings.get(MODULE_ID, "party"));
+      return true;
+    }
+  });
 
   // Escape closes the book, and the arrow keys browse it, while it's open and no window is. Core's own Escape closes
   // framed windows first, so those are left to it; the book closes on the next press. Taking the keys here also
@@ -190,6 +228,17 @@ Hooks.on("getSceneControlButtons", controls => {
     visible: enabledSections().length > 0,
     onChange: () => Codex.instance.toggle()
   };
+
+  // Beside it, a switch for the party frame, lit while the frame is shown.
+  tokens.tools.witchwindParty = {
+    name: "witchwindParty",
+    title: `${L}.Party.Toggle`,
+    icon: "fa-solid fa-users",
+    order: Object.keys(tokens.tools).length,
+    toggle: true,
+    active: game.settings.get(MODULE_ID, "party"),
+    onChange: (event, active) => game.settings.set(MODULE_ID, "party", active)
+  };
 });
 
 // And one at the top of the Journal tab, which works even with no scene open.
@@ -231,6 +280,8 @@ Hooks.once("ready", () => {
     if ( (kind === "quests") || (kind === "tracked") ) refreshTracker();
   });
   Tracker.refresh();
+  Party.register();
+  Party.refresh();
   registerSheet();
   registerNoticeBoard();
 

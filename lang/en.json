@@ -123,6 +123,14 @@
           "xerseraya": "The Xerseraya calendar",
           "world": "Foundry’s own (or another module’s)"
         }
+      },
+      "Party": {
+        "Name": "Party frame",
+        "Hint": "Show the party frame at the left of the screen: each character’s portrait, name, hit points and temporary hit points. Each player chooses for themselves."
+      },
+      "PartyScale": {
+        "Name": "Party frame size",
+        "Hint": "How large the party frame is. The − and + buttons on the frame change it too."
       }
     },
     "Keys": {
@@ -139,7 +147,8 @@
       "letters": "Open the letters",
       "merchants": "Open the merchants",
       "bestiary": "Open the bestiary",
-      "notices": "Open the notice board"
+      "notices": "Open the notice board",
+      "party": "Show or hide the party frame"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -690,6 +699,18 @@
         "factionsHint": "Each faction, its standing and the party’s ranks in it",
         "renownHint": "Each character’s titles and place in the factions"
       }
+    },
+    "Party": {
+      "Title": "Party",
+      "Toggle": "Party frame",
+      "DragHint": "Drag to move the party frame",
+      "Smaller": "Smaller",
+      "Larger": "Larger",
+      "Collapse": "Fold or unfold the party frame",
+      "Hide": "Hide the party frame",
+      "Temp": "Temporary hit points",
+      "HitPoints": "Hit points",
+      "Empty": "No party yet. Assign characters to players, or set a primary party."
     }
   }
 }

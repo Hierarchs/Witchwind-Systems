@@ -5166,3 +5166,251 @@ ul.wws-chips {
   letter-spacing: 0;
   text-transform: none;
 }
+
+/* ============================================ */
+/*  The party frame                             */
+/* ============================================ */
+
+/* A small leather card at the left of the screen. Everything inside is sized in em, so the one size setting scales it all. */
+#witchwind-party {
+  position: fixed;
+  top: 90px;
+  left: 72px;
+  z-index: var(--z-index-ui, 60);
+  pointer-events: auto;
+}
+
+.wws-party-frame {
+  width: 16em;
+  font-size: calc(13px * var(--wws-party-scale, 1));
+  background: var(--wws-grain), rgb(27 23 18 / 94%);
+  color: var(--wws-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-inner-rule), 0 8px 24px rgb(0 0 0 / 55%);
+  font-family: var(--wws-font-ui);
+}
+
+.wws-party-head {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  padding: 0.45em 0.4em 0.4em 0.75em;
+  border-bottom: 1px solid var(--wws-line);
+  cursor: grab;
+  color: var(--wws-gold);
+}
+
+#witchwind-party.dragging .wws-party-head {
+  cursor: grabbing;
+}
+
+.wws-party-frame.collapsed .wws-party-head {
+  border-bottom: none;
+}
+
+.wws-party-head h2 {
+  flex: 1;
+  margin: 0 0 0 0.3em;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws-party button.wws-tool.wws-mini {
+  width: 2em;
+  height: 2em;
+  font-size: 0.85em;
+  color: var(--wws-ink-faint);
+}
+
+.wws-party button.wws-tool:hover:not(:disabled) {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws-party-empty {
+  margin: 0;
+  padding: 0.7em 0.85em 0.8em;
+  font-size: 0.85em;
+  font-style: italic;
+  color: var(--wws-ink-muted);
+}
+
+.wws-party-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+  margin: 0;
+  padding: 0.55em 0.6em 0.6em;
+  list-style: none;
+}
+
+.wws-party-member {
+  display: grid;
+  grid-template-columns: 3em minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6em;
+}
+
+.wws button.wws-party-portrait {
+  all: unset;
+  box-sizing: border-box;
+  display: block;
+  width: 3em;
+  height: 3em;
+  overflow: hidden;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: var(--wws-dark);
+  box-shadow: inset 0 0 0 2px #120f0b;
+  cursor: pointer;
+  transition: border-color 140ms ease-out;
+}
+
+.wws button.wws-party-portrait:hover:not(:disabled) {
+  border-color: var(--wws-gold);
+}
+
+.wws button.wws-party-portrait:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws button.wws-party-portrait:disabled {
+  cursor: default;
+}
+
+.wws-party-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-party-info {
+  min-width: 0;
+}
+
+.wws-party-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+}
+
+.wws-party-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--wws-font-display);
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--wws-ivory);
+}
+
+.wws-party-temp-value {
+  flex: none;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #8fbfec;
+}
+
+.wws-party-temp-value i {
+  font-size: 0.85em;
+}
+
+.wws-party-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.25em;
+  margin-top: 0.3em;
+  overflow: hidden;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 2px;
+  background: #0f0d0a;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 70%);
+}
+
+.wws-party-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(180deg, #7dbb6c 0%, var(--wws-green) 55%, #2f5a2a 100%);
+}
+
+.wws-hp-hurt .wws-party-fill {
+  background: linear-gradient(180deg, #e2a457 0%, var(--wws-orange) 55%, #7d4a12 100%);
+}
+
+.wws-hp-low .wws-party-fill {
+  background: linear-gradient(180deg, #e0735f 0%, var(--wws-red) 55%, #6e2117 100%);
+}
+
+/* Temporary hit points: a blue band along the bottom of the bar, over the red or green. */
+.wws-party-temp {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 32%;
+  background: linear-gradient(180deg, #8fbfec, var(--wws-blue));
+  box-shadow: 0 -1px 0 rgb(0 0 0 / 45%);
+}
+
+.wws-party-hp {
+  position: relative;
+  font-size: 0.75em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff6e2;
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+
+/* Down: the portrait greys and the name is struck through. */
+.wws-hp-down .wws-party-portrait img {
+  filter: grayscale(1) brightness(0.55);
+}
+
+.wws-hp-down .wws-party-name {
+  color: var(--wws-ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: rgb(196 71 58 / 60%);
+}
+
+/* A change of hit points slides the bar from where it stood, and the portrait flashes red for a hit or green for healing. */
+@keyframes wws-party-slide { from { width: var(--wws-from); } }
+
+@keyframes wws-party-hit {
+  0% { box-shadow: inset 0 0 0 2px #120f0b, 0 0 0 2px var(--wws-red), 0 0 12px var(--wws-red); }
+}
+
+@keyframes wws-party-heal {
+  0% { box-shadow: inset 0 0 0 2px #120f0b, 0 0 0 2px var(--wws-green), 0 0 12px var(--wws-green); }
+}
+
+.wws-party-fill.wws-sliding,
+.wws-party-temp.wws-sliding {
+  animation: wws-party-slide 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wws .wws-party-hit button.wws-party-portrait {
+  animation: wws-party-hit 700ms ease-out;
+}
+
+.wws .wws-party-heal button.wws-party-portrait {
+  animation: wws-party-heal 700ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #witchwind-party * {
+    animation: none !important;
+  }
+}
