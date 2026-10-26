@@ -91,7 +91,7 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 
 ### Party frame
 
-- **The party at a glance.** Beside the scene controls, each character has a see-through box of their own in the manner of Final Fantasy's party boxes: portrait and name, then **HP** and **TEMP** (temporary hit points), each a coloured label, the number and a thin bar. The HP bar turns amber below half and red below a quarter, and breathes red while low. At 0 the portrait greys out.
+- **The party at a glance.** Beside the scene controls, each character has a compact, see-through box of their own, laid out like Final Fantasy's party boxes in Witchwind's leather and gold: portrait and name, then **HP** and **TEMP** (temporary hit points), each a coloured label, the number and a thin bar. The HP bar turns amber below half and red below a quarter, and breathes red while low. At 0 the portrait greys out.
 - **Hit points that move.** A hit drops the bar at once, and a pale trail of what was lost drains away after it. Healing shows a pale bar out to the new total, and the HP fills up to meet it. The numbers count to their new values, and the box flashes red or green. Only that character's box changes, and the bars move on the compositor, so it stays smooth in a busy fight.
 - **Effects.** Each box shows the character's conditions and other effects as their token does (Charmed, Prone, Bless, Concentrating and the like) as a row of small icons along its foot. Hover one for its name. Exhaustion shows its level, and a new effect pops in.
 - **The party's name** sits over the boxes. The GM sets it by clicking the name, or in the settings. Left empty, it's the primary party's name, or "Party".
