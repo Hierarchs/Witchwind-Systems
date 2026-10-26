@@ -63,6 +63,10 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Who sells what**: each merchant's wares as slots with prices and how many are left, their location and faction. Players browse; the GM marks sales with − and + on the page, or edits the stock.
 - **Restocking.** A merchant can restock every so many days of the world's calendar, refilling each ware to its usual amount as the clock passes; the GM can restock early. Drop items from the sidebar or a compendium into the stock to add them with their picture and price.
 
+### The Xerseraya calendar
+
+The world runs on the Xerseraya calendar: seven days to the week (Dawnwake, Morrow, Highsun, Waning, Evenfall, Deepnight, Stillhour) and twelve months of thirty days (First Light, Snow's End, Soils Break, Seeds Rest, Guiding Rain, Cloudbreak, Sun's Mantle, First Harvest, Harvest's End, Waning Sun, Flakefall, Last Light), 360 days a year with no leap years. Pop-ups, letters, titles and restocks give dates in it ("Highsun, 27th of First Harvest, 433"), and so does Foundry's own clock. **World calendar** in the settings switches back to Foundry's calendar, or another calendar module's.
+
 ### Who can see it
 
 Every quest, map, faction, note and marker can be shown to all players or only some: tick the players in its editor. Limited entries carry a small lock-and-person mark for the GM, and "Only Aria, Bren" on their page.

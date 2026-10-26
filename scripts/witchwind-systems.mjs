@@ -1,4 +1,4 @@
-import { MODULE_ID, L, SECTION_IDS } from "./config.mjs";
+import { MODULE_ID, L, SECTION_IDS, XERSERAYA_CALENDAR } from "./config.mjs";
 import * as store from "./store.mjs";
 import Codex, { enabledSections, sectionSetting } from "./codex.mjs";
 import Tracker from "./tracker.mjs";
@@ -18,6 +18,22 @@ import { SECTION_KINDS } from "./helpers.mjs";
 
 Hooks.once("init", () => {
   store.registerData();
+
+  // The world's calendar: Xerseraya's, unless the GM keeps Foundry's own (or another calendar module's).
+  game.settings.register(MODULE_ID, "calendar", {
+    name: `${L}.Settings.Calendar.Name`,
+    hint: `${L}.Settings.Calendar.Hint`,
+    scope: "world",
+    config: true,
+    type: String,
+    choices: { xerseraya: `${L}.Settings.Calendar.Choices.xerseraya`, world: `${L}.Settings.Calendar.Choices.world` },
+    default: "xerseraya",
+    requiresReload: true
+  });
+  if ( game.settings.get(MODULE_ID, "calendar") === "xerseraya" ) {
+    CONFIG.time.worldCalendarConfig = XERSERAYA_CALENDAR;
+    game.time?.initializeCalendar?.();
+  }
 
   const register = (key, data) => game.settings.register(MODULE_ID, key, data);
   const refreshAll = () => {

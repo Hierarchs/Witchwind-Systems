@@ -18,6 +18,35 @@ export const SECTION_ICONS = {
 };
 
 /* -------------------------------------------- */
+/*  The Xerseraya calendar                      */
+/* -------------------------------------------- */
+
+/** A week of seven days and twelve months of thirty days, with no leap years: 360 days a year. */
+export const XERSERAYA_CALENDAR = {
+  name: "The Xerseraya Calendar",
+  description: "Seven days to the week, twelve months of thirty days.",
+  years: { yearZero: 0, firstWeekday: 0, leapYear: null },
+  months: {
+    values: [
+      ["First Light", "FLt"], ["Snow's End", "SnE"], ["Soils Break", "SoB"], ["Seeds Rest", "SeR"],
+      ["Guiding Rain", "GRn"], ["Cloudbreak", "Clb"], ["Sun's Mantle", "SMn"], ["First Harvest", "FHv"],
+      ["Harvest's End", "HvE"], ["Waning Sun", "WSn"], ["Flakefall", "Flk"], ["Last Light", "LLt"]
+    ].map(([name, abbreviation], i) => ({ name, abbreviation, ordinal: i + 1, days: 30 }))
+  },
+  days: {
+    values: [
+      ["Dawnwake", "Daw"], ["Morrow", "Mor"], ["Highsun", "Hig"], ["Waning", "Wan"],
+      ["Evenfall", "Eve"], ["Deepnight", "Dee"], ["Stillhour", "Sti"]
+    ].map(([name, abbreviation], i) => ({ name, abbreviation, ordinal: i + 1 })),
+    daysPerYear: 360,
+    hoursPerDay: 24,
+    minutesPerHour: 60,
+    secondsPerMinute: 60
+  },
+  seasons: { values: [] }
+};
+
+/* -------------------------------------------- */
 /*  Letters                                     */
 /* -------------------------------------------- */
 

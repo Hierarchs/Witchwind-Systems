@@ -79,15 +79,18 @@ export function secondsPerDay() {
   return seconds > 0 ? seconds : 86400;
 }
 
-/** A world time as a date in the world's calendar, Oblivion style ("27th of Last Seed, 433"). */
+/** A world time as a date in the world's calendar, Oblivion style ("Highsun, 27th of First Harvest, 433"). */
 export function worldDate(time=worldNow()) {
   try {
     const calendar = game.time.calendar;
     const c = calendar.timeToComponents(time);
     const month = calendar.months?.values?.[c.month];
+    const weekday = calendar.days?.values?.[c.dayOfWeek];
     const day = c.dayOfMonth + 1;
     if ( month && Number.isFinite(day) ) {
-      return game.i18n.format(`${L}.Notice.Date`, { day: ordinal(day), month: game.i18n.localize(month.name), year: c.year });
+      const data = { day: ordinal(day), month: game.i18n.localize(month.name), year: c.year };
+      if ( weekday ) return game.i18n.format(`${L}.Notice.DateWeekday`, { ...data, weekday: game.i18n.localize(weekday.name) });
+      return game.i18n.format(`${L}.Notice.Date`, data);
     }
   } catch {}
   return formatDate(Date.now());

@@ -110,6 +110,14 @@
       "SheetRenown": {
         "Name": "Renown on character sheets",
         "Hint": "Show a character’s titles and faction ranks in the sidebar of their dnd5e sheet. This only changes your own view."
+      },
+      "Calendar": {
+        "Name": "World calendar",
+        "Hint": "Use the Xerseraya calendar for the world: seven days to the week (Dawnwake to Stillhour) and twelve months of thirty days (First Light to Last Light). Choose Foundry’s own to keep the default calendar or another calendar module’s. Foundry reloads when this changes.",
+        "Choices": {
+          "xerseraya": "The Xerseraya calendar",
+          "world": "Foundry’s own (or another module’s)"
+        }
       }
     },
     "Keys": {
@@ -456,7 +464,8 @@
       "From": "From {name}",
       "ReadLetter": "Read Letter",
       "Title": "Title Earned",
-      "ViewRenown": "View Renown"
+      "ViewRenown": "View Renown",
+      "DateWeekday": "{weekday}, {day} of {month}, {year}"
     },
     "Letters": {
       "New": "New Letter",
