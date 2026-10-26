@@ -22,19 +22,23 @@ export default {
     const regionName = new Map(regions.map(r => [r.id, r.name]));
     const region = regionName.has(app.filters.notices) ? app.filters.notices : ALL;
     const all = store.all("notices").filter(n => store.isVisible("notices", n)).sort((a, b) => (b.sentAt ?? 0) - (a.sentAt ?? 0));
+    // Each notice's status is worked out once, and the chips' counts come from a single pass over the notices.
+    const statuses = new Map(all.map(n => [n.id, statusOf(n)]));
+    const counts = new Map();
+    for ( const n of all ) counts.set(n.region, (counts.get(n.region) ?? 0) + 1);
     const shown = all.filter(n => (region === ALL) || (n.region === region));
     if ( !shown.some(n => n.id === app.selected.notices) ) app.selected.notices = shown[0]?.id ?? null;
     const notice = shown.find(n => n.id === app.selected.notices);
-    const changes = changesIn(all);
+    const changes = changesIn(statuses);
 
     return {
       isGM,
       canManage: isGM,
       regions: [
         { id: ALL, name: loc("Notices.AllRegions"), count: all.length, active: region === ALL },
-        ...regions.map(r => ({ id: r.id, name: r.name, count: all.filter(n => n.region === r.id).length, active: r.id === region }))
+        ...regions.map(r => ({ id: r.id, name: r.name, count: counts.get(r.id) ?? 0, active: r.id === region }))
       ],
-      notices: shown.map(n => ({ ...cardOf(n, regionName, changes), selected: n.id === app.selected.notices })),
+      notices: shown.map(n => ({ ...cardOf(n, regionName, statuses, changes), selected: n.id === app.selected.notices })),
       empty: !shown.length,
       notice: notice ? await detail(notice, regionName) : null
     };
@@ -157,33 +161,26 @@ function hashOf(id) {
 function tiltOf(id) {
   return hashOf(id) % 7 - 3;
 }
-
-/** Which of the two slip parchments a notice is pinned on. */
-function paperOf(id) {
-  return hashOf(id) % 2 ? "b" : "a";
-}
-
 /** The status each notice had when the board last drew it, and whether the board has drawn any yet. */
 const drawn = new Map();
 let primed = false;
 
 /** Notices pinned up, or changed, since the board last drew them: "arrived" or "updated", by id. */
-function changesIn(notices) {
+function changesIn(statuses) {
   const changes = new Map();
-  for ( const n of notices ) {
-    const status = statusOf(n);
-    const before = drawn.get(n.id);
-    if ( primed && (before === undefined) ) changes.set(n.id, "arrived");
-    else if ( primed && (before !== status) ) changes.set(n.id, "updated");
-    drawn.set(n.id, status);
+  for ( const [id, status] of statuses ) {
+    const before = drawn.get(id);
+    if ( primed && (before === undefined) ) changes.set(id, "arrived");
+    else if ( primed && (before !== status) ) changes.set(id, "updated");
+    drawn.set(id, status);
   }
   primed = true;
   return changes;
 }
 
-function cardOf(n, regionName, changes) {
+function cardOf(n, regionName, statuses, changes) {
   const diff = difficultyOf(n.difficulty);
-  const status = statusOf(n);
+  const status = statuses.get(n.id);
   return {
     id: n.id,
     title: n.title || loc("Untitled"),
@@ -192,7 +189,6 @@ function cardOf(n, regionName, changes) {
     diffColor: diff.color,
     diffLabel: loc(`Notices.Difficulty.${diff.id}`),
     tilt: tiltOf(n.id),
-    paper: paperOf(n.id),
     change: changes.get(n.id) ?? "",
     status,
     statusLabel: loc(`Notices.Status.${status}`),

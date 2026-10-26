@@ -52,6 +52,22 @@
   src: url("../fonts/alegreya-sans-700-latin.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Kingthings Petrock";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/Kingthings_Petrock.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Kingthings Petrock";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("../fonts/Kingthings_Petrock_light.ttf") format("truetype");
+}
+
 /* ============================================ */
 /*  Witchwind Systems                           */
 /* ============================================ */
@@ -4722,9 +4738,9 @@ ul.wws-chips {
   overflow: hidden;
   color: #e3cfa6;
   background:
-    linear-gradient(180deg, rgb(20 12 6 / 18%), rgb(20 12 6 / 42%)),
-    url("../images/notices/board.webp") center / cover no-repeat,
-    #3a2416;
+    repeating-linear-gradient(92deg, rgb(255 230 180 / 3%) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(90deg, rgb(20 12 6 / 40%) 0 1px, transparent 1px 180px),
+    linear-gradient(180deg, #4a3020 0%, #3a2416 100%);
   box-shadow: inset 0 0 50px rgb(0 0 0 / 60%), inset -6px 0 14px -8px rgb(0 0 0 / 70%);
 }
 
@@ -4819,17 +4835,15 @@ ul.wws-chips {
   flex-direction: column;
   gap: 5px;
   width: 100%;
-  min-height: 130px;
-  padding: 24px 20px 20px;
-  background-color: var(--wws-paper);
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  min-height: 118px;
+  padding: 16px 12px 14px;
+  background: var(--wws-paper);
   color: var(--wws-parch-ink);
   border-radius: 2px;
-  filter: drop-shadow(0 5px 6px rgb(0 0 0 / 55%));
+  box-shadow: 0 6px 12px rgb(0 0 0 / 55%), inset 0 0 26px rgb(120 84 40 / 30%);
   transform: rotate(var(--wws-tilt, 0deg));
   cursor: pointer;
-  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 300ms ease-out;
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .wws-notice-card::before {
@@ -4857,7 +4871,6 @@ ul.wws-chips {
 
 .wws button.wws-notice-card:hover {
   transform: rotate(0deg) translateY(-3px);
-  filter: drop-shadow(0 10px 10px rgb(0 0 0 / 60%));
 }
 
 .wws button.wws-notice-card.selected {
@@ -4997,25 +5010,8 @@ ul.wws-chips {
 }
 
 /* ============================================ */
-/*  Notice board: parchment and motion          */
+/*  Notice board: motion          */
 /* ============================================ */
-
-/* Each slip is one of the two lighter parchments, chosen by its notice. */
-.wws button.wws-notice-card.wws-slip-a {
-  background-image: url("../images/notices/parchment-seal.webp");
-}
-
-.wws button.wws-notice-card.wws-slip-b {
-  background-image: url("../images/notices/parchment-gold.webp");
-}
-
-/* The notice being read is written on the red-bordered parchment, with its text kept inside the border. */
-.wws-notice-entry {
-  box-sizing: border-box;
-  min-height: 560px;
-  padding: 50px 52px 52px;
-  background: url("../images/notices/parchment-red.webp") center / cover no-repeat;
-}
 
 /* A new notice drops onto the board, and its pin is pressed in after it lands. */
 @keyframes wws-pin-drop {
@@ -5067,4 +5063,47 @@ ul.wws-chips {
 
 #witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-notice-entry {
   animation: wws-unroll 520ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+/* ============================================ */
+/*  Notice board: type and fit                  */
+/* ============================================ */
+
+/* The board's titles, stamps and labels are set in Kingthings Petrock. The reading text stays in Alegreya. */
+.wws-board-head h2,
+.wws button.wws-region,
+.wws-notice-title,
+.wws-notice-status,
+.wws-notice-stamp,
+.wws-seal-diff span,
+.wws-notices .wws-entry-title {
+  font-family: "Kingthings Petrock", var(--wws-font-display);
+  font-weight: 400;
+}
+
+/* Each notice on the board is its own layout box, so changing one does not re-lay out the rest. */
+.wws-pinboard > li {
+  contain: layout style;
+}
+
+/* Kingthings Petrock sits small for its size, so its lines are set a little larger than the faces they replace. */
+.wws-board-head h2 {
+  font-size: 25px;
+}
+
+.wws button.wws-region {
+  font-size: 14px;
+}
+
+.wws-notice-title {
+  font-size: 17px;
+}
+
+.wws-notice-stamp {
+  font-size: 13px;
+}
+
+/* A tab's name stays on one line, so "Notice Board" doesn't wrap beside the others. */
+.wws button.wws-tab {
+  white-space: nowrap;
 }

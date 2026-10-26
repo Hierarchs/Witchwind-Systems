@@ -30,7 +30,7 @@
       "renown": "Renown",
       "merchants": "Merchants",
       "bestiary": "Bestiary",
-      "notices": "Notice Board"
+      "notices": "Notices"
     },
     "Settings": {
       "Sections": {
@@ -680,7 +680,8 @@
         "moderate": "Moderate",
         "hard": "Hard",
         "deadly": "Deadly"
-      }
+      },
+      "Title": "Notice Board"
     }
   }
 }

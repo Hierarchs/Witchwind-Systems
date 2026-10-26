@@ -3,7 +3,7 @@
   {{!-- The board: notices pinned up under their regions --}}
   <section class="wws-page wws-page-list wws-board">
     <header class="wws-board-head">
-      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.notices"}}</h2>
+      <h2>{{localize "WITCHWIND_SYSTEMS.Notices.Title"}}</h2>
       {{#if page.canManage}}
       <span class="wws-head-tools">
         <button type="button" class="wws-tool" data-action="noticeRegions" data-tooltip="WITCHWIND_SYSTEMS.Notices.Regions"
@@ -29,7 +29,7 @@
       <ol class="wws-pinboard">
         {{#each page.notices}}
         <li style="--wws-i: {{@index}}">
-          <button type="button" class="wws-notice-card wws-slip-{{paper}}{{#if change}} wws-{{change}}{{/if}}{{#if selected}} selected{{/if}} wws-status-{{status}}"
+          <button type="button" class="wws-notice-card{{#if change}} wws-{{change}}{{/if}}{{#if selected}} selected{{/if}} wws-status-{{status}}"
                   data-action="noticeSelect" data-id="{{id}}" style="--wws-tilt: {{tilt}}deg; --wws-diff: {{diffColor}};">
             <span class="wws-notice-title">{{title}}</span>
             <span class="wws-notice-meta"><span class="wws-diff-dot" aria-hidden="true"></span>{{diffLabel}}{{#if region}} · {{region}}{{/if}}</span>

@@ -155,7 +155,7 @@ api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave rob
 
 ## License
 
-The module's code is under the [MIT License](LICENSE). The bundled fonts are under the SIL Open Font License 1.1; each license is in `fonts/`.
+The module's code is under the [MIT License](LICENSE). The bundled fonts are under the SIL Open Font License 1.1; each license is in `fonts/`. The notice board's titles use Kingthings Petrock, by Kevin King, whose license note is in `fonts/Kingthings-License.txt`.
 
 ## Releasing a new version
 
