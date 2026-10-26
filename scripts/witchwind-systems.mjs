@@ -4,7 +4,9 @@ import Codex, { enabledSections, sectionSetting } from "./codex.mjs";
 import Tracker from "./tracker.mjs";
 import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
-import { initBanners, announce } from "./banner.mjs";
+import { initBanners, announce, onWorldTime } from "./banner.mjs";
+import { registerSheet } from "./sheet.mjs";
+import { restockDue } from "./sections/merchants.mjs";
 import { registerSounds, playSound } from "./sounds.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
@@ -77,6 +79,15 @@ Hooks.once("init", () => {
     onChange: () => Tracker.refresh()
   });
 
+  register("sheetRenown", {
+    name: `${L}.Settings.SheetRenown.Name`,
+    hint: `${L}.Settings.SheetRenown.Hint`,
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   register("questPopups", {
     name: `${L}.Settings.QuestPopups.Name`,
     hint: `${L}.Settings.QuestPopups.Hint`,
@@ -103,7 +114,7 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, maps: "KeyM", factions: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, letters: null, maps: "KeyM", factions: null, renown: null, merchants: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,
@@ -203,6 +214,14 @@ Hooks.once("ready", () => {
     if ( (kind === "quests") || (kind === "tracked") ) refreshTracker();
   });
   Tracker.refresh();
+  registerSheet();
+
+  // As the world's clock moves, held-back letters arrive and merchants restock.
+  Hooks.on("updateWorldTime", () => {
+    onWorldTime();
+    Codex.refresh("time");
+    restockDue();
+  });
 
   game.modules.get(MODULE_ID).api = {
     /** Open the window, optionally at a section ("quests", "journal", "maps", "factions") and an entry's id. */

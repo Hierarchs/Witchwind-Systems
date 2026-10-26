@@ -1,11 +1,17 @@
-import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, DEFAULT_RANKS } from "./config.mjs";
+import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, DEFAULT_RANKS } from "./config.mjs";
 import * as store from "./store.mjs";
 import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
+import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "./helpers.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760 };
+
+/** Icons a title can carry. */
+const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
+  "fa-solid fa-star", "fa-solid fa-dragon", "fa-solid fa-skull", "fa-solid fa-feather-pointed", "fa-solid fa-hand-fist",
+  "fa-solid fa-book-sparkles", "fa-solid fa-chess-rook", "fa-solid fa-gem"];
 
 /** Which field says an entry is shown to players: GM collections are revealed, user-owned ones are shared. */
 const VISIBILITY = {
@@ -13,11 +19,13 @@ const VISIBILITY = {
   map: { field: "visible", label: "Editor.VisibleMap" },
   faction: { field: "visible", label: "Editor.VisibleFaction" },
   note: { field: "shared", label: "Editor.SharedNote" },
-  pin: { field: "shared", label: "Editor.SharedPin" }
+  pin: { field: "shared", label: "Editor.SharedPin" },
+  letter: { field: "visible", label: "Editor.VisibleLetter" },
+  merchant: { field: "visible", label: "Editor.VisibleMerchant" }
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
-const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps" };
+const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants" };
 
 /**
  * One small form window for writing or changing any entry: a quest, note, map, marker, faction or quest log entry.
@@ -107,6 +115,23 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.factions = factionChoices(entry.faction);
         context.pins = pinChoices(entry.pin);
         break;
+      case "letter":
+        context.kinds = LETTER_KINDS.map(id => ({ id, label: `${L}.Letters.Kinds.${id}`, selected: (entry.kind ?? "letter") === id }));
+        context.arriveIn = daysUntil(entry.arrival);
+        context.today = worldDate();
+        break;
+      case "title": {
+        const people = partyCharacters();
+        context.people = people.map(p => ({ ...p, selected: p.uuid === entry.uuid }));
+        context.icons = TITLE_ICONS.map(value => ({ value, checked: (entry.icon ?? TITLE_ICONS[0]) === value }));
+        context.quests = store.all("quests").filter(q => store.isVisible("quests", q))
+          .sort(byTitle).map(q => ({ id: q.id, title: q.title, selected: q.id === entry.quest }));
+        break;
+      }
+      case "merchant":
+        context.factions = factionChoices(entry.faction);
+        context.stock = entry.stock ?? [];
+        break;
       case "groups":
         context.groups = (entry.groups ?? []).map(g => ({ ...g, placeholder: game.i18n.localize(`${L}.Quests.Kinds.${g.id}`) }));
         break;
@@ -167,6 +192,20 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onSubmit(event, form) {
     const data = readForm(form);
     if ( VISIBILITY[this.kind] ) data.viewers = Array.from(form.querySelectorAll("[data-viewer]:checked"), el => el.value);
+    if ( this.kind === "letter" ) {
+      // A letter held back arrives that many days from now; unchanged, it keeps the day it already had.
+      const days = Math.max(0, Number(data.arriveIn) || 0);
+      delete data.arriveIn;
+      if ( days && (days === daysUntil(this.entry.arrival)) ) data.arrival = this.entry.arrival;
+      else data.arrival = days ? worldNow() + (days * secondsPerDay()) : null;
+    }
+    if ( this.kind === "merchant" ) {
+      const count = v => (Number.isFinite(v) ? Math.max(0, v) : null);
+      data.restockDays = Math.max(0, Number(data.restockDays) || 0);
+      data.stock = (data.stock ?? []).filter(s => s.name).map(s => ({
+        ...s, id: s.id || foundry.utils.randomID(), price: Math.max(0, Number(s.price) || 0), qty: count(s.qty), max: count(s.max) ?? count(s.qty)
+      }));
+    }
     if ( this.kind === "groups" ) {
       data.groups = (data.groups ?? []).map(g => ({ id: g.id || foundry.utils.randomID(), name: g.name ?? "" }));
       if ( !data.groups.length ) data.groups = QUEST_KINDS.map(id => ({ id, name: "" }));
@@ -337,6 +376,10 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         this.#addRow("rewards", {
           name: doc.name, img: doc.img, uuid: doc.uuid, qty: doc.system?.quantity ?? 1, rarity: doc.system?.rarity ?? ""
         });
+        break;
+      case "stock":
+        if ( doc.documentName !== "Item" ) return;
+        this.#addRow("stock", { name: doc.name, img: doc.img, uuid: doc.uuid, rarity: doc.system?.rarity ?? "", price: doc.system?.price?.value ?? 0 });
         break;
       case "members":
         if ( doc.documentName !== "Actor" ) return;

@@ -1,0 +1,72 @@
+<div class="wws-spread wws-letters">
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.letters"}}</h2>
+      {{#if page.canCreate}}
+      <button type="button" class="wws-ink" data-action="letterNew"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Letters.NewShort"}}</button>
+      {{/if}}
+    </header>
+    <nav class="wws-filters">
+      {{#each page.filters}}
+      <button type="button" class="wws-filter{{#if active}} active{{/if}}" data-action="letterFilter" data-filter="{{id}}"
+              aria-pressed="{{#if active}}true{{else}}false{{/if}}">{{localize label}}{{#if count}}<span class="wws-count">{{count}}</span>{{/if}}</button>
+      {{/each}}
+    </nav>
+    <div class="wws-list-scroll">
+      {{#if page.empty}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Letters.Empty"}}</p>{{/if}}
+      <ol class="wws-list">
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row{{#if selected}} selected{{/if}}{{#if unread}} wws-unread{{/if}}" data-action="letterSelect" data-id="{{id}}">
+            <i class="{{icon}} wws-row-icon" inert></i>
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{title}}</span>
+              <span class="wws-row-sub">{{#if sender}}{{sender}} · {{/if}}{{dateLabel}}</span>
+            </span>
+            {{#if unread}}<i class="wws-unread-mark" data-tooltip="WITCHWIND_SYSTEMS.Letters.Unread"></i>{{/if}}
+            {{#if pending}}<i class="fa-solid fa-hourglass-half wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Letters.NotDelivered"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+  </section>
+
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.letter as |letter|}}
+      <article class="wws-entry wws-letter" data-id="{{letter.id}}" {{#if letter.unread}}data-unread{{/if}}>
+        {{#if letter.hidden}}<p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.Letters.NotDelivered"}}</p>
+        {{else if letter.arrivesLabel}}<p class="wws-ribbon"><i class="fa-solid fa-hourglass-half" inert></i> {{localize "WITCHWIND_SYSTEMS.Letters.Arrives" date=letter.arrivesLabel}}</p>
+        {{else if letter.viewers}}<p class="wws-ribbon"><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=letter.viewers}}</p>{{/if}}
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="letterEdit" data-id="{{letter.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit"><i class="fa-solid fa-pen-to-square" inert></i></button>
+          {{#if (or letter.hidden letter.arrivesLabel)}}
+          <button type="button" class="wws-tool" data-action="letterDeliver" data-id="{{letter.id}}" data-tooltip="WITCHWIND_SYSTEMS.Letters.DeliverNow"><i class="fa-solid fa-paper-plane" inert></i></button>
+          {{else}}
+          <button type="button" class="wws-tool" data-action="letterShow" data-id="{{letter.id}}" data-tooltip="WITCHWIND_SYSTEMS.ShowToPlayers"><i class="fa-solid fa-bullhorn" inert></i></button>
+          {{/if}}
+          <span class="wws-gm-gap"></span>
+          <button type="button" class="wws-tool wws-bad" data-action="letterDelete" data-id="{{letter.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+        </div>
+        {{/if}}
+
+        {{!-- The letter itself: a sheet of paper on the page, with its seal. --}}
+        <div class="wws-paper wws-paper-{{letter.kind}}">
+          {{#if letter.img}}<img class="wws-seal" src="{{letter.img}}" alt="">{{/if}}
+          <p class="wws-kicker"><i class="{{letter.icon}}" inert></i> {{localize letter.kindLabel}} <span class="wws-sep" aria-hidden="true">◆</span> {{letter.dateLabel}}</p>
+          <h1 class="wws-entry-title">{{letter.title}}</h1>
+          <div class="wws-prose">{{{letter.body}}}</div>
+          {{#if letter.sender}}<p class="wws-signature">— {{letter.sender}}</p>{{/if}}
+        </div>
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page"><i class="fa-solid fa-envelope" inert></i>
+        {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Letters.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Letters.NoneHint"}}{{/if}}</p>
+      {{/with}}
+    </div>
+  </section>
+</div>

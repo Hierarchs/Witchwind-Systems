@@ -5,7 +5,7 @@
     <nav class="wws-tabs" aria-label="{{localize "WITCHWIND_SYSTEMS.Title"}}">
       {{#each tabs}}
       <button type="button" class="wws-tab{{#if active}} active{{/if}}" data-action="section" data-section="{{id}}"
-              aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+              data-tooltip="{{label}}" aria-label="{{localize label}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
         <i class="{{icon}}" inert></i>
         <span>{{localize label}}</span>
       </button>

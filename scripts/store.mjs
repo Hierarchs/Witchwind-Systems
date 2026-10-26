@@ -9,7 +9,7 @@ import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
  */
 
 /** Collections the GM keeps in world settings. */
-export const WORLD_KINDS = ["quests", "maps", "factions"];
+export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants"];
 
 /** Collections each user keeps on their own User document. */
 export const USER_KINDS = ["notes", "pins"];
@@ -50,7 +50,7 @@ export function registerData() {
   Hooks.on("updateUser", (user, changes) => {
     const flags = changes.flags?.[MODULE_ID];
     if ( !flags ) return;
-    for ( const kind of [...USER_KINDS, "tracked"] ) {
+    for ( const kind of [...USER_KINDS, "tracked", "readLetters"] ) {
       if ( kind in flags ) emit(kind, user.id);
     }
   });
@@ -131,6 +131,8 @@ export function isVisible(kind, entry, user=game.user) {
   if ( !entry ) return false;
   if ( user.isGM ) return true;
   const allowed = !entry.viewers?.length || entry.viewers.includes(user.id);
+  // A letter sent for a later day stays out of sight until the world's clock reaches it.
+  if ( (kind === "letters") && entry.arrival && ((game.time?.worldTime ?? 0) < entry.arrival) ) return false;
   if ( WORLD_KINDS.includes(kind) ) return !!entry.visible && allowed;
   return (entry.author === user.id) || (!!entry.shared && allowed);
 }
@@ -275,6 +277,17 @@ export function setQuestGroups(groups) {
 /* -------------------------------------------- */
 /*  Tracked quests                              */
 /* -------------------------------------------- */
+
+/** Letters a user has opened, so new ones can be marked unread. */
+export function readLetters(user=game.user) {
+  return user.getFlag(MODULE_ID, "readLetters") ?? [];
+}
+
+export async function markRead(letterId) {
+  const read = readLetters();
+  if ( read.includes(letterId) ) return;
+  return game.user.setFlag(MODULE_ID, "readLetters", [...read, letterId]);
+}
 
 /** Quests a user follows in the on-screen tracker, kept on the User so it follows them between devices. */
 export function tracked(user=game.user) {

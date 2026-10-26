@@ -1,0 +1,92 @@
+<div class="wws-spread wws-merchants">
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.merchants"}}</h2>
+      {{#if page.canCreate}}
+      <button type="button" class="wws-ink" data-action="merchantNew"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Merchants.NewShort"}}</button>
+      {{/if}}
+    </header>
+    <div class="wws-list-scroll">
+      {{#if page.empty}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Merchants.Empty"}}</p>{{/if}}
+      <ol class="wws-list">
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="merchantSelect" data-id="{{id}}">
+            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="">{{else}}<i class="fa-solid fa-scale-balanced wws-row-icon" inert></i>{{/if}}
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{name}}</span>
+              {{#if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}
+            </span>
+            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+  </section>
+
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.merchant as |merchant|}}
+      <article class="wws-entry">
+        {{#if merchant.hidden}}<p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>
+        {{else if merchant.viewers}}<p class="wws-ribbon"><i class="fa-solid fa-user-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Visibility.Only" names=merchant.viewers}}</p>{{/if}}
+
+        <header class="wws-faction-head">
+          <span class="wws-emblem wws-emblem-large">{{#if merchant.img}}<img src="{{merchant.img}}" alt="">{{else}}<i class="fa-solid fa-scale-balanced" inert></i>{{/if}}</span>
+          <div class="wws-entry-head">
+            <h1 class="wws-entry-title">{{merchant.name}}</h1>
+            <p class="wws-byline">
+              {{#if merchant.location}}<i class="fa-solid fa-signs-post" inert></i> {{merchant.location}}{{/if}}
+              {{#if merchant.faction}} · <button type="button" class="wws-link" data-action="merchantFaction" data-faction="{{merchant.faction.id}}">{{merchant.faction.name}}</button>{{/if}}
+            </p>
+          </div>
+        </header>
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="merchantEdit" data-id="{{merchant.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit"><i class="fa-solid fa-pen-to-square" inert></i></button>
+          <button type="button" class="wws-tool" data-action="merchantReveal" data-id="{{merchant.id}}" data-tooltip="{{#if merchant.hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}">
+            <i class="fa-solid {{#if merchant.hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+          <button type="button" class="wws-tool" data-action="merchantShow" data-id="{{merchant.id}}" data-tooltip="WITCHWIND_SYSTEMS.ShowToPlayers"><i class="fa-solid fa-bullhorn" inert></i></button>
+          <button type="button" class="wws-tool" data-action="merchantRestock" data-id="{{merchant.id}}" data-tooltip="WITCHWIND_SYSTEMS.Merchants.RestockNow"><i class="fa-solid fa-boxes-stacked" inert></i></button>
+          <span class="wws-gm-gap"></span>
+          <button type="button" class="wws-tool wws-bad" data-action="merchantDelete" data-id="{{merchant.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+        </div>
+        {{/if}}
+
+        {{#if merchant.description}}<div class="wws-prose">{{{merchant.description}}}</div>{{/if}}
+
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Merchants.Stock"}}</h3>
+        {{#if merchant.restock}}<p class="wws-hint wws-restock"><i class="fa-solid fa-boxes-stacked" inert></i> {{localize "WITCHWIND_SYSTEMS.Merchants.Restocks" days=merchant.restock.days date=merchant.restock.next}}</p>{{/if}}
+        {{#if merchant.stock.length}}
+        <ol class="wws-wares">
+          {{#each merchant.stock}}
+          <li class="wws-ware{{#if out}} wws-out{{/if}}">
+            <button type="button" class="wws-slot" data-action="merchantItem" data-uuid="{{uuid}}" data-wws-rarity="{{rarity}}" {{#unless uuid}}disabled{{/unless}}>
+              {{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}
+            </button>
+            <span class="wws-ware-name">{{name}}</span>
+            <span class="wws-ware-count">{{#if counted}}{{#if out}}{{localize "WITCHWIND_SYSTEMS.Merchants.SoldOut"}}{{else}}× {{qty}}{{/if}}{{/if}}</span>
+            <strong class="wws-ware-price">{{priceLabel}}</strong>
+            {{#if @root.isGM}}{{#if counted}}
+            <span class="wws-row-tools">
+              <button type="button" class="wws-tool wws-mini" data-action="merchantCount" data-id="{{merchant.id}}" data-item="{{id}}" data-delta="-1" data-tooltip="WITCHWIND_SYSTEMS.Merchants.Sold"><i class="fa-solid fa-minus" inert></i></button>
+              <button type="button" class="wws-tool wws-mini" data-action="merchantCount" data-id="{{merchant.id}}" data-item="{{id}}" data-delta="1" data-tooltip="WITCHWIND_SYSTEMS.Merchants.AddOne"><i class="fa-solid fa-plus" inert></i></button>
+            </span>
+            {{/if}}{{/if}}
+          </li>
+          {{/each}}
+        </ol>
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Merchants.NoStock"}}</p>
+        {{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page"><i class="fa-solid fa-scale-balanced" inert></i>
+        {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Merchants.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Merchants.NoneHint"}}{{/if}}</p>
+      {{/with}}
+    </div>
+  </section>
+</div>

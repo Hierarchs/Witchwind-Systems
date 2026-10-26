@@ -1,6 +1,6 @@
 import { MODULE_ID, L } from "./config.mjs";
 import { playSound } from "./sounds.mjs";
-import { formatDate } from "./helpers.mjs";
+import { worldDate } from "./helpers.mjs";
 
 /*
  * Oblivion's "Quest added" box, in Witchwind's leather and parchment: the quest's icon, name and the date in the
@@ -14,7 +14,7 @@ const CLOSE_DURATION = 160;
 const queue = [];
 let showing = false;
 
-/** Queue a pop-up: { label, title, detail, img, icon, questId, tone }. */
+/** Queue a pop-up: { label, title, detail, img, icon, tone, open: { section, id }, openLabel }. */
 export function showNotice(notice) {
   queue.push(notice);
   if ( !showing ) next();
@@ -70,8 +70,8 @@ function next() {
     icon.append(i);
   }
   const view = shade.querySelector("[data-notice=view]");
-  view.textContent = t("View");
-  if ( !notice.questId ) view.remove();
+  view.textContent = notice.openLabel ?? t("View");
+  if ( !notice.open ) view.remove();
   const proceed = shade.querySelector("[data-notice=continue]");
   proceed.textContent = t("Continue");
 
@@ -84,7 +84,7 @@ function next() {
     close();
   };
 
-  const close = async (openQuest=false) => {
+  const close = async (openEntry=false) => {
     window.removeEventListener("keydown", onKey, { capture: true });
     shade.style.pointerEvents = "none";
     if ( !window.matchMedia("(prefers-reduced-motion: reduce)").matches ) {
@@ -92,7 +92,7 @@ function next() {
       await Promise.race([fade.finished, new Promise(r => setTimeout(r, CLOSE_DURATION + 60))]);
     }
     shade.remove();
-    if ( openQuest ) game.modules.get(MODULE_ID).api.open("quests", notice.questId);
+    if ( openEntry ) game.modules.get(MODULE_ID).api.open(notice.open.section, notice.open.id);
     else if ( returnFocus?.isConnected ) returnFocus.focus?.();
     next();
   };
@@ -105,22 +105,3 @@ function next() {
   playSound("quest");
 }
 
-/** Today in the world's calendar, Oblivion style ("27th of Last Seed, 433"), or the real date if there's none. */
-function worldDate() {
-  try {
-    const calendar = game.time.calendar;
-    const c = calendar.timeToComponents(game.time.worldTime);
-    const month = calendar.months?.values?.[c.month];
-    const day = c.dayOfMonth + 1;
-    if ( month && Number.isFinite(day) ) {
-      return game.i18n.format(`${L}.Notice.Date`, { day: ordinal(day), month: game.i18n.localize(month.name), year: c.year });
-    }
-  } catch {}
-  return formatDate(Date.now());
-}
-
-function ordinal(n) {
-  const suffixes = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return `${n}${suffixes[(v - 20) % 10] ?? suffixes[v] ?? suffixes[0]}`;
-}

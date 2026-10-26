@@ -3,7 +3,9 @@ import * as store from "./store.mjs";
 import { broadcast } from "./socket.mjs";
 
 /** The collection behind each section. */
-export const SECTION_KINDS = { quests: "quests", journal: "notes", maps: "maps", factions: "factions" };
+export const SECTION_KINDS = {
+  quests: "quests", journal: "notes", letters: "letters", maps: "maps", factions: "factions", renown: "titles", merchants: "merchants"
+};
 
 /** Open an entry on every player's screen, revealing it first if it was hidden. GM only. */
 export async function showToPlayers(section, id) {
@@ -65,6 +67,38 @@ export function plainText(html) {
   return html ? plainTextOnce(html) : "";
 }
 
+/** The world's time now, in seconds. */
+export function worldNow() {
+  return game.time?.worldTime ?? 0;
+}
+
+/** Seconds in a day of the world's calendar. */
+export function secondsPerDay() {
+  const d = game.time?.calendar?.days;
+  const seconds = d ? d.hoursPerDay * d.minutesPerHour * d.secondsPerMinute : 0;
+  return seconds > 0 ? seconds : 86400;
+}
+
+/** A world time as a date in the world's calendar, Oblivion style ("27th of Last Seed, 433"). */
+export function worldDate(time=worldNow()) {
+  try {
+    const calendar = game.time.calendar;
+    const c = calendar.timeToComponents(time);
+    const month = calendar.months?.values?.[c.month];
+    const day = c.dayOfMonth + 1;
+    if ( month && Number.isFinite(day) ) {
+      return game.i18n.format(`${L}.Notice.Date`, { day: ordinal(day), month: game.i18n.localize(month.name), year: c.year });
+    }
+  } catch {}
+  return formatDate(Date.now());
+}
+
+function ordinal(n) {
+  const suffixes = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return `${n}${suffixes[(v - 20) % 10] ?? suffixes[v] ?? suffixes[0]}`;
+}
+
 export function formatDate(ms) {
   if ( !ms ) return "";
   return new Date(ms).toLocaleDateString(game.i18n.lang, { day: "numeric", month: "short", year: "numeric" });
@@ -124,3 +158,22 @@ export function showImage(src, title) {
 
 export const byTitle = (a, b) => (a.title ?? "").localeCompare(b.title ?? "");
 export const byName = (a, b) => (a.name ?? "").localeCompare(b.name ?? "");
+
+/** The party's characters, and anyone else who holds a title. */
+export function partyCharacters(titles=store.all("titles")) {
+  const people = new Map();
+  for ( const actor of game.actors?.filter(a => a.hasPlayerOwner) ?? [] ) {
+    people.set(actor.uuid, { uuid: actor.uuid, name: actor.name, img: actor.img });
+  }
+  for ( const t of titles ) {
+    if ( people.has(t.uuid) ) continue;
+    const actor = docSync(t.uuid);
+    if ( actor ) people.set(t.uuid, { uuid: t.uuid, name: actor.name, img: actor.img });
+  }
+  return [...people.values()].sort(byName);
+}
+
+/** Days from now until a world time, rounded up; 0 for now or the past. */
+export function daysUntil(time) {
+  return time ? Math.max(0, Math.ceil((time - worldNow()) / secondsPerDay())) : 0;
+}

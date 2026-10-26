@@ -25,7 +25,10 @@
       "quests": "Quests",
       "journal": "Journal",
       "maps": "Maps",
-      "factions": "Factions"
+      "factions": "Factions",
+      "letters": "Letters",
+      "renown": "Renown",
+      "merchants": "Merchants"
     },
     "Settings": {
       "Sections": {
@@ -44,6 +47,18 @@
         "factions": {
           "Name": "Factions tab",
           "Hint": "Show the Factions tab, with each faction's standing and the party's ranks, for everyone in this world."
+        },
+        "letters": {
+          "Name": "Letters tab",
+          "Hint": "Show the Letters tab, with the letters, books, notices and orders the GM hands out, for everyone in this world."
+        },
+        "renown": {
+          "Name": "Renown tab",
+          "Hint": "Show the Renown tab, with each character’s titles and faction ranks, for everyone in this world."
+        },
+        "merchants": {
+          "Name": "Merchants tab",
+          "Hint": "Show the Merchants tab, with each merchant’s wares and prices, for everyone in this world."
         }
       },
       "PlayerNotes": {
@@ -91,6 +106,10 @@
       "QuestPopups": {
         "Name": "Quest pop-ups",
         "Hint": "When a quest is added, completed or failed, show a pop-up to continue past, as in Oblivion. Turn off to see a banner across the top instead. This only changes your own view."
+      },
+      "SheetRenown": {
+        "Name": "Renown on character sheets",
+        "Hint": "Show a character’s titles and faction ranks in the sidebar of their dnd5e sheet. This only changes your own view."
       }
     },
     "Keys": {
@@ -103,7 +122,10 @@
       "nextEntry": "Next entry in the list",
       "previousEntry": "Previous entry in the list",
       "nextTab": "Next tab",
-      "previousTab": "Previous tab"
+      "previousTab": "Previous tab",
+      "letters": "Open the letters",
+      "renown": "Open renown",
+      "merchants": "Open the merchants"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -372,7 +394,9 @@
       "MembersDrop": "Drop actors here to add them as members",
       "GroupsHint": "Name your quest groups and put them in order. Leave a default group’s name blank to keep its usual name. Quests in a removed group move to the first.",
       "AddGroup": "Add group",
-      "GroupPlaceholder": "Companions"
+      "GroupPlaceholder": "Companions",
+      "VisibleLetter": "Deliver to players",
+      "VisibleMerchant": "Players can see this merchant"
     },
     "Banners": {
       "Started": "Quest Started",
@@ -427,7 +451,85 @@
       "Failed": "Quest Failed",
       "Continue": "Continue",
       "View": "View Quest",
-      "Date": "{day} of {month}, {year}"
+      "Date": "{day} of {month}, {year}",
+      "Letter": "Letter Arrived",
+      "From": "From {name}",
+      "ReadLetter": "Read Letter",
+      "Title": "Title Earned",
+      "ViewRenown": "View Renown"
+    },
+    "Letters": {
+      "New": "New Letter",
+      "NewShort": "New",
+      "Edit": "Edit {name}",
+      "Send": "Send",
+      "Filters": {
+        "all": "All",
+        "unread": "Unread",
+        "pending": "Not delivered"
+      },
+      "Empty": "No letters yet.",
+      "Unread": "Unread",
+      "NotDelivered": "Not delivered yet",
+      "Arrives": "Arrives on {date}",
+      "DeliverNow": "Deliver now",
+      "StartHint": "No letters yet. Use New to write the first; it can arrive today or on a later day.",
+      "NoneHint": "No letters have reached you yet.",
+      "Kinds": {
+        "letter": "Letter",
+        "book": "Book",
+        "notice": "Notice",
+        "orders": "Orders"
+      },
+      "TitlePlaceholder": "To the bearer of the ember-lantern",
+      "Kind": "Kind",
+      "Sender": "From",
+      "SenderPlaceholder": "Captain Mara Holt",
+      "ArriveIn": "Arrives in (days)",
+      "ArriveHint": "0 delivers it now. Otherwise it arrives that many days after today ({today}) in the world’s calendar, with a pop-up for whoever it’s for.",
+      "Seal": "Seal or picture",
+      "Body": "Letter"
+    },
+    "Renown": {
+      "Empty": "No characters yet.",
+      "NoTitles": "No titles yet",
+      "OpenSheet": "Open the character sheet",
+      "Grant": "Grant Title",
+      "Titles": "Titles",
+      "Edit": "Edit {name}",
+      "Character": "Character",
+      "TitlePlaceholder": "Warden of the Vale",
+      "Description": "What it means",
+      "DescriptionPlaceholder": "Sworn protector of the barrow-lands",
+      "Reason": "Earned by",
+      "ReasonPlaceholder": "Recovered the Hollow Crown",
+      "Visible": "Players can see this title"
+    },
+    "Merchants": {
+      "New": "New Merchant",
+      "NewShort": "New",
+      "Edit": "Edit {name}",
+      "Create": "Create Merchant",
+      "Empty": "No merchants yet.",
+      "StartHint": "No merchants yet. Use New to add one; new merchants start hidden.",
+      "NoneHint": "No merchants are known to the party yet.",
+      "NamePlaceholder": "Ulfric’s Curiosities",
+      "Currency": "Currency",
+      "RestockDays": "Restocks every (days)",
+      "Never": "Never",
+      "RestockHint": "On each restock, every ware returns to its usual amount. Leave empty for a merchant who never restocks.",
+      "Stock": "Wares",
+      "StockDrop": "Drop items here from the sidebar or a compendium",
+      "Price": "Price",
+      "InStock": "In stock",
+      "RestocksTo": "Usual amount",
+      "AddWare": "Add ware",
+      "NoStock": "Nothing for sale right now.",
+      "SoldOut": "Sold out",
+      "Sold": "Sold one",
+      "AddOne": "One more in stock",
+      "RestockNow": "Restock now",
+      "Restocks": "Restocks every {days} days · next on {date}"
     }
   }
 }

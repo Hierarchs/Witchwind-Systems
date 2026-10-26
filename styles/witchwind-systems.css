@@ -3746,6 +3746,378 @@ ul.wws-chips {
 }
 
 /* ============================================ */
+/*  Letters                                     */
+/* ============================================ */
+
+/* An unread letter: its title in heading ink, with a wax-red diamond. */
+.wws .wws-row.wws-unread .wws-row-title {
+  color: var(--wws-parch-head);
+  font-weight: 700;
+}
+
+.wws-unread-mark {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: #8a2a1a;
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 2px rgb(138 42 26 / 20%);
+}
+
+/* The letter: a lighter sheet laid on the page, with its seal in the corner and the sender signed below. */
+.wws-paper {
+  position: relative;
+  max-width: 720px;
+  margin: 4px auto 0;
+  padding: 26px 34px 30px;
+  background: var(--wws-paper-grain), linear-gradient(170deg, #f5ecd6 0%, #ecdfc0 100%);
+  border: 1px solid rgb(90 62 30 / 25%);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 40%) inset, 0 6px 18px rgb(60 40 20 / 30%);
+  transform: rotate(-0.3deg);
+}
+
+.wws-paper-book {
+  border-left: 6px solid var(--wws-parch-head);
+}
+
+.wws-paper-orders {
+  border-top: 3px double var(--wws-gold-dim);
+}
+
+.wws-seal {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(60 20 10 / 45%);
+}
+
+.wws-signature {
+  margin: 18px 0 0;
+  text-align: right;
+  font-family: var(--wws-font-body);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--wws-parch-head);
+}
+
+/* ============================================ */
+/*  Renown                                      */
+/* ============================================ */
+
+.wws button.wws-portrait {
+  all: unset;
+  flex: none;
+  cursor: pointer;
+}
+
+.wws-portrait img {
+  display: block;
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: 0 0 0 3px var(--wws-parch-ink), 0 0 0 4px var(--wws-gold-dim), 0 4px 12px rgb(60 40 20 / 40%);
+}
+
+.wws-titles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-title:last-child {
+  border-bottom: none;
+}
+
+.wws-title-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--wws-slot-bg);
+  border: 2px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%);
+  color: var(--wws-gold);
+  font-size: 15px;
+}
+
+.wws-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-title-name {
+  font-family: var(--wws-font-display);
+  font-size: 16px;
+  color: var(--wws-parch-head);
+}
+
+.wws-title-description {
+  margin: 2px 0 0;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  font-style: italic;
+}
+
+.wws-title-record {
+  margin: 3px 0 0;
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-title:is(:hover, :focus-within) .wws-row-tools {
+  opacity: 1;
+}
+
+.wws-places {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws button.wws-place {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.wws button.wws-place:hover {
+  background: var(--wws-parch-wash);
+}
+
+/* ============================================ */
+/*  Merchants                                   */
+/* ============================================ */
+
+.wws-restock {
+  margin: -2px 0 10px;
+}
+
+.wws-wares {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each ware: a slot, its name, how many are left, and its price in gold Cinzel on the right. */
+.wws-ware {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-ware .wws-slot {
+  width: 42px;
+  height: 42px;
+  font-size: 16px;
+}
+
+.wws-ware-name {
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.wws-ware-count {
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-ware-price {
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  color: var(--wws-parch-head);
+  white-space: nowrap;
+}
+
+.wws-ware.wws-out {
+  opacity: 0.5;
+}
+
+.wws-ware.wws-out .wws-ware-name {
+  text-decoration: line-through;
+}
+
+.wws-ware:is(:hover, :focus-within) .wws-row-tools {
+  opacity: 1;
+}
+
+.wws-stock-head,
+.wws-stock-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 70px 70px 70px auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.wws-stock-head {
+  padding: 0 7px;
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wws-ink-muted);
+}
+
+.wws-stock-row .wws-qty-input {
+  width: 100%;
+}
+
+.wws-stock-row > input[type="hidden"] {
+  display: none;
+}
+
+/* ============================================ */
+/*  Renown on the character sheet               */
+/* ============================================ */
+
+/* A leather card in the dnd5e sheet's sidebar, like Witchwind Inventory's, with titles and faction ranks. */
+.wws-sheet-renown {
+  margin: 8px 0;
+  padding: 8px 10px 10px;
+  background: var(--wws-grain), var(--wws-panel);
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 55%);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+}
+
+.wws-sheet-renown h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  padding-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid var(--wws-gold-dim);
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws-sheet-renown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wws-sheet-renown button {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 4px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--wws-ink);
+}
+
+.wws-sheet-renown button:hover {
+  background: var(--wws-gold-wash);
+  color: var(--wws-gold);
+}
+
+.wws-sheet-titles i {
+  width: 16px;
+  text-align: center;
+  color: var(--wws-gold);
+}
+
+.wws-sheet-titles span {
+  font-family: var(--wws-font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.wws-sheet-factions {
+  margin-top: 6px !important;
+  padding-top: 6px !important;
+  border-top: 1px solid var(--wws-line);
+}
+
+.wws-sheet-emblem {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  background: var(--wws-slot-bg);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  color: var(--wws-gold);
+  font-size: 11px;
+}
+
+.wws-sheet-emblem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-sheet-faction {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.wws-sheet-faction strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wws-sheet-faction span {
+  font-size: 12px;
+  color: var(--wws-ink-muted);
+}
+
+/* Tier colours, lightened to read on the dark card. */
+.wws-sheet-renown .wws-tier {
+  font-size: 11px;
+  filter: brightness(1.8) saturate(0.9);
+}
+
+/* ============================================ */
 /*  Who can see it                              */
 /* ============================================ */
 
@@ -4105,6 +4477,25 @@ ul.wws-chips {
 /* Markers grow with the menu too, and still keep one size however far the map is zoomed. */
 #witchwind-codex .wws-pin {
   transform: translate(-50%, -50%) scale(calc(var(--wws-scale) / var(--wws-zoom, 1)));
+}
+
+/* Seven tabs need room: on smaller screens they tighten, then keep only their icons (named in tooltips). */
+@container wws-book (max-width: 1400px) {
+  .wws button.wws-tab {
+    gap: 7px;
+    padding: 15px 10px 14px;
+    font-size: 16px;
+  }
+}
+
+@container wws-book (max-width: 1080px) {
+  .wws button.wws-tab span {
+    display: none;
+  }
+
+  .wws button.wws-tab i {
+    font-size: 20px;
+  }
 }
 
 /* Narrower still: the tabs keep only their icons. */

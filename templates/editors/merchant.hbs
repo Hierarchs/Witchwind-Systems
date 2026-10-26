@@ -1,0 +1,96 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <nav class="wws-editor-tabs">
+    <button type="button" class="active" data-action="editorTab" data-tab="details" aria-pressed="true">{{localize "WITCHWIND_SYSTEMS.Editor.Details"}}</button>
+    <button type="button" data-action="editorTab" data-tab="stock" aria-pressed="false">{{localize "WITCHWIND_SYSTEMS.Merchants.Stock"}}</button>
+  </nav>
+
+  <section class="wws-panel active" data-panel="details">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</label>
+      <input type="text" name="name" value="{{entry.name}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Merchants.NamePlaceholder"}}">
+    </div>
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Quests.Location"}}</label>
+        <input type="text" name="location" value="{{entry.location}}">
+      </div>
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Quests.Faction"}}</label>
+        <select name="faction">
+          <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+          {{#each factions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Merchants.Currency"}}</label>
+        <input type="text" name="currency" value="{{entry.currency}}" placeholder="gp">
+      </div>
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Merchants.RestockDays"}}</label>
+        <input type="number" name="restockDays" value="{{entry.restockDays}}" min="0" step="1" placeholder="{{localize "WITCHWIND_SYSTEMS.Merchants.Never"}}">
+      </div>
+    </div>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Merchants.RestockHint"}}</p>
+    {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
+    <div class="form-group stacked">
+      <label>{{localize "WITCHWIND_SYSTEMS.Editor.Picture"}}</label>
+      {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+    </div>
+    <div class="form-group stacked">
+      <label>{{localize "WITCHWIND_SYSTEMS.Quests.Description"}}</label>
+      <textarea name="description" rows="3">{{entry.description}}</textarea>
+    </div>
+  </section>
+
+  <section class="wws-panel" data-panel="stock">
+    <div class="wws-drop-zone" data-drop="stock"><i class="fa-solid fa-box-open" inert></i> {{localize "WITCHWIND_SYSTEMS.Merchants.StockDrop"}}</div>
+    <div class="wws-stock-head" aria-hidden="true">
+      <span></span><span>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</span><span>{{localize "WITCHWIND_SYSTEMS.Merchants.Price"}}</span>
+      <span>{{localize "WITCHWIND_SYSTEMS.Merchants.InStock"}}</span><span>{{localize "WITCHWIND_SYSTEMS.Merchants.RestocksTo"}}</span><span></span>
+    </div>
+    <ol class="wws-rows" data-list="stock">
+      {{#each stock}}
+      <li class="wws-edit-row wws-stock-row" data-list-row>
+        <input type="hidden" data-field="id" value="{{id}}">
+        <input type="hidden" data-field="uuid" value="{{uuid}}">
+        <input type="hidden" data-field="img" value="{{img}}">
+        <input type="hidden" data-field="rarity" value="{{rarity}}">
+        <img class="wws-row-img" src="{{#if img}}{{img}}{{else}}icons/svg/item-bag.svg{{/if}}" data-show="img" alt="">
+        <input type="text" data-field="name" value="{{name}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}">
+        <input type="number" class="wws-qty-input" data-field="price" value="{{price}}" min="0" step="any" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.Price"}}">
+        <input type="number" class="wws-qty-input" data-field="qty" value="{{qty}}" min="0" step="1" placeholder="∞" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.InStock"}}">
+        <input type="number" class="wws-qty-input" data-field="max" value="{{max}}" min="0" step="1" placeholder="∞" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.RestocksTo"}}">
+        <span class="wws-row-buttons">
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+      {{/each}}
+    </ol>
+    <button type="button" class="wws-add" data-action="addRow" data-list="stock"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Merchants.AddWare"}}</button>
+    <template data-row-template="stock">
+      <li class="wws-edit-row wws-stock-row" data-list-row>
+        <input type="hidden" data-field="id" value="">
+        <input type="hidden" data-field="uuid" value="">
+        <input type="hidden" data-field="img" value="">
+        <input type="hidden" data-field="rarity" value="">
+        <img class="wws-row-img" src="icons/svg/item-bag.svg" data-show="img" alt="">
+        <input type="text" data-field="name" value="" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}">
+        <input type="number" class="wws-qty-input" data-field="price" value="0" min="0" step="any" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.Price"}}">
+        <input type="number" class="wws-qty-input" data-field="qty" value="" min="0" step="1" placeholder="∞" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.InStock"}}">
+        <input type="number" class="wws-qty-input" data-field="max" value="" min="0" step="1" placeholder="∞" aria-label="{{localize "WITCHWIND_SYSTEMS.Merchants.RestocksTo"}}">
+        <span class="wws-row-buttons">
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+    </template>
+  </section>
+</div>
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-scale-balanced" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Merchants.Create"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

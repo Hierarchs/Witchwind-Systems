@@ -1,0 +1,39 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Renown.Character"}}</label>
+    <select name="uuid">{{#each people}}<option value="{{uuid}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}</select>
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Title"}}</label>
+    <input type="text" name="name" value="{{entry.name}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Renown.TitlePlaceholder"}}">
+  </div>
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Maps.Icon"}}</legend>
+    <div class="wws-icon-grid">
+      {{#each icons}}
+      <label class="wws-icon-choice"><input type="radio" name="icon" value="{{value}}" {{#if checked}}checked{{/if}} aria-label="{{value}}"><i class="{{value}}" inert></i></label>
+      {{/each}}
+    </div>
+  </fieldset>
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Renown.Description"}}</label>
+    <textarea name="description" rows="2" placeholder="{{localize "WITCHWIND_SYSTEMS.Renown.DescriptionPlaceholder"}}">{{entry.description}}</textarea>
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Renown.Reason"}}</label>
+    <input type="text" name="reason" value="{{entry.reason}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Renown.ReasonPlaceholder"}}">
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Maps.LinkQuest"}}</label>
+    <select name="quest">
+      <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+      {{#each quests}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{title}}</option>{{/each}}
+    </select>
+  </div>
+  <label class="wws-toggle"><input type="checkbox" name="visible" {{#if entry.visible}}checked{{/if}}> <span>{{localize "WITCHWIND_SYSTEMS.Renown.Visible"}}</span></label>
+</div>
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-crown" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Renown.Grant"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

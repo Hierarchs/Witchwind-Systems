@@ -5,13 +5,29 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "maps", "factions"];
+export const SECTION_IDS = ["quests", "journal", "letters", "maps", "factions", "renown", "merchants"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
   journal: "fa-solid fa-feather-pointed",
+  letters: "fa-solid fa-envelope",
   maps: "fa-solid fa-map",
-  factions: "fa-solid fa-chess-rook"
+  factions: "fa-solid fa-chess-rook",
+  renown: "fa-solid fa-crown",
+  merchants: "fa-solid fa-scale-balanced"
+};
+
+/* -------------------------------------------- */
+/*  Letters                                     */
+/* -------------------------------------------- */
+
+export const LETTER_KINDS = ["letter", "book", "notice", "orders"];
+
+export const LETTER_ICONS = {
+  letter: "fa-solid fa-envelope",
+  book: "fa-solid fa-book",
+  notice: "fa-solid fa-scroll",
+  orders: "fa-solid fa-stamp"
 };
 
 /* -------------------------------------------- */

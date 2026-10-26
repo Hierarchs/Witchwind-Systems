@@ -46,6 +46,23 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Members.** Drop actors onto a faction's page, or use **Add the party** in the editor.
 - **Personal standing.** Each character can have their own standing alongside the party's, nudged with + and − beside their portrait or set in the editor. Characters who aren't members ("Not a member") are listed as known to the faction with their standing, and can be made members with one click.
 
+### Letters
+
+- **In-world letters, books, notices and orders** the GM writes and hands out, read inside the book on a sheet of paper with a seal or picture, signed by the sender.
+- **Delivered on a day.** A letter can arrive now or a set number of days later in the world's calendar. It stays hidden until the world's clock reaches that day, then arrives with a "Letter Arrived" pop-up and a **Read Letter** button. The GM can deliver one early.
+- **Unread marks.** Players see which letters they haven't opened, and can list only those.
+
+### Renown
+
+- **A card for each character** with the titles they've earned, such as "Warden of the Vale": what the title means, what earned it, the date in the world's calendar, and the quest behind it. Below that, their rank and standing in each faction they're known to.
+- **Granting a title** pops up "Title Earned" for the character's player.
+- **On the character sheet.** dnd5e character and NPC sheets get a small Renown card in their sidebar with the character's titles and faction ranks; each opens the book at it. Each player can turn it off.
+
+### Merchants
+
+- **Who sells what**: each merchant's wares as slots with prices and how many are left, their location and faction. Players browse; the GM marks sales with − and + on the page, or edits the stock.
+- **Restocking.** A merchant can restock every so many days of the world's calendar, refilling each ware to its usual amount as the clock passes; the GM can restock early. Drop items from the sidebar or a compendium into the stock to add them with their picture and price.
+
 ### Who can see it
 
 Every quest, map, faction, note and marker can be shown to all players or only some: tick the players in its editor. Limited entries carry a small lock-and-person mark for the GM, and "Only Aria, Bren" on their page.
@@ -79,7 +96,8 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Maps and Factions tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Letters, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |
 | Announce quest updates | The Elder Scrolls style banners for quest and faction changes. |

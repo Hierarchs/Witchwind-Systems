@@ -2,7 +2,7 @@
   "id": "witchwind-systems",
   "title": "Witchwind Systems",
   "description": "Quests, a shared journal, maps with markers and factions in one book, in Witchwind's leather and gold with Oblivion's parchment pages. Quests track and announce themselves as in the Elder Scrolls games; players write notes and place markers too.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "authors": [
     { "name": "Hierarchs", "url": "https://github.com/Hierarchs" }
   ],

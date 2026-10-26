@@ -26,15 +26,60 @@ let showing = false;
 export function initBanners() {
   seen = snapshot();
   store.onChange((kind, userId) => {
-    if ( !["quests", "factions"].includes(kind) ) return;
+    if ( !["quests", "factions", "letters", "titles"].includes(kind) ) return;
     const before = seen;
     seen = snapshot();
     // Whoever made the change already knows about it.
     if ( (userId === game.user.id) || !game.settings.get(MODULE_ID, "announce") ) return;
+    if ( kind === "letters" ) return letterArrivals(before.letters, seen.letters);
+    if ( kind === "titles" ) return titleAwards(before.titles, seen.titles);
     const events = kind === "quests" ? questEvents(before.quests, seen.quests, seen.factions)
       : factionEvents(before.factions, seen.factions);
     for ( const event of events ) announce(event);
   });
+}
+
+/** The world’s clock moved: letters held back for this day arrive. */
+export function onWorldTime() {
+  const before = seen;
+  seen = snapshot();
+  if ( game.settings.get(MODULE_ID, "announce") ) letterArrivals(before.letters, seen.letters);
+}
+
+/** A pop-up for each letter that has just reached this player, unless they’ve already read it. */
+function letterArrivals(before, after) {
+  if ( game.user.isGM ) return;
+  const read = new Set(store.readLetters());
+  for ( const letter of after.values() ) {
+    if ( before.has(letter.id) || read.has(letter.id) ) continue;
+    showNotice({
+      label: game.i18n.localize(`${L}.Notice.Letter`),
+      title: letter.title || "",
+      detail: letter.sender ? game.i18n.format(`${L}.Notice.From`, { name: letter.sender }) : "",
+      img: letter.img,
+      icon: "fa-solid fa-envelope",
+      open: { section: "letters", id: letter.id },
+      openLabel: game.i18n.localize(`${L}.Notice.ReadLetter`)
+    });
+  }
+}
+
+/** A pop-up when one of this player’s characters earns a title. */
+function titleAwards(before, after) {
+  if ( game.user.isGM ) return;
+  for ( const title of after.values() ) {
+    if ( before.has(title.id) ) continue;
+    const actor = docSync(title.uuid);
+    if ( !actor?.isOwner ) continue;
+    showNotice({
+      label: game.i18n.localize(`${L}.Notice.Title`),
+      title: title.name || "",
+      detail: [actor.name, title.reason].filter(Boolean).join(" · "),
+      icon: title.icon || "fa-solid fa-crown",
+      open: { section: "renown", id: title.uuid },
+      openLabel: game.i18n.localize(`${L}.Notice.ViewRenown`)
+    });
+  }
 }
 
 /**
@@ -77,7 +122,7 @@ function next() {
 
 function snapshot() {
   const visible = kind => new Map(store.all(kind).filter(e => store.isVisible(kind, e)).map(e => [e.id, e]));
-  return { quests: visible("quests"), factions: visible("factions") };
+  return { quests: visible("quests"), factions: visible("factions"), letters: visible("letters"), titles: visible("titles") };
 }
 
 const t = key => game.i18n.localize(`${L}.Banners.${key}`);
@@ -99,7 +144,7 @@ function questEvents(before, after, factions) {
       label: game.i18n.localize(`${L}.Notice.${labelKey}`),
       detail,
       img: quest.img || factions.get(quest.faction)?.img || "",
-      questId: quest.id
+      open: { section: "quests", id: quest.id }
     });
 
     if ( !prev ) {
