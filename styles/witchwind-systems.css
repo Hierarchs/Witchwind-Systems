@@ -3371,6 +3371,171 @@
 }
 
 /* ============================================ */
+/*  Quest pop-ups                               */
+/* ============================================ */
+
+/*
+ * Oblivion's "Quest added" box: a leather frame with Witchwind UI's inner rule, holding a parchment card with the
+ * double gold rule. A gold diamond sits on the frame's top edge, like the one under the open tab.
+ */
+.wws-notice-shade {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-index-tooltip, 9999) - 2);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: radial-gradient(ellipse at center, rgb(10 8 6 / 30%) 0%, rgb(10 8 6 / 62%) 100%);
+  animation: wws-fade-in 200ms ease-out;
+}
+
+.wws-notice {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 7px;
+  box-sizing: border-box;
+  background: var(--wws-leather);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 4px;
+  box-shadow: var(--wws-inner-rule), 0 0 0 1px var(--wws-dark), 0 18px 50px rgb(0 0 0 / 70%);
+  animation: wws-notice-in 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wws-notice::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  margin-left: -6px;
+  background: var(--wws-gold);
+  border: 1px solid var(--wws-dark);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--wws-gold-glow);
+}
+
+@keyframes wws-notice-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.95); }
+}
+
+.wws-notice-page {
+  padding: 14px 24px 16px;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  box-shadow: var(--wws-page-rule), inset 0 0 44px rgb(120 84 40 / 38%);
+  text-align: center;
+}
+
+.wws-notice-label {
+  margin: 0 0 12px;
+  padding-bottom: 7px;
+  border: none;
+  border-bottom: 3px double var(--wws-gold-dim);
+  font-family: var(--wws-font-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--wws-parch-head);
+}
+
+.wws-tone-green .wws-notice-label { color: var(--wws-good); }
+.wws-tone-red .wws-notice-label { color: var(--wws-bad); }
+
+.wws-notice-quest {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+/* The quest's icon in a square slot framed in gold, as an item sits in Witchwind Inventory. */
+.wws-notice-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--wws-slot-bg);
+  border: 2px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 55%), 0 2px 5px rgb(60 40 20 / 35%);
+  color: var(--wws-gold);
+  font-size: 20px;
+}
+
+.wws-notice-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-notice-heading {
+  min-width: 0;
+}
+
+.wws-notice-title {
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--wws-parch-ink);
+  overflow-wrap: anywhere;
+}
+
+/* The date in the world's calendar, in red ink as Oblivion writes it. */
+.wws-notice-date {
+  margin: 2px 0 0;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 600;
+  color: #8a2a1a;
+}
+
+.wws-notice-text {
+  margin: 12px 0 0;
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--wws-parch-ink);
+  text-align: left;
+}
+
+.wws-notice-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--wws-parch-rule);
+}
+
+.wws-notice-buttons button.wws-ink {
+  height: 30px;
+  min-width: 120px;
+  font-size: 12px;
+}
+
+.wws-notice-buttons button.wws-button {
+  height: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wws-notice-shade,
+  .wws-notice {
+    animation: none;
+  }
+}
+
+/* ============================================ */
 /*  The button in the Journal tab               */
 /* ============================================ */
 

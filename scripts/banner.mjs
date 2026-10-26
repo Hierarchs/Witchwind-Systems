@@ -2,6 +2,7 @@ import { MODULE_ID, L, standingTier } from "./config.mjs";
 import * as store from "./store.mjs";
 import { plainText, docSync } from "./helpers.mjs";
 import { playSound } from "./sounds.mjs";
+import { showNotice } from "./notice.mjs";
 
 /*
  * When the GM starts, updates, completes or fails a quest, or promotes your character in a faction, a title
@@ -15,6 +16,9 @@ const DURATION = 4800;
 /** The longest line of detail shown under a title. */
 const DETAIL_LENGTH = 140;
 
+/** The longest text shown in a quest pop-up. */
+const POPUP_LENGTH = 260;
+
 let seen = null;
 const queue = [];
 let showing = false;
@@ -27,13 +31,18 @@ export function initBanners() {
     seen = snapshot();
     // Whoever made the change already knows about it.
     if ( (userId === game.user.id) || !game.settings.get(MODULE_ID, "announce") ) return;
-    const events = kind === "quests" ? questEvents(before.quests, seen.quests) : factionEvents(before.factions, seen.factions);
+    const events = kind === "quests" ? questEvents(before.quests, seen.quests, seen.factions)
+      : factionEvents(before.factions, seen.factions);
     for ( const event of events ) announce(event);
   });
 }
 
-/** Show a banner, after any already showing. */
-export function announce({ label, title, detail, tone="gold", icon="fa-solid fa-scroll-old" }) {
+/**
+ * Show a banner, after any already showing. A quest added, completed or failed (an event with a popup) shows
+ * Oblivion's pop-up instead, unless the player has turned pop-ups off.
+ */
+export function announce({ label, title, detail, tone="gold", icon="fa-solid fa-scroll-old", popup }) {
+  if ( popup && game.settings.get(MODULE_ID, "questPopups") ) return showNotice({ title, tone, icon, ...popup });
   queue.push({ label, title, detail, tone, icon });
   if ( !showing ) next();
 }
@@ -72,9 +81,9 @@ function snapshot() {
 }
 
 const t = key => game.i18n.localize(`${L}.Banners.${key}`);
-const clip = text => (text.length > DETAIL_LENGTH ? `${text.slice(0, DETAIL_LENGTH - 1)}…` : text);
+const clip = (text, length=DETAIL_LENGTH) => (text.length > length ? `${text.slice(0, length - 1)}…` : text);
 
-function questEvents(before, after) {
+function questEvents(before, after, factions) {
   const events = [];
   for ( const quest of after.values() ) {
     const prev = before.get(quest.id);
@@ -83,18 +92,33 @@ function questEvents(before, after) {
     const shownObjectives = q => (q?.objectives ?? []).filter(o => !o.hidden);
     const shownLog = q => (q?.log ?? []).filter(e => !e.hidden);
 
+    // What the pop-up shows: the quest's picture (or its faction's emblem), and a line about it.
+    const latest = shownLog(quest).sort((a, b) => (b.date ?? 0) - (a.date ?? 0))[0];
+    const about = clip(plainText(quest.description) || shownObjectives(quest).find(o => !o.done)?.text || "", POPUP_LENGTH);
+    const popup = (labelKey, detail) => ({
+      label: game.i18n.localize(`${L}.Notice.${labelKey}`),
+      detail,
+      img: quest.img || factions.get(quest.faction)?.img || "",
+      questId: quest.id
+    });
+
     if ( !prev ) {
       if ( status === "active" ) {
         const first = shownObjectives(quest).find(o => !o.done);
-        events.push({ label: t("Started"), title, detail: first?.text, icon: "fa-solid fa-scroll-old" });
+        events.push({ label: t("Started"), title, detail: first?.text, icon: "fa-solid fa-scroll-old", popup: popup("Added", about) });
       }
       continue;
     }
 
     const prevStatus = prev.status ?? "active";
     if ( status !== prevStatus ) {
-      if ( status === "completed" ) events.push({ label: t("Completed"), title, tone: "green", icon: "fa-solid fa-circle-check" });
-      else if ( status === "failed" ) events.push({ label: t("Failed"), title, tone: "red", icon: "fa-solid fa-circle-xmark" });
+      const ending = latest ? clip(plainText(latest.text), POPUP_LENGTH) : about;
+      if ( status === "completed" ) {
+        events.push({ label: t("Completed"), title, tone: "green", icon: "fa-solid fa-circle-check", popup: popup("Completed", ending) });
+      }
+      else if ( status === "failed" ) {
+        events.push({ label: t("Failed"), title, tone: "red", icon: "fa-solid fa-circle-xmark", popup: popup("Failed", ending) });
+      }
       else events.push({ label: t("Updated"), title, icon: "fa-solid fa-scroll-old" });
       continue;
     }

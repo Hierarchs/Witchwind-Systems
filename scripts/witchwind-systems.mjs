@@ -6,6 +6,7 @@ import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
 import { initBanners, announce } from "./banner.mjs";
 import { registerSounds, playSound } from "./sounds.mjs";
+import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
 import { SECTION_KINDS } from "./helpers.mjs";
 
@@ -74,6 +75,15 @@ Hooks.once("init", () => {
     type: Boolean,
     default: true,
     onChange: () => Tracker.refresh()
+  });
+
+  register("questPopups", {
+    name: `${L}.Settings.QuestPopups.Name`,
+    hint: `${L}.Settings.QuestPopups.Hint`,
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true
   });
 
   registerSounds();
@@ -201,6 +211,8 @@ Hooks.once("ready", () => {
     close: () => Codex.existing?.close(),
     /** Show an Elder Scrolls style banner on this client: { label, title, detail }. */
     announce,
+    /** Show an Oblivion style quest pop-up on this client: { label, title, detail, img, questId }. */
+    notice: showNotice,
     /** Play one of the module's sounds on this client: "open", "close", "page" or "quest". */
     playSound,
     store

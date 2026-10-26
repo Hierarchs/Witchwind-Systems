@@ -17,7 +17,8 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **A journal per quest.** Dated entries, newest first, tell the story as it's played. The GM can write entries ahead of time, hidden, and reveal them when the moment comes; the same goes for objectives.
 - **Giver, location, faction and rewards.** Drop an actor in as the quest giver and items in as rewards; rewards are Witchwind Inventory's slots, framed by rarity. Click either to open its sheet.
 - **Track quests.** Tracked quests and their open objectives sit in a small steel card on your screen; drag it wherever you like. A tracked quest's marker on the map breathes with a gold ring.
-- **Announcements.** "Quest Started", "Objective Complete", "Quest Updated", "Quest Completed" and "Quest Failed" fade in across the top of each player's screen, Elder Scrolls style.
+- **Quest pop-ups.** When a quest is added, completed or failed, each player gets Oblivion's box in Witchwind's leather and parchment: "Quest Added" over the quest's icon (its picture or its faction's emblem), its name, the date in red in the world's own calendar ("27th of Last Seed, 433"), a line about it, and **Continue** (or Enter, or Esc). **View Quest** opens the book at it. Several arriving together follow one another. Each player can switch them off for banners instead.
+- **Announcements.** "Objective Complete", "New Objective" and "Quest Updated" fade in across the top of each player's screen, Elder Scrolls style.
 - **GM tools** sit on their own dashed strip: add an entry, edit, hide or reveal, show to players, complete, fail, reopen, delete. New quests start hidden, so you can prepare them in advance.
 
 ### Journal
@@ -82,6 +83,7 @@ Under **Configure Settings > Witchwind Systems**:
 | Players can place map markers | Lets players place markers, and move or delete their own. |
 | Announce quest updates | The Elder Scrolls style banners for quest and faction changes. |
 | Show the quest tracker | Each player's own choice. |
+| Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
 | Sounds: book opens, closes, page turns (two), quest updates | Audio files on your server, chosen by the GM. Empty plays nothing. |
 | Sound volume | Each player's own volume; zero turns the sounds off. |
 | Backups and Imports | Download, restore or import from the Journal (GM only). |
@@ -95,6 +97,7 @@ const api = game.modules.get("witchwind-systems").api;
 api.open("quests");              // or "journal", "maps", "factions"; add an entry's id to open it
 api.toggle();
 api.announce({ label: "Quest Started", title: "The Hollow Crown", detail: "Speak to Captain Holt" });
+api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave robbers took the crown." });
 ```
 
 ## Notes

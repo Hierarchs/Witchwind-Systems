@@ -87,6 +87,10 @@
           "Name": "Sound volume",
           "Hint": "How loud the book and quest sounds are for you. Set it to zero to turn them off. This only changes your own sound."
         }
+      },
+      "QuestPopups": {
+        "Name": "Quest pop-ups",
+        "Hint": "When a quest is added, completed or failed, show a pop-up to continue past, as in Oblivion. Turn off to see a banner across the top instead. This only changes your own view."
       }
     },
     "Keys": {
@@ -416,6 +420,14 @@
       "Restored": "The backup has been restored.",
       "NothingToImport": "There are no journal entries in that folder.",
       "Imported": "Imported {count} quests."
+    },
+    "Notice": {
+      "Added": "Quest Added",
+      "Completed": "Quest Completed",
+      "Failed": "Quest Failed",
+      "Continue": "Continue",
+      "View": "View Quest",
+      "Date": "{day} of {month}, {year}"
     }
   }
 }
