@@ -28,8 +28,8 @@
       {{/if}}
       <ol class="wws-pinboard">
         {{#each page.notices}}
-        <li>
-          <button type="button" class="wws-notice-card{{#if selected}} selected{{/if}} wws-status-{{status}}"
+        <li style="--wws-i: {{@index}}">
+          <button type="button" class="wws-notice-card wws-slip-{{paper}}{{#if change}} wws-{{change}}{{/if}}{{#if selected}} selected{{/if}} wws-status-{{status}}"
                   data-action="noticeSelect" data-id="{{id}}" style="--wws-tilt: {{tilt}}deg; --wws-diff: {{diffColor}};">
             <span class="wws-notice-title">{{title}}</span>
             <span class="wws-notice-meta"><span class="wws-diff-dot" aria-hidden="true"></span>{{diffLabel}}{{#if region}} · {{region}}{{/if}}</span>

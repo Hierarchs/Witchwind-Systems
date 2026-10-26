@@ -25,6 +25,7 @@ export default {
     const shown = all.filter(n => (region === ALL) || (n.region === region));
     if ( !shown.some(n => n.id === app.selected.notices) ) app.selected.notices = shown[0]?.id ?? null;
     const notice = shown.find(n => n.id === app.selected.notices);
+    const changes = changesIn(all);
 
     return {
       isGM,
@@ -33,7 +34,7 @@ export default {
         { id: ALL, name: loc("Notices.AllRegions"), count: all.length, active: region === ALL },
         ...regions.map(r => ({ id: r.id, name: r.name, count: all.filter(n => n.region === r.id).length, active: r.id === region }))
       ],
-      notices: shown.map(n => ({ ...cardOf(n, regionName), selected: n.id === app.selected.notices })),
+      notices: shown.map(n => ({ ...cardOf(n, regionName, changes), selected: n.id === app.selected.notices })),
       empty: !shown.length,
       notice: notice ? await detail(notice, regionName) : null
     };
@@ -149,11 +150,38 @@ function statusOf(n) {
 }
 
 /** A small, stable tilt for each notice, so the board looks pinned up by hand rather than in a grid. */
-function tiltOf(id) {
-  return [...String(id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 7 - 3;
+function hashOf(id) {
+  return [...String(id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
 }
 
-function cardOf(n, regionName) {
+function tiltOf(id) {
+  return hashOf(id) % 7 - 3;
+}
+
+/** Which of the two slip parchments a notice is pinned on. */
+function paperOf(id) {
+  return hashOf(id) % 2 ? "b" : "a";
+}
+
+/** The status each notice had when the board last drew it, and whether the board has drawn any yet. */
+const drawn = new Map();
+let primed = false;
+
+/** Notices pinned up, or changed, since the board last drew them: "arrived" or "updated", by id. */
+function changesIn(notices) {
+  const changes = new Map();
+  for ( const n of notices ) {
+    const status = statusOf(n);
+    const before = drawn.get(n.id);
+    if ( primed && (before === undefined) ) changes.set(n.id, "arrived");
+    else if ( primed && (before !== status) ) changes.set(n.id, "updated");
+    drawn.set(n.id, status);
+  }
+  primed = true;
+  return changes;
+}
+
+function cardOf(n, regionName, changes) {
   const diff = difficultyOf(n.difficulty);
   const status = statusOf(n);
   return {
@@ -164,6 +192,8 @@ function cardOf(n, regionName) {
     diffColor: diff.color,
     diffLabel: loc(`Notices.Difficulty.${diff.id}`),
     tilt: tiltOf(n.id),
+    paper: paperOf(n.id),
+    change: changes.get(n.id) ?? "",
     status,
     statusLabel: loc(`Notices.Status.${status}`),
     hidden: !n.visible

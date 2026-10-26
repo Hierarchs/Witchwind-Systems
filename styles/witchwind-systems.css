@@ -4722,9 +4722,9 @@ ul.wws-chips {
   overflow: hidden;
   color: #e3cfa6;
   background:
-    repeating-linear-gradient(92deg, rgb(255 230 180 / 3%) 0 2px, transparent 2px 9px),
-    repeating-linear-gradient(90deg, rgb(20 12 6 / 40%) 0 1px, transparent 1px 180px),
-    linear-gradient(180deg, #4a3020 0%, #3a2416 100%);
+    linear-gradient(180deg, rgb(20 12 6 / 18%), rgb(20 12 6 / 42%)),
+    url("../images/notices/board.webp") center / cover no-repeat,
+    #3a2416;
   box-shadow: inset 0 0 50px rgb(0 0 0 / 60%), inset -6px 0 14px -8px rgb(0 0 0 / 70%);
 }
 
@@ -4819,15 +4819,17 @@ ul.wws-chips {
   flex-direction: column;
   gap: 5px;
   width: 100%;
-  min-height: 118px;
-  padding: 16px 12px 14px;
-  background: var(--wws-paper);
+  min-height: 130px;
+  padding: 24px 20px 20px;
+  background-color: var(--wws-paper);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   color: var(--wws-parch-ink);
   border-radius: 2px;
-  box-shadow: 0 6px 12px rgb(0 0 0 / 55%), inset 0 0 26px rgb(120 84 40 / 30%);
+  filter: drop-shadow(0 5px 6px rgb(0 0 0 / 55%));
   transform: rotate(var(--wws-tilt, 0deg));
   cursor: pointer;
-  transition: transform 220ms ease-out, box-shadow 220ms ease-out;
+  transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 300ms ease-out;
 }
 
 .wws-notice-card::before {
@@ -4855,7 +4857,7 @@ ul.wws-chips {
 
 .wws button.wws-notice-card:hover {
   transform: rotate(0deg) translateY(-3px);
-  box-shadow: 0 12px 20px rgb(0 0 0 / 60%), inset 0 0 26px rgb(120 84 40 / 30%);
+  filter: drop-shadow(0 10px 10px rgb(0 0 0 / 60%));
 }
 
 .wws button.wws-notice-card.selected {
@@ -4904,9 +4906,8 @@ ul.wws-chips {
 
 /* Taken, expired or taken down: a stamp across the slip. */
 .wws-notice-stamp {
-  position: absolute;
-  right: 8px;
-  bottom: 12px;
+  align-self: flex-start;
+  margin-top: 4px;
   padding: 2px 8px;
   border: 2px solid #8a2a1a;
   border-radius: 2px;
@@ -4917,7 +4918,7 @@ ul.wws-chips {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  transform: rotate(-12deg);
+  transform: rotate(-6deg);
 }
 
 .wws button.wws-notice-card.wws-status-closed {
@@ -4989,16 +4990,81 @@ ul.wws-chips {
   border-color: var(--wws-parch-muted);
 }
 
-/* Each notice on the board comes in with a small pop, one after another. */
+/* The notices settle onto the board one after another, each a little after the last (the first twelve). */
 #witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li {
-  animation: wws-pop-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  animation-delay: 120ms;
+  animation: wws-rise-in 460ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(min(var(--wws-i, 0), 12) * 50ms + 80ms);
 }
 
-#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li:nth-child(3n + 2) {
-  animation-delay: 190ms;
+/* ============================================ */
+/*  Notice board: parchment and motion          */
+/* ============================================ */
+
+/* Each slip is one of the two lighter parchments, chosen by its notice. */
+.wws button.wws-notice-card.wws-slip-a {
+  background-image: url("../images/notices/parchment-seal.webp");
 }
 
-#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="list"]) .wws-pinboard > li:nth-child(3n) {
-  animation-delay: 260ms;
+.wws button.wws-notice-card.wws-slip-b {
+  background-image: url("../images/notices/parchment-gold.webp");
+}
+
+/* The notice being read is written on the red-bordered parchment, with its text kept inside the border. */
+.wws-notice-entry {
+  box-sizing: border-box;
+  min-height: 560px;
+  padding: 50px 52px 52px;
+  background: url("../images/notices/parchment-red.webp") center / cover no-repeat;
+}
+
+/* A new notice drops onto the board, and its pin is pressed in after it lands. */
+@keyframes wws-pin-drop {
+  0% { opacity: 0; transform: translateY(-48px) rotate(calc(var(--wws-tilt, 0deg) - 8deg)); }
+  55% { opacity: 1; transform: translateY(6px) rotate(calc(var(--wws-tilt, 0deg) + 2deg)); }
+  78% { transform: translateY(-2px) rotate(var(--wws-tilt, 0deg)); }
+  100% { transform: rotate(var(--wws-tilt, 0deg)); }
+}
+
+@keyframes wws-pin-land {
+  0% { opacity: 0; transform: scale(2.4); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Only for changes that came in while the board was up: not when the book opens, or a tab or region is chosen. */
+#witchwind-codex[data-animate=""] .wws-notice-card.wws-arrived {
+  animation: wws-pin-drop 640ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+#witchwind-codex[data-animate=""] .wws-notice-card.wws-arrived::before {
+  animation: wws-pin-land 240ms ease-in 480ms backwards;
+}
+
+/* A notice that was taken, taken down or put back up is stamped again, with the slam of the quest stamps. */
+@keyframes wws-notice-slam {
+  0% { opacity: 0; transform: rotate(-6deg) scale(2); }
+  60% { opacity: 1; transform: rotate(-6deg) scale(0.92); }
+  100% { opacity: 1; transform: rotate(-6deg) scale(1); }
+}
+
+#witchwind-codex[data-animate=""] .wws-notice-card.wws-updated .wws-notice-stamp {
+  animation: wws-notice-slam 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 160ms backwards;
+}
+
+/* The chosen notice straightens from its tilt as it is picked up. */
+@keyframes wws-select-lift {
+  from { transform: rotate(var(--wws-tilt, 0deg)); }
+}
+
+#witchwind-codex[data-animate="entry"] .wws-notice-card.selected {
+  animation: wws-select-lift 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* The notice unrolls down the page as it is opened, rather than appearing all at once. */
+@keyframes wws-unroll {
+  from { clip-path: inset(0 0 100% 0); transform: translateY(-8px); }
+  to { clip-path: inset(0 0 0 0); transform: none; }
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-notice-entry {
+  animation: wws-unroll 520ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
