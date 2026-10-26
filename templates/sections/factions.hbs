@@ -1,19 +1,44 @@
-<div class="wws-spread wws-factions">
+<div class="wws-spread wws-standing-tab" data-mode="{{page.mode}}">
 
-  {{!-- Left page: the factions --}}
+  {{!-- Left page: the chosen mode's list, under a tab for each mode --}}
   <section class="wws-page wws-page-list">
     <header class="wws-page-head">
       <h2>{{localize "WITCHWIND_SYSTEMS.Sections.factions"}}</h2>
       {{#if page.canCreate}}
       <button type="button" class="wws-ink" data-action="factionNew">
-        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Factions.NewShort"}}
+        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Factions.New"}}
       </button>
       {{/if}}
     </header>
 
+    <nav class="wws-modes" aria-label="{{localize "WITCHWIND_SYSTEMS.Sections.factions"}}">
+      {{#each page.modes}}
+      <button type="button" class="wws-mode{{#if active}} active{{/if}}" data-action="standingMode" data-filter="{{filter}}"
+              data-tooltip="{{hint}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+        <i class="{{icon}}" inert></i> {{localize label}} <span class="wws-count">{{count}}</span>
+      </button>
+      {{/each}}
+    </nav>
+
     <div class="wws-list-scroll">
-      {{#if page.empty}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Factions.Empty"}}</p>{{/if}}
+      {{#if page.empty}}
+      <p class="wws-empty">{{#if page.isRenown}}{{localize "WITCHWIND_SYSTEMS.Renown.Empty"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Factions.Empty"}}{{/if}}</p>
+      {{/if}}
       <ol class="wws-list">
+        {{#if page.isRenown}}
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="renownSelect" data-id="{{uuid}}" data-uuid="{{uuid}}">
+            <img class="wws-thumb" src="{{img}}" alt="">
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{name}}</span>
+              <span class="wws-row-sub">{{#if latest}}{{latest}}{{else}}{{localize "WITCHWIND_SYSTEMS.Renown.NoTitles"}}{{/if}}</span>
+            </span>
+            {{#if count}}<span class="wws-count">{{count}}</span>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+        {{else}}
         {{#each page.rows}}
         <li>
           <button type="button" class="wws-row wws-faction-row{{#if selected}} selected{{/if}}" data-action="factionSelect" data-id="{{id}}"
@@ -30,13 +55,80 @@
           </button>
         </li>
         {{/each}}
+        {{/if}}
       </ol>
     </div>
   </section>
 
-  {{!-- Right page: the chosen faction --}}
+  {{!-- Right page: the chosen faction, or the chosen character's renown --}}
   <section class="wws-page wws-page-detail">
     <div class="wws-detail-scroll">
+      {{#if page.isRenown}}
+      {{#with page.person as |person|}}
+      <article class="wws-entry wws-character-card">
+        <header class="wws-faction-head">
+          <button type="button" class="wws-portrait" data-action="renownSheet" data-uuid="{{person.uuid}}" data-tooltip="WITCHWIND_SYSTEMS.Renown.OpenSheet">
+            <img src="{{person.img}}" alt="">
+          </button>
+          <div class="wws-entry-head">
+            <h1 class="wws-entry-title">{{person.name}}</h1>
+            {{#if person.titles.length}}<p class="wws-motto">{{person.titles.0.name}}</p>{{/if}}
+          </div>
+        </header>
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-button" data-action="titleGrant" data-uuid="{{person.uuid}}"><i class="fa-solid fa-crown" inert></i> {{localize "WITCHWIND_SYSTEMS.Renown.Grant"}}</button>
+        </div>
+        {{/if}}
+
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Renown.Titles"}}</h3>
+        {{#if person.titles.length}}
+        <ol class="wws-titles">
+          {{#each person.titles}}
+          <li class="wws-title{{#if hidden}} wws-is-hidden{{/if}}">
+            <span class="wws-title-mark"><i class="{{#if icon}}{{icon}}{{else}}fa-solid fa-crown{{/if}}" inert></i></span>
+            <div class="wws-title-text">
+              <strong class="wws-title-name">{{name}}</strong>
+              {{#if description}}<p class="wws-title-description">{{description}}</p>{{/if}}
+              <p class="wws-title-record">
+                {{dateLabel}}{{#if reason}} · {{reason}}{{/if}}
+                {{#if quest}} · <button type="button" class="wws-link" data-action="renownQuest" data-quest="{{quest.id}}">{{quest.title}}</button>{{/if}}
+              </p>
+            </div>
+            {{#if @root.isGM}}
+            <span class="wws-row-tools">
+              <button type="button" class="wws-tool wws-mini" data-action="titleEdit" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit"><i class="fa-solid fa-pen-to-square" inert></i></button>
+              <button type="button" class="wws-tool wws-mini wws-bad" data-action="titleDelete" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+            </span>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ol>
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Renown.NoTitles"}}</p>
+        {{/if}}
+
+        {{#if person.factions.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Sections.factions"}}</h3>
+        <ul class="wws-places">
+          {{#each person.factions}}
+          <li>
+            <button type="button" class="wws-place" data-action="renownFaction" data-faction="{{id}}">
+              <span class="wws-emblem">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-chess-rook" inert></i>{{/if}}</span>
+              <span class="wws-row-text"><span class="wws-row-title">{{name}}</span><span class="wws-row-sub">{{rankName}}</span></span>
+              <span class="wws-tier wws-tier-{{tier}}">{{tierLabel}}</span> <span class="wws-standing-value">{{standingLabel}}</span>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page"><i class="fa-solid fa-crown" inert></i> {{localize "WITCHWIND_SYSTEMS.Renown.Empty"}}</p>
+      {{/with}}
+      {{else}}
       {{#with page.faction as |faction|}}
       <article class="wws-entry wws-faction-page" data-id="{{faction.id}}"
                style="--wws-faction: {{#if faction.color}}{{faction.color}}{{else}}#8f7442{{/if}};">
@@ -256,6 +348,7 @@
         {{#if page.canCreate}}{{localize "WITCHWIND_SYSTEMS.Factions.StartHint"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Factions.NoneHint"}}{{/if}}
       </p>
       {{/with}}
+      {{/if}}
     </div>
   </section>
 </div>

@@ -1,74 +1,77 @@
-import { PATH, L, DEFAULT_RANKS, standingTier } from "../config.mjs";
+import { L, DEFAULT_RANKS, standingTier } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { loc, confirmDelete, openSheet, worldDate, worldNow, partyCharacters } from "../helpers.mjs";
 
 /*
- * Renown: each character's card, with the titles they've earned (and what earned them) and their place in each
- * faction. A title is awarded to one character with a reason, a date in the world's calendar, and optionally the
- * quest that earned it.
+ * Renown, the second mode of the Standing tab (see factions.mjs): each character's card, with the titles they've
+ * earned (and what earned them) and their place in each faction. A title is awarded to one character with a reason,
+ * a date in the world's calendar, and optionally the quest that earned it.
  */
-export default {
-  id: "renown",
-  template: `${PATH}/templates/sections/renown.hbs`,
 
-  async prepare(app) {
-    const titles = store.all("titles").filter(t => store.isVisible("titles", t));
-    const people = partyCharacters(titles);
-    if ( !people.some(p => p.uuid === app.selected.renown) ) app.selected.renown = people[0]?.uuid ?? null;
+/** The Renown mode's list of characters, and the card of the chosen one. */
+export function renownPage(app) {
+  const titles = store.all("titles").filter(t => store.isVisible("titles", t));
+  const people = partyCharacters(titles);
+  if ( !people.some(p => p.uuid === app.selected.renown) ) app.selected.renown = people[0]?.uuid ?? null;
 
-    const rows = people.map(p => {
-      const held = titles.filter(t => t.uuid === p.uuid).sort((a, b) => (b.date ?? 0) - (a.date ?? 0));
-      return { ...p, count: held.length, latest: held[0]?.name, selected: p.uuid === app.selected.renown };
-    });
+  const rows = people.map(p => {
+    const held = titles.filter(t => t.uuid === p.uuid).sort((a, b) => (b.date ?? 0) - (a.date ?? 0));
+    return { ...p, count: held.length, latest: held[0]?.name, selected: p.uuid === app.selected.renown };
+  });
 
-    const person = people.find(p => p.uuid === app.selected.renown);
-    return { rows, empty: !rows.length, isGM: game.user.isGM, person: person ? card(person, titles) : null };
+  const person = people.find(p => p.uuid === app.selected.renown);
+  return { rows, empty: !rows.length, person: person ? card(person, titles) : null };
+}
+
+/** How many characters the Renown mode lists, for its tab. */
+export function renownCount() {
+  return partyCharacters(store.all("titles").filter(t => store.isVisible("titles", t))).length;
+}
+
+/** The Renown mode's actions. The Standing tab takes these on along with its own. */
+export const renownActions = {
+  renownSelect(event, target) {
+    this.selected.renown = target.dataset.uuid;
+    this.render();
   },
 
-  actions: {
-    renownSelect(event, target) {
-      this.selected.renown = target.dataset.uuid;
-      this.render();
-    },
+  titleGrant(event, target) {
+    openEditor("title", {
+      entry: { uuid: target.dataset.uuid, visible: true },
+      title: loc("Renown.Grant"),
+      onSave: async data => {
+        await store.create("titles", { ...data, date: worldNow() });
+        this.selected.renown = data.uuid;
+      }
+    });
+  },
 
-    titleGrant(event, target) {
-      openEditor("title", {
-        entry: { uuid: target.dataset.uuid, visible: true },
-        title: loc("Renown.Grant"),
-        onSave: async data => {
-          await store.create("titles", { ...data, date: worldNow() });
-          this.selected.renown = data.uuid;
-        }
-      });
-    },
+  titleEdit(event, target) {
+    const title = store.get("titles", target.dataset.id);
+    if ( !title ) return;
+    openEditor("title", {
+      entry: title,
+      title: loc("Renown.Edit", { name: title.name }),
+      onSave: data => store.update("titles", title.id, data)
+    });
+  },
 
-    titleEdit(event, target) {
-      const title = store.get("titles", target.dataset.id);
-      if ( !title ) return;
-      openEditor("title", {
-        entry: title,
-        title: loc("Renown.Edit", { name: title.name }),
-        onSave: data => store.update("titles", title.id, data)
-      });
-    },
+  async titleDelete(event, target) {
+    const title = store.get("titles", target.dataset.id);
+    if ( title && await confirmDelete(title.name) ) await store.remove("titles", title.id);
+  },
 
-    async titleDelete(event, target) {
-      const title = store.get("titles", target.dataset.id);
-      if ( title && await confirmDelete(title.name) ) await store.remove("titles", title.id);
-    },
+  renownSheet(event, target) {
+    return openSheet(target.dataset.uuid);
+  },
 
-    renownSheet(event, target) {
-      return openSheet(target.dataset.uuid);
-    },
+  renownFaction(event, target) {
+    this.open("factions", target.dataset.faction);
+  },
 
-    renownFaction(event, target) {
-      this.open("factions", target.dataset.faction);
-    },
-
-    renownQuest(event, target) {
-      this.open("quests", target.dataset.quest);
-    }
+  renownQuest(event, target) {
+    this.open("quests", target.dataset.quest);
   }
 };
 

@@ -2,6 +2,12 @@ import { PATH, L, DEFAULT_RANKS, standingTier } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { enrich, loc, confirmDelete, openSheet, showToPlayers, docSync, viewerNames, byName, byTitle } from "../helpers.mjs";
+import { renownPage, renownCount, renownActions } from "./renown.mjs";
+
+/*
+ * The Standing tab, in two modes, as the Journal has notes and letters: Factions, each one's standing and the party's
+ * ranks in it, and Renown, each character's titles and place in the factions. Each mode keeps its own chosen entry.
+ */
 
 /** How far one click of the standing arrows moves it. */
 const STANDING_STEP = 5;
@@ -11,31 +17,19 @@ export default {
   template: `${PATH}/templates/sections/factions.hbs`,
 
   async prepare(app) {
-    const factions = store.all("factions").filter(f => store.isVisible("factions", f)).sort(byName);
-    if ( !factions.some(f => f.id === app.selected.factions) ) app.selected.factions = factions[0]?.id ?? null;
-
-    const rows = factions.map(f => {
-      const tier = standingTier(f.standing ?? 0);
-      const yours = members(f).filter(m => m.yours).sort((a, b) => b.rank - a.rank)[0];
-      return {
-        id: f.id,
-        name: f.name || loc("Untitled"),
-        img: f.img,
-        color: f.color,
-        tier,
-        tierLabel: `${L}.Factions.Tiers.${tier}`,
-        yourRank: yours?.rankName,
-        hidden: !f.visible,
-        selected: f.id === app.selected.factions
-      };
-    });
-
-    const faction = factions.find(f => f.id === app.selected.factions);
+    const mode = app.filters.factions === "renown" ? "renown" : "factions";
+    const page = (mode === "renown") ? renownPage(app) : await factionsPage(app);
+    const factionCount = store.all("factions").filter(f => store.isVisible("factions", f)).length;
     return {
-      rows,
-      empty: !rows.length,
-      canCreate: game.user.isGM,
-      faction: faction ? await detail(faction, app) : null
+      ...page,
+      mode,
+      isRenown: mode === "renown",
+      modes: [
+        { id: "factions", filter: "factions", label: `${L}.Standing.Modes.factions`, hint: `${L}.Standing.Modes.factionsHint`,
+          icon: "fa-solid fa-chess-rook", count: factionCount, active: mode === "factions" },
+        { id: "renown", filter: "renown", label: `${L}.Standing.Modes.renown`, hint: `${L}.Standing.Modes.renownHint`,
+          icon: "fa-solid fa-crown", count: renownCount(), active: mode === "renown" }
+      ]
     };
   },
 
@@ -66,6 +60,13 @@ export default {
   },
 
   actions: {
+    ...renownActions,
+
+    standingMode(event, target) {
+      this.filters.factions = target.dataset.filter;
+      this.render();
+    },
+
     factionSelect(event, target) {
       this.selected.factions = target.dataset.id;
       this.render();
@@ -160,6 +161,36 @@ export default {
 };
 
 /* -------------------------------------------- */
+
+/** The Factions mode: the list of visible factions, and the chosen one's page. */
+async function factionsPage(app) {
+  const factions = store.all("factions").filter(f => store.isVisible("factions", f)).sort(byName);
+  if ( !factions.some(f => f.id === app.selected.factions) ) app.selected.factions = factions[0]?.id ?? null;
+
+  const rows = factions.map(f => {
+    const tier = standingTier(f.standing ?? 0);
+    const yours = members(f).filter(m => m.yours).sort((a, b) => b.rank - a.rank)[0];
+    return {
+      id: f.id,
+      name: f.name || loc("Untitled"),
+      img: f.img,
+      color: f.color,
+      tier,
+      tierLabel: `${L}.Factions.Tiers.${tier}`,
+      yourRank: yours?.rankName,
+      hidden: !f.visible,
+      selected: f.id === app.selected.factions
+    };
+  });
+
+  const faction = factions.find(f => f.id === app.selected.factions);
+  return {
+    rows,
+    empty: !rows.length,
+    canCreate: game.user.isGM,
+    faction: faction ? await detail(faction, app) : null
+  };
+}
 
 const ranksOf = f => (f.ranks?.length ? f.ranks : DEFAULT_RANKS);
 

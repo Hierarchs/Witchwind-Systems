@@ -131,7 +131,7 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, notices: null, maps: "KeyM", factions: null, renown: null, merchants: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, notices: null, maps: "KeyM", factions: null, merchants: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,

@@ -25,9 +25,8 @@
       "quests": "Quests",
       "journal": "Journal",
       "maps": "Maps",
-      "factions": "Factions",
+      "factions": "Standing",
       "letters": "Letters",
-      "renown": "Renown",
       "merchants": "Merchants",
       "bestiary": "Bestiary",
       "notices": "Notices"
@@ -47,16 +46,12 @@
           "Hint": "Show the Maps tab, with the GM's maps and everyone's markers, for everyone in this world."
         },
         "factions": {
-          "Name": "Factions tab",
-          "Hint": "Show the Factions tab, with each faction's standing and the party's ranks, for everyone in this world."
+          "Name": "Standing tab",
+          "Hint": "Show the Standing tab, with each faction and its standing, and each character’s titles, for everyone in this world."
         },
         "letters": {
           "Name": "Letters tab",
           "Hint": "Show the Letters tab, with the letters, books, notices and orders the GM hands out, for everyone in this world."
-        },
-        "renown": {
-          "Name": "Renown tab",
-          "Hint": "Show the Renown tab, with each character’s titles and faction ranks, for everyone in this world."
         },
         "merchants": {
           "Name": "Merchants tab",
@@ -142,7 +137,6 @@
       "nextTab": "Next tab",
       "previousTab": "Previous tab",
       "letters": "Open the letters",
-      "renown": "Open renown",
       "merchants": "Open the merchants",
       "bestiary": "Open the bestiary",
       "notices": "Open the notice board"
@@ -688,6 +682,14 @@
         "deadly": "Deadly"
       },
       "Title": "Notice Board"
+    },
+    "Standing": {
+      "Modes": {
+        "factions": "Factions",
+        "renown": "Renown",
+        "factionsHint": "Each faction, its standing and the party’s ranks in it",
+        "renownHint": "Each character’s titles and place in the factions"
+      }
     }
   }
 }

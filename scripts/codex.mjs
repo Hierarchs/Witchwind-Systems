@@ -7,7 +7,6 @@ import maps from "./sections/maps.mjs";
 import factions from "./sections/factions.mjs";
 import bestiary from "./sections/bestiary.mjs";
 import notices from "./sections/notices.mjs";
-import renown from "./sections/renown.mjs";
 import merchants from "./sections/merchants.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -16,7 +15,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * Each section is a self-contained module: its template, the context it prepares, its actions and anything it wires up
  * after rendering. Adding a fifth means writing one more of these and listing it here.
  */
-export const SECTIONS = { quests, journal, bestiary, notices, maps, factions, renown, merchants };
+export const SECTIONS = { quests, journal, bestiary, notices, maps, factions, merchants };
 
 /** The world setting that switches a section on or off: showQuests, showJournal, showMaps, showFactions. */
 export function sectionSetting(id) {
@@ -30,20 +29,20 @@ export function enabledSections() {
 
 /** Which sections show each collection, so a change only re-renders the book when the open section uses it. */
 const SHOWN_IN = {
-  quests: ["quests", "maps", "factions", "renown"],
+  quests: ["quests", "maps", "factions"],
   notes: ["journal"],
   pins: ["maps", "quests"],
   maps: ["maps", "quests"],
-  factions: ["factions", "quests", "maps", "renown", "merchants"],
+  factions: ["factions", "quests", "maps", "merchants"],
   tracked: ["quests", "maps"],
   letters: ["journal"],
   readLetters: ["journal"],
-  titles: ["renown"],
+  titles: ["factions"],
   merchants: ["merchants"],
   bestiary: ["bestiary"],
   notices: ["notices"],
   noticeRegions: ["notices"],
-  time: ["journal", "renown", "merchants"]
+  time: ["journal", "factions", "merchants"]
 };
 
 /** How long the book takes to fade away, in milliseconds. */
@@ -135,7 +134,9 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     const sections = enabledSections();
     if ( section && sections.includes(section) ) this.section = section;
     if ( id ) {
-      this.selected[this.section] = id;
+      // On the Standing tab, a character's id opens their renown; any other id is a faction.
+      const renown = (this.section === "factions") && !store.get("factions", id);
+      this.selected[renown ? "renown" : this.section] = id;
       this.#revealInList(this.section, id);
     }
     this.placing = false;
@@ -201,6 +202,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
       const quest = store.get("quests", id);
       if ( quest && (this.filters.quests !== "updates") ) this.filters.quests = quest.status ?? "active";
     }
+    if ( section === "factions" ) this.filters.factions = store.get("factions", id) ? "factions" : "renown";
     if ( section === "journal" ) {
       // A letter opens on the letters tab, and anything else on the notes.
       this.filters.journal = store.get("letters", id) ? "letters" : "all";
@@ -284,7 +286,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
    * objective doesn't make the page flicker.
    */
   #animationFor(options) {
-    const shown = { section: this.section, entry: this.selected[this.section], pin: this.openPin, filter: this.filters[this.section] };
+    const shown = { section: this.section, entry: [this.selected[this.section], this.selected.renown].join("|"), pin: this.openPin, filter: this.filters[this.section] };
     const before = this.#shown;
     const requested = this.nextAnimation;
     this.#shown = shown;

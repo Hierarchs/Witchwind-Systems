@@ -111,7 +111,7 @@ function titleAwards(before, after) {
       title: title.name || "",
       detail: [actor.name, title.reason].filter(Boolean).join(" · "),
       icon: title.icon || "fa-solid fa-crown",
-      open: { section: "renown", id: title.uuid },
+      open: { section: "factions", id: title.uuid },
       openLabel: game.i18n.localize(`${L}.Notice.ViewRenown`)
     });
   }

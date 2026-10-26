@@ -5,7 +5,7 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "bestiary", "notices", "maps", "factions", "renown", "merchants"];
+export const SECTION_IDS = ["quests", "journal", "bestiary", "notices", "maps", "factions", "merchants"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
@@ -14,7 +14,6 @@ export const SECTION_ICONS = {
   notices: "fa-solid fa-thumbtack",
   maps: "fa-solid fa-map",
   factions: "fa-solid fa-chess-rook",
-  renown: "fa-solid fa-crown",
   merchants: "fa-solid fa-scale-balanced"
 };
 

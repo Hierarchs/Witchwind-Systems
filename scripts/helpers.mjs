@@ -4,7 +4,7 @@ import { broadcast } from "./socket.mjs";
 
 /** The collection behind each section. */
 export const SECTION_KINDS = {
-  quests: "quests", journal: "notes", bestiary: "bestiary", notices: "notices", maps: "maps", factions: "factions", renown: "titles", merchants: "merchants"
+  quests: "quests", journal: "notes", bestiary: "bestiary", notices: "notices", maps: "maps", factions: "factions", merchants: "merchants"
 };
 
 /** The collection an entry lives in: the journal holds both notes and letters. */

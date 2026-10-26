@@ -38,7 +38,11 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Show on map.** A quest with a linked marker gets a button that opens its map, centered on the marker.
 - **Find and filter.** Search markers by name and notes (matches glow, the rest fade; Enter jumps to the first), and open the legend to hide or show each kind of marker.
 
-### Factions
+### Standing
+
+The Standing tab has two modes, **Factions** and **Renown**, on tabs above the list.
+
+#### Factions
 
 - **Standing.** A bar from Hated to Revered with the party's place on it in gold. The GM nudges it with + and −.
 - **Ranks.** Each faction has its own ladder of ranks, highest first, with each member's portrait beside their rank. Players see their own characters' ranks called out, and get a banner when they're promoted or join.
@@ -74,7 +78,7 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 - **Taking a contract.** A player can take an open notice. It becomes a quest in their Quests, shared with the players who could see the notice, and the board shows who took it. This needs a GM online, since the quest is made on the GM's screen.
 - **Taken down.** The GM can take a notice down, and put it back up while nobody has taken it.
 
-### Renown
+#### Renown
 
 - **A card for each character** with the titles they've earned, such as "Warden of the Vale": what the title means, what earned it, the date in the world's calendar, and the quest behind it. Below that, their rank and standing in each faction they're known to.
 - **Granting a title** pops up "Title Earned" for the character's player.
@@ -122,7 +126,7 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Bestiary, Notice board, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Bestiary, Notice board, Maps, Standing and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
 | Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |

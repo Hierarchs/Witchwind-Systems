@@ -25,7 +25,7 @@ function onRenderSheet(app, element) {
   if ( !actor || !game.settings.get(MODULE_ID, "sheetRenown") ) return;
   element.querySelector(".wws-sheet-renown")?.remove();
 
-  const titles = !game.settings.get(MODULE_ID, "showRenown") ? [] : store.all("titles")
+  const titles = !game.settings.get(MODULE_ID, "showFactions") ? [] : store.all("titles")
     .filter(t => (t.uuid === actor.uuid) && store.isVisible("titles", t)).sort((a, b) => (b.date ?? 0) - (a.date ?? 0));
   const places = game.settings.get(MODULE_ID, "showFactions") ? factionPlaces(actor.uuid) : [];
   if ( !titles.length && !places.length ) return;
@@ -35,7 +35,7 @@ function onRenderSheet(app, element) {
   card.className = "wws wws-sheet-renown";
   const head = document.createElement("h3");
   head.innerHTML = `<i class="fa-solid fa-crown" inert></i> <span></span>`;
-  head.querySelector("span").textContent = t("Sections.renown");
+  head.querySelector("span").textContent = t("Standing.Modes.renown");
   card.append(head);
 
   const open = (section, id) => () => game.modules.get(MODULE_ID).api.open(section, id);
@@ -50,7 +50,7 @@ function onRenderSheet(app, element) {
       button.querySelector("i").className = title.icon || "fa-solid fa-crown";
       button.querySelector("span").textContent = title.name;
       if ( title.reason ) button.dataset.tooltip = title.reason;
-      button.addEventListener("click", open("renown", actor.uuid));
+      button.addEventListener("click", open("factions", actor.uuid));
       li.append(button);
       list.append(li);
     }
