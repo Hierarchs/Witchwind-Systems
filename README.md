@@ -60,7 +60,8 @@ The Journal holds everyone's notes and the letters the GM sends, in one list. Fi
 - **Encounters.** Log where and when the party met a creature. Logging the first one shows its basics (its kind and size) to everyone.
 - **Facts, one at a time.** Each part of the record (threat, defenses, movement, abilities, resistances, languages, skills, attacks, traits and spells, tactics, lore, habitat) is revealed on its own, to everyone or to chosen players, with a chip for each. Players see a locked card for anything not yet revealed, and nothing hidden is shown on their screen.
 - **Learned pop-ups.** A player gets a pop-up when a fact about a creature is revealed to them.
-- **Refresh from the compendium** brings a creature's stats up to date with its monster, keeping what the table has learned.
+- **Refresh from the compendium** brings a creature's stats, biography and picture up to date with its monster, keeping what the table has learned.
+- **Biography and artwork.** The monster's biography from the compendium becomes its Lore, with its large picture above the record. Your own lore is written under it.
 
 A creature's record is copied, not linked, so it stays whole if the compendium changes. Like everything else in the module, the facts you haven't revealed are stored in the world, so a player who looked in the browser's console could find them.
 

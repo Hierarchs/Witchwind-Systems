@@ -145,6 +145,15 @@ const titleCase = s => String(s ?? "").replace(/[_-]+/g, " ").replace(/\b\w/g, c
 const FRACTIONS = { 0.125: "1/8", 0.25: "1/4", 0.5: "1/2" };
 const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"];
 
+/** A monster's biography: the description in its compendium entry, public or not. */
+const biographyOf = details => details?.biography?.value || details?.biography?.public || "";
+
+/** The first picture in a biography, which is usually the monster's large artwork. */
+function firstImage(html) {
+  if ( !html ) return "";
+  return new DOMParser().parseFromString(html, "text/html").querySelector("img")?.getAttribute("src") ?? "";
+}
+
 /** A list of trait names from dnd5e's collection or set of keys, such as damage types. */
 const traitList = v => Array.from(v?.value ?? v ?? []).filter(x => typeof x === "string").map(titleCase);
 
@@ -178,6 +187,8 @@ export function snapshotCreature(actor) {
   return {
     name: actor.name ?? "",
     img: actor.img ?? "",
+    art: firstImage(biographyOf(details)) || actor.img || "",
+    biography: biographyOf(details),
     type,
     size: traits.size ?? details.size ?? "",
     cr: FRACTIONS[details.cr] ?? details.cr ?? "",
@@ -290,6 +301,12 @@ function lines(c, key) {
   return rows;
 }
 
+/** The text a fact shows: the lore is the compendium's biography, with the table's own lore written after it. */
+function textFor(c, key) {
+  if ( key === "lore" ) return [c.biography, c.lore].filter(Boolean).join("");
+  return c[key] ?? "";
+}
+
 /** The players who can see a fact, as chips for the GM to switch. */
 function playerChoices(c, key) {
   const who = c.knowledge?.[key] ?? [];
@@ -319,16 +336,18 @@ async function detail(c) {
       label: loc(`Bestiary.Facts.${fact.key}`),
       known,
       hiddenFromPlayers: isGM && !shared,
+      wide: isText,
       everyone,
       players: isGM ? playerChoices(c, fact.key) : [],
       lines: show && !isText ? lines(c, fact.key) : [],
-      html: show && isText ? await enrich(c[fact.key] ?? "") : ""
+      html: show && isText ? await enrich(textFor(c, fact.key)) : ""
     };
   }));
   // Only what the page prints: the facts carry everything else, and each one is filled in only when it may be seen.
   return {
     id: c.id,
     img: c.img,
+    art: c.art || c.img || "",
     name: c.name || loc("Untitled"),
     hidden: !c.visible,
     encounteredCount: encounters.length,

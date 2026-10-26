@@ -32,8 +32,8 @@ export const BESTIARY_FACTS = [
   { key: "skills", icon: "fa-solid fa-eye" },
   { key: "attacks", icon: "fa-solid fa-hand-fist" },
   { key: "traits", icon: "fa-solid fa-wand-magic-sparkles" },
-  { key: "tactics", icon: "fa-solid fa-chess" },
   { key: "lore", icon: "fa-solid fa-book-open" },
+  { key: "tactics", icon: "fa-solid fa-chess" },
   { key: "habitat", icon: "fa-solid fa-tree" }
 ];
 

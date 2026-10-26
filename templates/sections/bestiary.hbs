@@ -44,6 +44,10 @@
       <article class="wws-entry wws-creature" data-id="{{c.id}}">
         {{#if c.hidden}}<p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>{{/if}}
 
+        {{#if c.art}}
+        <figure class="wws-plate wws-plate-creature"><img src="{{c.art}}" alt="{{c.name}}"></figure>
+        {{/if}}
+
         <header class="wws-faction-head">
           <span class="wws-emblem wws-emblem-large">{{#if c.img}}<img src="{{c.img}}" alt="">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}</span>
           <div class="wws-entry-head">
@@ -87,7 +91,7 @@
         <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Bestiary.Knowledge"}}</h3>
         <div class="wws-facts-grid">
           {{#each c.facts}}
-          <section class="wws-fact{{#unless (or known @root.isGM)}} wws-locked{{/unless}}">
+          <section class="wws-fact{{#if wide}} wws-wide{{/if}}{{#unless (or known @root.isGM)}} wws-locked{{/unless}}">
             <header class="wws-fact-head">
               <i class="{{icon}}" inert></i>
               <h4>{{label}}</h4>

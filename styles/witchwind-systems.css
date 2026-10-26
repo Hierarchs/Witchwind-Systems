@@ -1317,6 +1317,15 @@
   overflow-wrap: anywhere;
 }
 
+/*
+ * Biographies from the compendium bring dnd5e's own boxes and tabs, which come with dark backgrounds and light text
+ * that disappear on the parchment. They sit on the page instead, in the page's ink.
+ */
+.wws-prose :not(a, img, picture, figure, figcaption, h1, h2, h3, h4, h5, h6) {
+  background-color: transparent !important;
+  color: var(--wws-parch-ink) !important;
+}
+
 .wws-prose > :first-child { margin-top: 0; }
 .wws-prose > :last-child { margin-bottom: 0; }
 
@@ -4208,6 +4217,18 @@ ul.wws-chips {
 
 .wws-fact-lines dd {
   margin: 0;
+}
+
+/* Lore and tactics run the full width of the record, so a long biography reads as a page. */
+.wws-fact.wws-wide {
+  grid-column: 1 / -1;
+}
+
+/* The monster's large artwork, framed as a picture in the book. */
+.wws-plate-creature img {
+  max-height: 420px;
+  object-fit: contain;
+  background: #120f0b;
 }
 
 .wws-fact .wws-prose {
