@@ -91,11 +91,12 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 
 ### Party frame
 
-- **The party at a glance.** At the left of the screen, beside the scene controls, each character has a slim, see-through box of their own: portrait, name, and a thin hit point bar with the numbers beside it, temporary hit points included. The bar turns orange below half and red below a quarter, and slides when hit points change. The box flashes red for a hit or green for healing, and the portrait greys out at 0.
+- **The party at a glance.** Beside the scene controls, each character has a see-through box of their own in the manner of Final Fantasy's party boxes: portrait and name, then **HP** and **TEMP** (temporary hit points), each a coloured label, the number and a thin bar. The HP bar turns amber below half and red below a quarter, and breathes red while low. At 0 the portrait greys out.
+- **Hit points that move.** A hit drops the bar at once, and a pale trail of what was lost drains away after it. Healing shows a pale bar out to the new total, and the HP fills up to meet it. The numbers count to their new values, and the box flashes red or green. Only that character's box changes, and the bars move on the compositor, so it stays smooth in a busy fight.
 - **The party's name** sits over the boxes. The GM sets it by clicking the name, or in the settings. Left empty, it's the primary party's name, or "Party".
 - **Who's in it.** The members of dnd5e's primary party if you've set one, otherwise the characters assigned to players, otherwise every character a player owns.
 - **What players see.** The numbers only for characters they can observe. For the rest, just the bar.
-- **Each player's own.** Show or hide it with the party button in the token controls, the × on the frame, or a key of your choosing. Make it smaller or larger with − and + on the frame (or the size setting), fold it, and drag it by its title. The frame's buttons show while the pointer is over it.
+- **Each player's own.** Show or hide it with the party button in the token controls, the × on the frame, or a key of your choosing. Make it smaller or larger with − and + on the frame (or the size setting), lay it out as a column or a row, fold it, and drag it by its title. The frame's buttons show while the pointer is over it.
 
 ### The Xerseraya calendar
 
@@ -142,6 +143,7 @@ Under **Configure Settings > Witchwind Systems**:
 | Show the quest tracker | Each player's own choice. |
 | Party frame | The party's portraits, names and hit points at the left of the screen. Each player's own choice. |
 | Party frame size | How large the party frame is; − and + on the frame change it too. Each player's own choice. |
+| Party frame layout | The boxes in a column down the side of the screen, or in a row. Each player's own choice. |
 | Party name | The name over the party frame, for everyone. The GM can also click the name on the frame. |
 | Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
 | Sounds: book opens, closes, page turns (two), quest updates | Audio files on your server, chosen by the GM. Empty plays nothing. |

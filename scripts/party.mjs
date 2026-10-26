@@ -6,10 +6,21 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 /** How small and large the frame can be set, as a multiple of its normal size, and how far − and + move it. */
 export const PARTY_SCALE = { min: 0.6, max: 1.8, step: 0.1 };
 
+/** How long a changed number takes to count to its new value, in milliseconds; the bars glide for about as long. */
+const COUNT_DURATION = 500;
+
+/** How a character is faring, from their share of hit points. Each is a class on their box. */
+const STATES = ["ok", "hurt", "low", "down", "none"];
+
 /**
- * The party frame: each character's portrait, name, hit points and temporary hit points, in a small leather card at
- * the left of the screen beside the scene controls. Each player shows or hides it, sets its size, and can drag it by
- * its title. A player sees the numbers only for characters they can observe; for the others, just the bar.
+ * The party frame: a box for each character in the manner of Final Fantasy's party boxes, with their portrait, name,
+ * hit points and temporary hit points, under the party's name, in a column at the left of the screen or in a row.
+ * Each player shows or hides it, sets its size and layout, and can drag it by its title. A player sees the numbers
+ * only for characters they can observe; for the others, just the bars.
+ *
+ * A change of hit points doesn't redraw the frame. That character's box is changed in place: its bars glide to the
+ * new values on the compositor and its numbers count to them. The frame redraws only when the party, a name or a
+ * picture changes.
  */
 export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
 
@@ -44,17 +55,19 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Redraw when something on a card changes: a character's hit points, name or picture, who is in the party, or
-   * which character a player has. A burst of changes (a fireball, a long rest) redraws once.
+   * Keep the frame current. Hit points change one box in place; a change to who's in the party, or to a member's name
+   * or picture, redraws the frame, once after a burst of changes.
    */
   static register() {
     const redraw = foundry.utils.debounce(() => this.refresh(), 60);
     const shown = () => game.settings.get(MODULE_ID, "party");
     Hooks.on("updateActor", (actor, changes) => {
       if ( !shown() ) return;
-      const onCard = ("name" in changes) || ("img" in changes) || (changes.system?.attributes?.hp !== undefined);
-      const inParty = ("ownership" in changes) || (actor.type === "group");
-      if ( inParty || (onCard && partyMembers().includes(actor)) ) redraw();
+      if ( ("ownership" in changes) || (actor.type === "group") ) return redraw();
+      const party = this.#instance;
+      if ( !party?.rendered || !party.#memberIds.has(actor.id) ) return;
+      if ( ("name" in changes) || ("img" in changes) ) return redraw();
+      if ( changes.system?.attributes?.hp !== undefined ) party.#updateMember(actor);
     });
     for ( const hook of ["createActor", "deleteActor"] ) Hooks.on(hook, () => shown() && redraw());
     Hooks.on("updateUser", (user, changes) => {
@@ -62,28 +75,16 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
     });
   }
 
-  /** What each card showed last time, by actor id, so a change slides the bar from where it was. */
+  /** The ids of the characters on the frame, and what each one's box shows. */
+  #memberIds = new Set();
   #shown = new Map();
 
   /** @override */
   async _prepareContext(options) {
     const scale = Math.clamp(Number(game.settings.get(MODULE_ID, "partyScale")) || 1, PARTY_SCALE.min, PARTY_SCALE.max);
-    const before = this.#shown;
-    this.#shown = new Map();
-    const members = partyMembers().map(actor => {
-      const card = cardOf(actor);
-      const was = before.get(actor.id);
-      if ( was && card.hasHp ) {
-        card.slide = was.pct !== card.pct;
-        card.fromPct = was.pct;
-        card.slideTemp = was.tempPct !== card.tempPct;
-        card.fromTemp = was.tempPct;
-        if ( card.value < was.value ) card.change = "hit";
-        else if ( card.value > was.value ) card.change = "heal";
-      }
-      this.#shown.set(actor.id, { pct: card.pct, tempPct: card.tempPct, value: card.value });
-      return card;
-    });
+    const members = partyMembers().map(cardOf);
+    this.#memberIds = new Set(members.map(m => m.id));
+    this.#shown = new Map(members.map(m => [m.id, m]));
     return {
       title: partyName(),
       canRename: game.user.isGM,
@@ -92,6 +93,7 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
       scale,
       atMin: scale <= PARTY_SCALE.min,
       atMax: scale >= PARTY_SCALE.max,
+      row: game.settings.get(MODULE_ID, "partyLayout") === "row",
       collapsed: game.settings.get(MODULE_ID, "partyCollapsed")
     };
   }
@@ -103,6 +105,35 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( Number.isFinite(left) && Number.isFinite(top) ) this.#moveTo(left, top);
     else this.#placeBesideControls();
     this.element.querySelector(".wws-party-head")?.addEventListener("pointerdown", this.#onDragStart.bind(this));
+  }
+
+  /**
+   * Bring one character's box up to date in place. The bars take their new length from custom properties on the box,
+   * so they glide by CSS transitions; the numbers count to their new values, and the box flashes for a hit or a heal.
+   */
+  #updateMember(actor) {
+    const box = this.element?.querySelector(`.wws-party-member[data-actor-id="${actor.id}"]`);
+    const was = this.#shown.get(actor.id);
+    if ( !box || !was ) return;
+    const card = cardOf(actor);
+    this.#shown.set(actor.id, card);
+    if ( card.hasHp !== was.hasHp ) return this.render();
+
+    box.classList.remove(...STATES.map(s => `wws-hp-${s}`));
+    box.classList.add(`wws-hp-${card.state}`);
+    box.classList.toggle("wws-rising", card.value > was.value);
+    box.style.setProperty("--wws-hp", card.ratio);
+    box.style.setProperty("--wws-temp", card.tempRatio);
+    box.querySelector(".wws-party-temp-row")?.classList.toggle("wws-party-none", !card.temp);
+    setMeter(box.querySelector(".wws-party-hp-bar"), card, card.value, card.pct);
+    setMeter(box.querySelector(".wws-party-temp-bar"), card, card.temp, Math.round(card.tempRatio * 1000) / 10);
+    if ( card.showNumbers ) {
+      countTo(box.querySelector(".wws-party-hp-value"), was.value, card.value);
+      countTo(box.querySelector(".wws-party-temp-value"), was.temp, card.temp);
+      const max = box.querySelector(".wws-party-max");
+      if ( max ) max.textContent = `/${card.max}`;
+    }
+    if ( card.value !== was.value ) flash(box, card.value < was.value ? "hit" : "heal");
   }
 
   /** Where it starts until it's dragged: just right of the scene controls, level with their top. */
@@ -210,14 +241,15 @@ function primaryParty() {
   }
 }
 
-/** One character's card: picture, name, and hit points as a bar, with the numbers if the viewer may see them. */
+/** One character's box: picture, name, and hit points and temporary hit points, with the numbers if the viewer may see them. */
 function cardOf(actor) {
   const hp = actor.system?.attributes?.hp;
   const max = Math.max(0, Number(hp?.effectiveMax ?? ((Number(hp?.max) || 0) + (Number(hp?.tempmax) || 0))) || 0);
   const value = Math.clamp(Number(hp?.value) || 0, 0, max);
   const temp = Math.max(0, Number(hp?.temp) || 0);
-  const pct = max ? Math.round((value / max) * 1000) / 10 : 0;
-  const tempPct = max ? Math.min(100, Math.round((temp / max) * 1000) / 10) : 0;
+  const ratio = max ? Math.round((value / max) * 1000) / 1000 : 0;
+  const tempRatio = max ? Math.min(1, Math.round((temp / max) * 1000) / 1000) : 0;
+  const pct = Math.round(ratio * 1000) / 10;
   let state = "ok";
   if ( !max ) state = "none";
   else if ( value <= 0 ) state = "down";
@@ -234,8 +266,49 @@ function cardOf(actor) {
     value,
     max,
     temp,
+    ratio,
+    tempRatio,
     pct,
-    tempPct,
+    tempPct: Math.round(tempRatio * 1000) / 10,
     state
   };
+}
+
+/** A bar's value for screen readers: the number if the viewer may see it, otherwise a percentage. */
+function setMeter(bar, card, value, pct) {
+  if ( !bar ) return;
+  bar.setAttribute("aria-valuemax", card.showNumbers ? card.max : 100);
+  bar.setAttribute("aria-valuenow", card.showNumbers ? value : pct);
+}
+
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Which count each number is running, so a newer change takes over from an older one. */
+const counting = new WeakMap();
+
+/** Count a number to its new value over a moment, easing out as the bars do. */
+function countTo(el, from, to) {
+  if ( !el ) return;
+  if ( (from === to) || reducedMotion() ) {
+    el.textContent = String(to);
+    return;
+  }
+  const run = {};
+  counting.set(el, run);
+  const start = performance.now();
+  const step = now => {
+    if ( counting.get(el) !== run ) return;
+    const t = Math.min(1, (now - start) / COUNT_DURATION);
+    el.textContent = String(Math.round(from + ((to - from) * (1 - ((1 - t) ** 3)))));
+    if ( t < 1 ) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/** Flash a box red for a hit or green for healing, once. Only an overlay's opacity moves. */
+function flash(box, kind) {
+  const el = box.querySelector(".wws-party-flash");
+  if ( !el || reducedMotion() ) return;
+  el.dataset.kind = kind;
+  el.animate([{ opacity: 0.5 }, { opacity: 0 }], { duration: 650, easing: "ease-out" });
 }

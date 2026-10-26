@@ -135,6 +135,14 @@
       "PartyName": {
         "Name": "Party name",
         "Hint": "The name at the top of the party frame, for everyone. Leave it empty to use the primary party’s name, or Party. The GM can also click the name on the frame to change it."
+      },
+      "PartyLayout": {
+        "Name": "Party frame layout",
+        "Hint": "The party’s boxes in a column down the side of the screen, or in a row side by side. Each player chooses for themselves.",
+        "Choices": {
+          "column": "Column",
+          "row": "Row"
+        }
       }
     },
     "Keys": {
@@ -716,7 +724,9 @@
       "HitPoints": "Hit points",
       "Empty": "No party yet. Assign characters to players, or set a primary party.",
       "Rename": "Rename the party",
-      "RenameHint": "Shown to everyone at the top of the party frame. Leave it empty to use the default."
+      "RenameHint": "Shown to everyone at the top of the party frame. Leave it empty to use the default.",
+      "HP": "HP",
+      "TempShort": "TEMP"
     }
   }
 }

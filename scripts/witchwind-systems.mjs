@@ -151,6 +151,17 @@ Hooks.once("init", () => {
     onChange: () => Party.refresh()
   });
 
+  register("partyLayout", {
+    name: `${L}.Settings.PartyLayout.Name`,
+    hint: `${L}.Settings.PartyLayout.Hint`,
+    scope: "client",
+    config: true,
+    type: String,
+    choices: { column: `${L}.Settings.PartyLayout.Choices.column`, row: `${L}.Settings.PartyLayout.Choices.row` },
+    default: "column",
+    onChange: () => Party.refresh()
+  });
+
   registerSounds();
 
   // Backups, restores and journal imports, behind a button in Configure Settings.
