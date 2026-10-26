@@ -1,5 +1,5 @@
 import { MODULE_ID, PATH } from "./config.mjs";
-import { openSheet } from "./helpers.mjs";
+import { openSheet, loc } from "./helpers.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -25,6 +25,7 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
     tag: "aside",
     window: { frame: false, positioned: false },
     actions: {
+      partyRename: Party.#onRename,
       partySheet: Party.#onSheet,
       partySize: Party.#onSize,
       partyCollapse: Party.#onCollapse,
@@ -84,6 +85,8 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
       return card;
     });
     return {
+      title: partyName(),
+      canRename: game.user.isGM,
       members,
       empty: !members.length,
       scale,
@@ -138,6 +141,23 @@ export default class Party extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /* -------------------------------------------- */
 
+  /** The GM names the party for everyone; an empty name goes back to the default. */
+  static async #onRename() {
+    if ( !game.user.isGM ) return;
+    const escape = foundry.utils.escapeHTML;
+    const name = await foundry.applications.api.DialogV2.prompt({
+      window: { title: loc("Party.Rename"), icon: "fa-solid fa-users" },
+      classes: ["wws", "wws-dialog"],
+      content: `<p>${loc("Party.RenameHint")}</p>
+        <input type="text" name="name" value="${escape(game.settings.get(MODULE_ID, "partyName"))}"
+               placeholder="${escape(partyName(false))}" aria-label="${escape(loc("Party.Rename"))}" autofocus>`,
+      ok: { label: loc("Save"), icon: "fa-solid fa-check", callback: (event, button) => button.form.elements.name.value },
+      rejectClose: false,
+      modal: true
+    });
+    if ( typeof name === "string" ) await game.settings.set(MODULE_ID, "partyName", name.trim());
+  }
+
   static #onSheet(event, target) {
     return openSheet(target.dataset.uuid);
   }
@@ -170,6 +190,15 @@ export function partyMembers() {
   const assigned = game.users.filter(u => !u.isGM && u.character).map(u => u.character);
   if ( assigned.length ) return [...new Set(assigned)];
   return game.actors.filter(a => a.hasPlayerOwner && (a.type === "character"));
+}
+
+/**
+ * The name over the frame: the one the GM gave it, otherwise the primary party's name, otherwise "Party". With
+ * custom false, the default it would fall back to.
+ */
+function partyName(custom=true) {
+  const given = custom ? String(game.settings.get(MODULE_ID, "partyName") ?? "").trim() : "";
+  return given || primaryParty()?.name || loc("Party.Title");
 }
 
 /** dnd5e's primary party, if the system has one and it's set. */

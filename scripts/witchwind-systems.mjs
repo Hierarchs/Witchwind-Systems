@@ -129,6 +129,17 @@ Hooks.once("init", () => {
     }
   });
 
+  // World: the party's name over the frame, set by the GM for everyone.
+  register("partyName", {
+    name: `${L}.Settings.PartyName.Name`,
+    hint: `${L}.Settings.PartyName.Hint`,
+    scope: "world",
+    config: true,
+    type: String,
+    default: "",
+    onChange: () => Party.refresh()
+  });
+
   register("partyScale", {
     name: `${L}.Settings.PartyScale.Name`,
     hint: `${L}.Settings.PartyScale.Hint`,

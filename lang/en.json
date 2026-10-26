@@ -131,6 +131,10 @@
       "PartyScale": {
         "Name": "Party frame size",
         "Hint": "How large the party frame is. The − and + buttons on the frame change it too."
+      },
+      "PartyName": {
+        "Name": "Party name",
+        "Hint": "The name at the top of the party frame, for everyone. Leave it empty to use the primary party’s name, or Party. The GM can also click the name on the frame to change it."
       }
     },
     "Keys": {
@@ -710,7 +714,9 @@
       "Hide": "Hide the party frame",
       "Temp": "Temporary hit points",
       "HitPoints": "Hit points",
-      "Empty": "No party yet. Assign characters to players, or set a primary party."
+      "Empty": "No party yet. Assign characters to players, or set a primary party.",
+      "Rename": "Rename the party",
+      "RenameHint": "Shown to everyone at the top of the party frame. Leave it empty to use the default."
     }
   }
 }
