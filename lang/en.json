@@ -28,7 +28,8 @@
       "factions": "Factions",
       "letters": "Letters",
       "renown": "Renown",
-      "merchants": "Merchants"
+      "merchants": "Merchants",
+      "bestiary": "Bestiary"
     },
     "Settings": {
       "Sections": {
@@ -59,6 +60,10 @@
         "merchants": {
           "Name": "Merchants tab",
           "Hint": "Show the Merchants tab, with each merchant’s wares and prices, for everyone in this world."
+        },
+        "bestiary": {
+          "Name": "Bestiary tab",
+          "Hint": "Show the Bestiary tab, with the creatures the party has met and what it has learned about each, for everyone in this world."
         }
       },
       "PlayerNotes": {
@@ -133,7 +138,8 @@
       "previousTab": "Previous tab",
       "letters": "Open the letters",
       "renown": "Open renown",
-      "merchants": "Open the merchants"
+      "merchants": "Open the merchants",
+      "bestiary": "Open the bestiary"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -239,11 +245,13 @@
         "people": "People",
         "places": "Places",
         "lore": "Lore",
-        "clues": "Clues"
+        "clues": "Clues",
+        "letters": "Letters"
       },
       "Linked": "Notes",
       "LinksTitle": "Links",
-      "LinkPin": "Map marker"
+      "LinkPin": "Map marker",
+      "NewLetter": "New letter"
     },
     "Maps": {
       "Upload": "Upload",
@@ -404,7 +412,8 @@
       "AddGroup": "Add group",
       "GroupPlaceholder": "Companions",
       "VisibleLetter": "Deliver to players",
-      "VisibleMerchant": "Players can see this merchant"
+      "VisibleMerchant": "Players can see this merchant",
+      "VisibleCreature": "Players can see this creature"
     },
     "Banners": {
       "Started": "Quest Started",
@@ -416,7 +425,9 @@
       "Joined": "Joined",
       "Promoted": "Promoted",
       "StandingUp": "Standing Rises",
-      "StandingDown": "Standing Falls"
+      "StandingDown": "Standing Falls",
+      "NewCreature": "New Creature",
+      "Learned": "Learned"
     },
     "Tracker": {
       "Title": "Tracked Quests",
@@ -539,6 +550,78 @@
       "AddOne": "One more in stock",
       "RestockNow": "Restock now",
       "Restocks": "Restocks every {days} days · next on {date}"
+    },
+    "Bestiary": {
+      "Search": "Search creatures",
+      "Empty": "No creatures yet.",
+      "NoMatches": "No creature matches your search.",
+      "NoneHint": "The party hasn’t met any creatures yet.",
+      "StartHint": "No creatures yet. Drag a monster from the Monsters compendium onto this page to add it.",
+      "DropHint": "Drop a monster from the Monsters compendium here to add it",
+      "Unknown": "Unknown creature",
+      "Times": "Met {count} times",
+      "NotYet": "Not yet met",
+      "LogEncounter": "Log an encounter with {name}",
+      "LogEncounterShort": "Log encounter",
+      "Edit": "Edit {name}",
+      "Refresh": "Refresh from the compendium",
+      "Added": "{name} added to the bestiary.",
+      "Updated": "{name} refreshed from the compendium.",
+      "NoSource": "This creature wasn’t copied from a compendium, so there’s nothing to refresh it from.",
+      "SourceMissing": "The compendium entry for this creature can’t be found any more.",
+      "Encounters": "Encounters",
+      "Knowledge": "What the party knows",
+      "Everyone": "Everyone",
+      "HiddenTag": "Hidden",
+      "NotYetKnown": "Not yet known",
+      "NothingRecorded": "Nothing recorded yet.",
+      "Habitat": "Habitat",
+      "HabitatPlaceholder": "Ruined crypts, deep woods…",
+      "Lore": "Lore",
+      "Tactics": "Tactics",
+      "EditHint": "Lore and tactics are written by you. Each fact on the record is revealed on its own, to everyone or to chosen players.",
+      "Sizes": {
+        "tiny": "Tiny",
+        "sm": "Small",
+        "med": "Medium",
+        "lg": "Large",
+        "huge": "Huge",
+        "grg": "Gargantuan"
+      },
+      "Facts": {
+        "basics": "Creature",
+        "threat": "Threat",
+        "defense": "Defenses",
+        "movement": "Movement and senses",
+        "abilities": "Abilities",
+        "resistances": "Resistances",
+        "languages": "Languages",
+        "skills": "Skills",
+        "attacks": "Attacks",
+        "traits": "Traits and spells",
+        "tactics": "Tactics",
+        "lore": "Lore",
+        "habitat": "Habitat"
+      },
+      "Lines": {
+        "type": "Type",
+        "size": "Size",
+        "cr": "Challenge",
+        "ac": "AC",
+        "hp": "HP",
+        "speed": "Speed",
+        "senses": "Senses",
+        "resistances": "Resists",
+        "vulnerabilities": "Vulnerable",
+        "immunities": "Immune",
+        "conditionImmunities": "Condition immunities",
+        "languages": "Languages",
+        "skills": "Skills",
+        "attacks": "Attacks",
+        "traits": "Traits",
+        "spells": "Spells",
+        "habitat": "Habitat"
+      }
     }
   }
 }

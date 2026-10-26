@@ -9,7 +9,7 @@ import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
  */
 
 /** Collections the GM keeps in world settings. */
-export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants"];
+export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary"];
 
 /** Collections each user keeps on their own User document. */
 export const USER_KINDS = ["notes", "pins"];

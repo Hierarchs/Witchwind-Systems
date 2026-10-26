@@ -10,7 +10,7 @@ import { restockDue } from "./sections/merchants.mjs";
 import { registerSounds, playSound } from "./sounds.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
-import { SECTION_KINDS } from "./helpers.mjs";
+import { SECTION_KINDS, resolveKind } from "./helpers.mjs";
 
 /* -------------------------------------------- */
 /*  Settings and keys                           */
@@ -130,7 +130,7 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, letters: null, maps: "KeyM", factions: null, renown: null, merchants: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, maps: "KeyM", factions: null, renown: null, merchants: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,
@@ -215,7 +215,7 @@ Hooks.once("ready", () => {
 
   // A GM's "Show to players" opens the entry for everyone who can see it.
   listen("show", ({ section, id }) => {
-    const kind = SECTION_KINDS[section];
+    const kind = resolveKind(section, id);
     if ( !enabledSections().includes(section) || !store.isVisible(kind, store.get(kind, id)) ) return;
     if ( section === "maps" ) Codex.instance.openPin = null;
     Codex.instance.open(section, id);

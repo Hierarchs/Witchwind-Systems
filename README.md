@@ -46,11 +46,23 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Members.** Drop actors onto a faction's page, or use **Add the party** in the editor.
 - **Personal standing.** Each character can have their own standing alongside the party's, nudged with + and − beside their portrait or set in the editor. Characters who aren't members ("Not a member") are listed as known to the faction with their standing, and can be made members with one click.
 
-### Letters
+### Journal and letters
+
+The Journal holds everyone's notes and the letters the GM sends, in one list. Filter it to **Letters** to see only those. The rest of the letter details are below.
 
 - **In-world letters, books, notices and orders** the GM writes and hands out, read inside the book on a sheet of paper with a seal or picture, signed by the sender.
 - **Delivered on a day.** A letter can arrive now or a set number of days later in the world's calendar. It stays hidden until the world's clock reaches that day, then arrives with a "Letter Arrived" pop-up and a **Read Letter** button. The GM can deliver one early.
 - **Unread marks.** Players see which letters they haven't opened, and can list only those.
+
+### Bestiary
+
+- **Creatures the party has met**, copied from their monster in the Monsters compendium. As GM, drag a monster from the compendium onto the Bestiary page; the stats come across, and the creature is hidden until you log an encounter with it.
+- **Encounters.** Log where and when the party met a creature. Logging the first one shows its basics (its kind and size) to everyone.
+- **Facts, one at a time.** Each part of the record (threat, defenses, movement, abilities, resistances, languages, skills, attacks, traits and spells, tactics, lore, habitat) is revealed on its own, to everyone or to chosen players, with a chip for each. Players see a locked card for anything not yet revealed, and nothing hidden is shown on their screen.
+- **Learned pop-ups.** A player gets a pop-up when a fact about a creature is revealed to them.
+- **Refresh from the compendium** brings a creature's stats up to date with its monster, keeping what the table has learned.
+
+A creature's record is copied, not linked, so it stays whole if the compendium changes. Like everything else in the module, the facts you haven't revealed are stored in the world, so a player who looked in the browser's console could find them.
 
 ### Renown
 
@@ -100,7 +112,7 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Letters, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Bestiary, Maps, Factions, Renown and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
 | Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |

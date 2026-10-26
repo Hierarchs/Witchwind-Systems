@@ -4,12 +4,28 @@ import { broadcast } from "./socket.mjs";
 
 /** The collection behind each section. */
 export const SECTION_KINDS = {
-  quests: "quests", journal: "notes", letters: "letters", maps: "maps", factions: "factions", renown: "titles", merchants: "merchants"
+  quests: "quests", journal: "notes", bestiary: "bestiary", maps: "maps", factions: "factions", renown: "titles", merchants: "merchants"
 };
+
+/** The collection an entry lives in: the journal holds both notes and letters. */
+export function resolveKind(section, id) {
+  if ( (section === "journal") && !store.get("notes", id) && store.get("letters", id) ) return "letters";
+  return SECTION_KINDS[section];
+}
+
+/**
+ * Whether a player knows a fact about a creature. Each fact lists "*" (everyone) or the ids of the players it's
+ * been revealed to. The GM knows everything.
+ */
+export function knows(entry, key, user=game.user) {
+  if ( user.isGM ) return true;
+  const who = entry?.knowledge?.[key] ?? [];
+  return who.includes("*") || who.includes(user.id);
+}
 
 /** Open an entry on every player's screen, revealing it first if it was hidden. GM only. */
 export async function showToPlayers(section, id) {
-  const kind = SECTION_KINDS[section];
+  const kind = resolveKind(section, id);
   const entry = store.get(kind, id);
   if ( !game.user.isGM || !entry ) return;
   if ( kind === "notes" ) {

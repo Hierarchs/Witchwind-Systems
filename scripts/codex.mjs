@@ -5,7 +5,7 @@ import quests from "./sections/quests.mjs";
 import journal from "./sections/journal.mjs";
 import maps from "./sections/maps.mjs";
 import factions from "./sections/factions.mjs";
-import letters from "./sections/letters.mjs";
+import bestiary from "./sections/bestiary.mjs";
 import renown from "./sections/renown.mjs";
 import merchants from "./sections/merchants.mjs";
 
@@ -15,7 +15,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * Each section is a self-contained module: its template, the context it prepares, its actions and anything it wires up
  * after rendering. Adding a fifth means writing one more of these and listing it here.
  */
-export const SECTIONS = { quests, journal, letters, maps, factions, renown, merchants };
+export const SECTIONS = { quests, journal, bestiary, maps, factions, renown, merchants };
 
 /** The world setting that switches a section on or off: showQuests, showJournal, showMaps, showFactions. */
 export function sectionSetting(id) {
@@ -35,11 +35,12 @@ const SHOWN_IN = {
   maps: ["maps", "quests"],
   factions: ["factions", "quests", "maps", "renown", "merchants"],
   tracked: ["quests", "maps"],
-  letters: ["letters"],
-  readLetters: ["letters"],
+  letters: ["journal"],
+  readLetters: ["journal"],
   titles: ["renown"],
   merchants: ["merchants"],
-  time: ["letters", "renown", "merchants"]
+  bestiary: ["bestiary"],
+  time: ["journal", "renown", "merchants"]
 };
 
 /** How long the book takes to fade away, in milliseconds. */

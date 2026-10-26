@@ -1,0 +1,36 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</label>
+    <input type="text" name="name" value="{{entry.name}}" required>
+  </div>
+
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Editor.Picture"}}</label>
+    {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.Habitat"}}</label>
+    <input type="text" name="habitat" value="{{entry.habitat}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Bestiary.HabitatPlaceholder"}}">
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.Lore"}}</label>
+    <prose-mirror name="lore" value="{{entry.lore}}"></prose-mirror>
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.Tactics"}}</label>
+    <prose-mirror name="tactics" value="{{entry.tactics}}"></prose-mirror>
+  </div>
+
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Bestiary.EditHint"}}</p>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-dragon" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

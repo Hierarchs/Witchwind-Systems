@@ -6,7 +6,7 @@ import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -21,11 +21,12 @@ const VISIBILITY = {
   note: { field: "shared", label: "Editor.SharedNote" },
   pin: { field: "shared", label: "Editor.SharedPin" },
   letter: { field: "visible", label: "Editor.VisibleLetter" },
-  merchant: { field: "visible", label: "Editor.VisibleMerchant" }
+  merchant: { field: "visible", label: "Editor.VisibleMerchant" },
+  creature: { field: "visible", label: "Editor.VisibleCreature" }
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
-const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants" };
+const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants", creature: "bestiary" };
 
 /**
  * One small form window for writing or changing any entry: a quest, note, map, marker, faction or quest log entry.

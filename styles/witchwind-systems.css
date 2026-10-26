@@ -4121,6 +4121,140 @@ ul.wws-chips {
 /*  Who can see it                              */
 /* ============================================ */
 
+/* ============================================ */
+/*  The bestiary                                */
+/* ============================================ */
+
+/* Each fact is a card on the page. The ones the party doesn't know yet are dashed and hatched. */
+.wws-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.wws-fact {
+  position: relative;
+  padding: 9px 12px 10px;
+  background: rgb(255 250 235 / 22%);
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px rgb(255 250 235 / 30%);
+}
+
+.wws-fact.wws-locked {
+  background: repeating-linear-gradient(135deg, rgb(90 62 30 / 6%) 0 6px, transparent 6px 12px);
+  border-style: dashed;
+  border-color: rgb(90 62 30 / 35%);
+}
+
+.wws-fact-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.wws-fact-head i {
+  color: var(--wws-gold-dim);
+  font-size: 14px;
+}
+
+.wws-fact-head h4 {
+  flex: 1;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-parch-head);
+}
+
+/* "Hidden" on a fact the GM is looking at that the players can't see. */
+.wws-fact-tag {
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: var(--wws-parch-ink);
+  color: var(--wws-parch-button);
+  font-family: var(--wws-font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wws-fact-lines {
+  margin: 0;
+}
+
+.wws-fact-lines > div {
+  display: grid;
+  grid-template-columns: minmax(90px, 36%) minmax(0, 1fr);
+  gap: 8px;
+  padding: 2px 0;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+}
+
+.wws-fact-lines dt {
+  padding-top: 3px;
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws-fact-lines dd {
+  margin: 0;
+}
+
+.wws-fact .wws-prose {
+  font-size: 15px;
+}
+
+.wws-fact-locked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--wws-font-body);
+  font-style: italic;
+  color: var(--wws-parch-faint);
+}
+
+/* Who knows a fact: a chip for everyone, and one per player, coloured by that player. */
+.wws-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--wws-parch-rule);
+}
+
+.wws .wws-share button.wws-chip {
+  border-left: 3px solid var(--wws-author, var(--wws-gold-dim));
+}
+
+.wws button.wws-chip.on {
+  background: var(--wws-parch-ink);
+  border-color: var(--wws-parch-ink);
+  color: var(--wws-gold-bright);
+}
+
+.wws-encounter-place {
+  margin: 2px 0 0;
+  font-family: var(--wws-font-body);
+  font-size: 16px;
+  white-space: pre-wrap;
+}
+
+/* ============================================ */
+/*  Who can see it                              */
+/* ============================================ */
+
 .wws-visibility {
   display: flex;
   flex-direction: column;

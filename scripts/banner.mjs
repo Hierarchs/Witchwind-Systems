@@ -1,6 +1,6 @@
-import { MODULE_ID, L, standingTier } from "./config.mjs";
+import { MODULE_ID, L, standingTier, BESTIARY_FACTS } from "./config.mjs";
 import * as store from "./store.mjs";
-import { plainText, docSync } from "./helpers.mjs";
+import { plainText, docSync, knows } from "./helpers.mjs";
 import { playSound } from "./sounds.mjs";
 import { showNotice } from "./notice.mjs";
 
@@ -26,12 +26,13 @@ let showing = false;
 export function initBanners() {
   seen = snapshot();
   store.onChange((kind, userId) => {
-    if ( !["quests", "factions", "letters", "titles"].includes(kind) ) return;
+    if ( !["quests", "factions", "letters", "titles", "bestiary"].includes(kind) ) return;
     const before = seen;
     seen = snapshot();
     // Whoever made the change already knows about it.
     if ( (userId === game.user.id) || !game.settings.get(MODULE_ID, "announce") ) return;
     if ( kind === "letters" ) return letterArrivals(before.letters, seen.letters);
+    if ( kind === "bestiary" ) return creatureNews(before.bestiary, seen.bestiary);
     if ( kind === "titles" ) return titleAwards(before.titles, seen.titles);
     const events = kind === "quests" ? questEvents(before.quests, seen.quests, seen.factions)
       : factionEvents(before.factions, seen.factions);
@@ -46,6 +47,25 @@ export function onWorldTime() {
   if ( game.settings.get(MODULE_ID, "announce") ) letterArrivals(before.letters, seen.letters);
 }
 
+/** A creature the party has just met, and each fact about one that's just been revealed to this player. */
+function creatureNews(before, after) {
+  if ( game.user.isGM ) return;
+  const t = key => game.i18n.localize(`${L}.Banners.${key}`);
+  for ( const creature of after.values() ) {
+    const prev = before.get(creature.id);
+    const name = creature.name || game.i18n.localize(`${L}.Untitled`);
+    if ( !prev ) {
+      announce({ label: t("NewCreature"), title: name, icon: "fa-solid fa-dragon" });
+      continue;
+    }
+    for ( const fact of BESTIARY_FACTS ) {
+      if ( knows(creature, fact.key) && !knows(prev, fact.key) ) {
+        announce({ label: t("Learned"), title: name, detail: game.i18n.localize(`${L}.Bestiary.Facts.${fact.key}`), icon: fact.icon });
+      }
+    }
+  }
+}
+
 /** A pop-up for each letter that has just reached this player, unless they’ve already read it. */
 function letterArrivals(before, after) {
   if ( game.user.isGM ) return;
@@ -58,7 +78,7 @@ function letterArrivals(before, after) {
       detail: letter.sender ? game.i18n.format(`${L}.Notice.From`, { name: letter.sender }) : "",
       img: letter.img,
       icon: "fa-solid fa-envelope",
-      open: { section: "letters", id: letter.id },
+      open: { section: "journal", id: letter.id },
       openLabel: game.i18n.localize(`${L}.Notice.ReadLetter`)
     });
   }
@@ -122,7 +142,10 @@ function next() {
 
 function snapshot() {
   const visible = kind => new Map(store.all(kind).filter(e => store.isVisible(kind, e)).map(e => [e.id, e]));
-  return { quests: visible("quests"), factions: visible("factions"), letters: visible("letters"), titles: visible("titles") };
+  return {
+    quests: visible("quests"), factions: visible("factions"), letters: visible("letters"), titles: visible("titles"),
+    bestiary: visible("bestiary")
+  };
 }
 
 const t = key => game.i18n.localize(`${L}.Banners.${key}`);

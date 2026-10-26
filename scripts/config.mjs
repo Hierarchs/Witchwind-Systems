@@ -5,17 +5,37 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "letters", "maps", "factions", "renown", "merchants"];
+export const SECTION_IDS = ["quests", "journal", "bestiary", "maps", "factions", "renown", "merchants"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
   journal: "fa-solid fa-feather-pointed",
-  letters: "fa-solid fa-envelope",
+  bestiary: "fa-solid fa-dragon",
   maps: "fa-solid fa-map",
   factions: "fa-solid fa-chess-rook",
   renown: "fa-solid fa-crown",
   merchants: "fa-solid fa-scale-balanced"
 };
+
+/*
+ * The bestiary: what the party can learn about a creature, one fact at a time. Each is revealed to everyone or to
+ * chosen players, and shown in this order. "basics" is revealed as soon as the party meets the creature.
+ */
+export const BESTIARY_FACTS = [
+  { key: "basics", icon: "fa-solid fa-paw" },
+  { key: "threat", icon: "fa-solid fa-skull" },
+  { key: "defense", icon: "fa-solid fa-shield-halved" },
+  { key: "movement", icon: "fa-solid fa-shoe-prints" },
+  { key: "abilities", icon: "fa-solid fa-dumbbell" },
+  { key: "resistances", icon: "fa-solid fa-hand-sparkles" },
+  { key: "languages", icon: "fa-solid fa-language" },
+  { key: "skills", icon: "fa-solid fa-eye" },
+  { key: "attacks", icon: "fa-solid fa-hand-fist" },
+  { key: "traits", icon: "fa-solid fa-wand-magic-sparkles" },
+  { key: "tactics", icon: "fa-solid fa-chess" },
+  { key: "lore", icon: "fa-solid fa-book-open" },
+  { key: "habitat", icon: "fa-solid fa-tree" }
+];
 
 /* -------------------------------------------- */
 /*  The Xerseraya calendar                      */

@@ -1,41 +1,47 @@
-import { PATH, L, NOTE_KINDS, NOTE_ICONS } from "../config.mjs";
+import { PATH, L, NOTE_KINDS, NOTE_ICONS, LETTER_ICONS } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { uploadImage, readTextFile } from "../uploads.mjs";
-import { enrich, plainText, formatDate, loc, authorOf, confirmDelete, showImage, showToPlayers, viewerNames } from "../helpers.mjs";
+import { enrich, plainText, formatDate, loc, authorOf, confirmDelete, showImage, showToPlayers, viewerNames, worldDate, worldNow } from "../helpers.mjs";
+
+/*
+ * The journal: everyone's notes and the letters the GM sends, in one list. Notes belong to whoever wrote them. A
+ * letter can be held back for a later day, and players see which they haven't opened (store.isVisible, markRead).
+ */
+
+/** The filter that shows only letters. */
+const LETTERS = "letters";
+
+const ICONS = { all: "fa-solid fa-book-open", mine: "fa-solid fa-user-pen", [LETTERS]: LETTER_ICONS.letter };
 
 export default {
   id: "journal",
   template: `${PATH}/templates/sections/journal.hbs`,
 
   async prepare(app) {
+    const isGM = game.user.isGM;
     const notes = store.all("notes").filter(n => store.isVisible("notes", n));
-    const filter = ["all", "mine", ...NOTE_KINDS].includes(app.filters.journal) ? app.filters.journal : "all";
+    const letters = store.all("letters").filter(l => store.isVisible("letters", l));
+    const read = new Set(store.readLetters());
+    const filters = ["all", "mine", LETTERS, ...NOTE_KINDS];
+    const filter = filters.includes(app.filters.journal) ? app.filters.journal : "all";
     const search = (app.search.journal ?? "").trim().toLowerCase();
+    const matches = text => !search || text.toLowerCase().includes(search);
 
-    const filters = ["all", ...NOTE_KINDS].map(id => ({
-      id,
-      icon: NOTE_ICONS[id] ?? "fa-solid fa-book-open",
-      label: `${L}.Journal.Kinds.${id}`,
-      count: id === "all" ? notes.length : notes.filter(n => kindOf(n) === id).length,
-      active: id === filter
-    }));
-    filters.push({
-      id: "mine",
-      icon: "fa-solid fa-user-pen",
-      label: `${L}.Journal.Kinds.mine`,
-      count: notes.filter(n => n.author === game.user.id).length,
-      active: filter === "mine"
-    });
+    const noteShown = n => (filter === "all") || ((filter === "mine") ? (n.author === game.user.id) : (kindOf(n) === filter));
+    const letterShown = () => (filter === "all") || (filter === LETTERS);
+    const items = [
+      ...notes.filter(noteShown).filter(n => matches(`${n.title} ${plainText(n.body)}`))
+        .map(n => ({ type: "note", id: n.id, time: n.updated ?? 0, n })),
+      ...(letterShown() ? letters.filter(l => matches(`${l.title} ${l.sender ?? ""} ${plainText(l.body)}`)) : [])
+        .map(l => ({ type: "letter", id: l.id, time: sentOn(l), l }))
+    ].sort((a, b) => b.time - a.time);
 
-    const listed = notes
-      .filter(n => (filter === "all") || (filter === "mine" ? n.author === game.user.id : kindOf(n) === filter))
-      .filter(n => !search || `${n.title} ${plainText(n.body)}`.toLowerCase().includes(search))
-      .sort((a, b) => (b.updated ?? 0) - (a.updated ?? 0));
+    if ( !items.some(i => i.id === app.selected.journal) ) app.selected.journal = items[0]?.id ?? null;
+    const sel = app.selected.journal;
 
-    if ( !listed.some(n => n.id === app.selected.journal) ) app.selected.journal = listed[0]?.id ?? null;
-
-    const rows = listed.map(n => ({
+    const rows = items.map(({ type, n, l, time }) => (type === "note") ? {
+      type,
       id: n.id,
       title: n.title || loc("Untitled"),
       icon: NOTE_ICONS[kindOf(n)],
@@ -44,22 +50,50 @@ export default {
       img: n.img,
       private: !n.shared,
       restricted: !!n.shared && !!n.viewers?.length,
-      selected: n.id === app.selected.journal
+      selected: n.id === sel
+    } : {
+      type,
+      id: l.id,
+      title: l.title || loc("Untitled"),
+      icon: LETTER_ICONS[l.kind] ?? LETTER_ICONS.letter,
+      sender: l.sender,
+      dateLabel: worldDate(time),
+      unread: !isGM && !read.has(l.id),
+      pending: isGM && pending(l),
+      selected: l.id === sel
+    });
+
+    const counts = {
+      all: notes.length + letters.length,
+      mine: notes.filter(n => n.author === game.user.id).length,
+      [LETTERS]: letters.length
+    };
+    const filterRows = filters.map(id => ({
+      id,
+      icon: ICONS[id] ?? NOTE_ICONS[id],
+      label: `${L}.Journal.Kinds.${id}`,
+      count: (id in counts) ? counts[id] : notes.filter(n => kindOf(n) === id).length,
+      active: id === filter
     }));
 
-    const note = listed.find(n => n.id === app.selected.journal);
+    const selected = items.find(i => i.id === sel);
     return {
-      filters,
+      filters: filterRows,
       rows,
       search: app.search.journal ?? "",
       empty: !rows.length,
       canCreate: store.canCreate("notes"),
-      note: note ? await detail(note) : null
+      canLetter: isGM,
+      note: selected?.type === "note" ? await detail(selected.n) : null,
+      letter: selected?.type === "letter" ? await letterDetail(selected.l, read) : null
     };
   },
 
-  /** Drop a picture or a text file anywhere on the journal to start a note from it. */
+  /** Drop a picture or a text file anywhere on the journal to start a note from it; open a letter marks it read. */
   onRender(app, element) {
+    const unread = element.querySelector(".wws-letter[data-unread]")?.dataset.id;
+    if ( unread ) store.markRead(unread);
+
     const page = element.querySelector(".wws-journal");
     if ( !page || !store.canCreate("notes") ) return;
     page.addEventListener("dragover", event => {
@@ -107,6 +141,18 @@ export default {
       newNote(this, { kind, shared: true });
     },
 
+    /** Letters are the GM's: a new one arrives now, or on a later day if the GM sets it. */
+    letterNew() {
+      if ( !game.user.isGM ) return;
+      openEditor("letter", {
+        entry: { kind: "letter", visible: true },
+        title: loc("Letters.New"),
+        onSave: async data => {
+          this.selected.journal = await store.create("letters", { ...data, sentAt: worldNow() });
+        }
+      });
+    },
+
     noteEdit(event, target) {
       const note = store.get("notes", target.dataset.id);
       if ( !note || !store.canEdit("notes", note) ) return;
@@ -142,6 +188,30 @@ export default {
     notePin(event, target) {
       const pin = store.get("pins", target.dataset.pin);
       if ( pin ) this.showPin(pin);
+    },
+
+    letterEdit(event, target) {
+      const letter = store.get("letters", target.dataset.id);
+      if ( !letter ) return;
+      openEditor("letter", {
+        entry: letter,
+        title: loc("Letters.Edit", { name: letter.title }),
+        onSave: data => store.update("letters", letter.id, data)
+      });
+    },
+
+    async letterDelete(event, target) {
+      const letter = store.get("letters", target.dataset.id);
+      if ( letter && await confirmDelete(letter.title) ) await store.remove("letters", letter.id);
+    },
+
+    /** Deliver a held-back or hidden letter right away. */
+    letterDeliver(event, target) {
+      return store.update("letters", target.dataset.id, { visible: true, arrival: null, sentAt: worldNow() });
+    },
+
+    letterShow(event, target) {
+      return showToPlayers("journal", target.dataset.id);
     }
   }
 };
@@ -149,6 +219,12 @@ export default {
 /* -------------------------------------------- */
 
 const kindOf = n => n.kind ?? "general";
+
+/** When a letter reaches its reader: its arrival day if it has one, otherwise when it was sent. */
+const sentOn = l => l.arrival ?? l.sentAt ?? 0;
+
+/** A letter the players can't see yet: hidden, or held back for a day still to come. */
+const pending = l => !l.visible || ((l.arrival ?? 0) > worldNow());
 
 function newNote(app, entry) {
   openEditor("note", {
@@ -186,5 +262,22 @@ async function detail(note) {
     canEdit: store.canEdit("notes", note),
     // A GM may show the table a shared note or one of their own, never a player's private one.
     canShow: game.user.isGM && (!!note.shared || (note.author === game.user.id))
+  };
+}
+
+async function letterDetail(letter, read) {
+  const isGM = game.user.isGM;
+  const kind = letter.kind ?? "letter";
+  return {
+    ...letter,
+    title: letter.title || loc("Untitled"),
+    body: await enrich(letter.body),
+    icon: LETTER_ICONS[kind] ?? LETTER_ICONS.letter,
+    kindLabel: `${L}.Letters.Kinds.${kind}`,
+    dateLabel: worldDate(sentOn(letter)),
+    arrivesLabel: (isGM && (letter.arrival ?? 0) > worldNow()) ? worldDate(letter.arrival) : null,
+    hidden: !letter.visible,
+    viewers: isGM ? viewerNames(letter) : "",
+    unread: !isGM && !read.has(letter.id)
   };
 }
