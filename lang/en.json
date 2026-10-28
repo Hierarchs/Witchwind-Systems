@@ -650,7 +650,9 @@
         "traits": "Traits",
         "spells": "Spells",
         "habitat": "Habitat"
-      }
+      },
+      "VulnerableTo": "Vulnerable against",
+      "NoneKnown": "None known"
     },
     "Notices": {
       "NewShort": "Pin up",

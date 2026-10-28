@@ -1,12 +1,26 @@
+{{!-- The GM's chips for who can see one fact: everyone, or chosen players. --}}
+{{#*inline "wws-beast-share"}}
+<div class="wws-share">
+  <button type="button" class="wws-chip{{#if fact.everyone}} on{{/if}}" data-action="bestiaryShare" data-id="{{id}}" data-key="{{fact.key}}" data-user="*">
+    <i class="fa-solid fa-users" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.Everyone"}}
+  </button>
+  {{#each fact.players}}
+  <button type="button" class="wws-chip{{#if on}} on{{/if}}" data-action="bestiaryShare" data-id="{{../id}}" data-key="{{../fact.key}}" data-user="{{id}}"
+          style="--wws-author: {{color}};">{{name}}</button>
+  {{/each}}
+</div>
+{{/inline}}
+
 <div class="wws-spread wws-bestiary">
 
-  {{!-- Left page: the creatures the party has met --}}
-  <section class="wws-page wws-page-list">
-    <header class="wws-page-head">
+  {{!-- Left: the creatures the party has met, grouped by kind as in the Witcher's bestiary --}}
+  <section class="wws-page wws-page-list wws-beast-list">
+    <header class="wws-beast-head">
       <h2>{{localize "WITCHWIND_SYSTEMS.Sections.bestiary"}}</h2>
+      {{#if page.total}}<span class="wws-beast-count">{{page.total}}</span>{{/if}}
     </header>
 
-    <label class="wws-search">
+    <label class="wws-search wws-beast-search">
       <i class="fa-solid fa-magnifying-glass" inert></i>
       <input type="search" data-focus-key="bestiary" value="{{page.search}}"
              placeholder="{{localize "WITCHWIND_SYSTEMS.Bestiary.Search"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Bestiary.Search"}}">
@@ -16,20 +30,31 @@
       {{#if page.empty}}
       <p class="wws-empty">{{#if page.search}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NoMatches"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Empty"}}{{/if}}</p>
       {{/if}}
-      <ol class="wws-list">
-        {{#each page.rows}}
-        <li>
-          <button type="button" class="wws-row wws-creature-row{{#if selected}} selected{{/if}}" data-action="bestiarySelect" data-id="{{id}}">
-            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-dragon wws-row-icon" inert></i>{{/if}}
-            <span class="wws-row-text">
-              <span class="wws-row-title">{{name}}</span>
-              <span class="wws-row-sub">{{#if type}}{{type}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Unknown"}}{{/if}}{{#if encountered}} · {{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=encountered}}{{/if}}</span>
-            </span>
-            {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
-          </button>
-        </li>
-        {{/each}}
-      </ol>
+      {{#each page.groups}}
+      <section class="wws-beast-group">
+        <button type="button" class="wws-beast-group-head" data-action="bestiaryGroup" data-group="{{key}}" aria-expanded="{{#if open}}true{{else}}false{{/if}}">
+          <span class="wws-beast-group-name">{{label}}</span>
+          <span class="wws-beast-group-count">{{count}}</span>
+          <i class="fa-solid {{#if open}}fa-caret-up{{else}}fa-caret-down{{/if}}" inert></i>
+        </button>
+        {{#if open}}
+        <ol class="wws-list wws-beast-rows">
+          {{#each rows}}
+          <li>
+            <button type="button" class="wws-row wws-creature-row{{#if selected}} selected{{/if}}" data-action="bestiarySelect" data-id="{{id}}">
+              <span class="wws-beast-thumb">{{#if img}}<img src="{{img}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}</span>
+              <span class="wws-row-text">
+                <span class="wws-row-title">{{name}}</span>
+                {{#if encountered}}<span class="wws-row-sub">{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=encountered}}</span>{{/if}}
+              </span>
+              {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+            </button>
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+      </section>
+      {{/each}}
     </div>
 
     {{#if isGM}}
@@ -37,25 +62,40 @@
     {{/if}}
   </section>
 
-  {{!-- Right page: the record of the chosen creature --}}
-  <section class="wws-page wws-page-detail">
+  {{!-- Middle: the creature itself, and what it's vulnerable to --}}
+  <section class="wws-beast-stage">
+    {{#with page.creature as |c|}}
+    <figure class="wws-beast-art">
+      {{#if c.art}}<img src="{{c.art}}" alt="{{c.name}}">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}
+    </figure>
+    <div class="wws-beast-weak">
+      <h3 class="wws-beast-weak-head">
+        <span>{{localize "WITCHWIND_SYSTEMS.Bestiary.VulnerableTo"}}</span>
+      </h3>
+      {{#if c.vulnerable.known}}
+      {{#if c.vulnerable.items.length}}
+      <ul class="wws-beast-weak-icons">
+        {{#each c.vulnerable.items}}
+        <li style="--wws-i: {{@index}};" data-tooltip="{{label}}">{{#if img}}<img src="{{img}}" alt="{{label}}">{{else}}<i class="{{icon}}" aria-label="{{label}}"></i>{{/if}}</li>
+        {{/each}}
+      </ul>
+      {{else}}
+      <p class="wws-beast-weak-none">{{localize "WITCHWIND_SYSTEMS.Bestiary.NoneKnown"}}</p>
+      {{/if}}
+      {{#if c.vulnerable.hiddenFromPlayers}}<p class="wws-beast-weak-note">{{localize "WITCHWIND_SYSTEMS.Bestiary.HiddenTag"}}</p>{{/if}}
+      {{else}}
+      <p class="wws-beast-weak-none"><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.NotYetKnown"}}</p>
+      {{/if}}
+    </div>
+    {{/with}}
+  </section>
+
+  {{!-- Right: the creature's page in the book --}}
+  <section class="wws-page wws-page-detail wws-beast-book">
     <div class="wws-detail-scroll">
       {{#with page.creature as |c|}}
       <article class="wws-entry wws-creature" data-id="{{c.id}}">
         {{#if c.hidden}}<p class="wws-ribbon"><i class="fa-solid fa-eye-slash" inert></i> {{localize "WITCHWIND_SYSTEMS.HiddenFromPlayers"}}</p>{{/if}}
-
-        {{#if c.art}}
-        <figure class="wws-plate wws-plate-creature"><img src="{{c.art}}" alt="{{c.name}}"></figure>
-        {{/if}}
-
-        <header class="wws-faction-head">
-          <span class="wws-emblem wws-emblem-large">{{#if c.img}}<img src="{{c.img}}" alt="">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}</span>
-          <div class="wws-entry-head">
-            <h1 class="wws-entry-title">{{c.name}}</h1>
-            {{#if (or c.typeLabel c.sizeLabel)}}<p class="wws-byline">{{c.typeLabel}}{{#if c.sizeLabel}}{{#if c.typeLabel}} · {{/if}}{{c.sizeLabel}}{{/if}}</p>{{/if}}
-            <p class="wws-byline">{{#if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}</p>
-          </div>
-        </header>
 
         {{#if @root.isGM}}
         <div class="wws-gm-bar">
@@ -76,20 +116,29 @@
         </div>
         {{/if}}
 
-        {{#if c.encounters.length}}
-        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Bestiary.Encounters"}}</h3>
-        <ol class="wws-log wws-encounters">
-          {{#each c.encounters}}
-          <li class="wws-log-entry">
-            <div class="wws-log-meta"><time>{{dateLabel}}</time></div>
-            <p class="wws-encounter-place">{{place}}</p>
-          </li>
-          {{/each}}
-        </ol>
-        {{/if}}
+        <header class="wws-beast-title">
+          <h1 class="wws-entry-title">{{c.name}}</h1>
+          <p class="wws-byline">
+            {{#if c.typeLabel}}{{c.typeLabel}}{{/if}}{{#if c.sizeLabel}}{{#if c.typeLabel}} · {{/if}}{{c.sizeLabel}}{{/if}}{{#if (or c.typeLabel c.sizeLabel)}} · {{/if}}
+            {{#if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}
+          </p>
+        </header>
 
-        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Bestiary.Knowledge"}}</h3>
-        <div class="wws-facts-grid">
+        {{!-- The lore: the book's own words about the creature, written out first. --}}
+        {{#with c.story as |story|}}
+        <section class="wws-beast-story{{#unless (or story.known @root.isGM)}} wws-locked{{/unless}}">
+          {{#if story.hiddenFromPlayers}}<span class="wws-fact-tag">{{localize "WITCHWIND_SYSTEMS.Bestiary.HiddenTag"}}</span>{{/if}}
+          {{#if (or story.known @root.isGM)}}
+          {{#if story.html}}<div class="wws-prose">{{{story.html}}}</div>
+          {{else}}<p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Bestiary.NothingRecorded"}}</p>{{/if}}
+          {{else}}
+          <p class="wws-fact-locked"><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.NotYetKnown"}}</p>
+          {{/if}}
+          {{#if @root.isGM}}{{> wws-beast-share fact=story id=c.id}}{{/if}}
+        </section>
+        {{/with}}
+
+        <div class="wws-facts-grid wws-beast-facts">
           {{#each c.facts}}
           <section class="wws-fact{{#if wide}} wws-wide{{/if}}{{#unless (or known @root.isGM)}} wws-locked{{/unless}}">
             <header class="wws-fact-head">
@@ -110,20 +159,22 @@
               <p class="wws-fact-locked"><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.NotYetKnown"}}</p>
             {{/if}}
 
-            {{#if @root.isGM}}
-            <div class="wws-share">
-              <button type="button" class="wws-chip{{#if everyone}} on{{/if}}" data-action="bestiaryShare" data-id="{{c.id}}" data-key="{{key}}" data-user="*">
-                <i class="fa-solid fa-users" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.Everyone"}}
-              </button>
-              {{#each players}}
-              <button type="button" class="wws-chip{{#if on}} on{{/if}}" data-action="bestiaryShare" data-id="{{c.id}}" data-key="{{../key}}" data-user="{{id}}"
-                      style="--wws-author: {{color}};">{{name}}</button>
-              {{/each}}
-            </div>
-            {{/if}}
+            {{#if @root.isGM}}{{> wws-beast-share fact=this id=c.id}}{{/if}}
           </section>
           {{/each}}
         </div>
+
+        {{#if c.encounters.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Bestiary.Encounters"}}</h3>
+        <ol class="wws-log wws-encounters">
+          {{#each c.encounters}}
+          <li class="wws-log-entry">
+            <div class="wws-log-meta"><time>{{dateLabel}}</time></div>
+            <p class="wws-encounter-place">{{place}}</p>
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
       </article>
       {{else}}
       <p class="wws-empty wws-empty-page">

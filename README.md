@@ -60,6 +60,7 @@ The Journal has two tabs. **Notes** are the table's own session notes, which any
 
 ### Bestiary
 
+- **Laid out like the Witcher's bestiary**, in Witchwind's leather and gold. The creatures are grouped by kind on the left; fold a kind away by its heading. The chosen creature stands large in the middle over what it's vulnerable to, and its page of the book is on the right, with the lore first and the other facts after it. A creature's kind and weaknesses show only once they're revealed.
 - **Creatures the party has met**, copied from their monster in the Monsters compendium. As GM, drag a monster from the compendium onto the Bestiary page; the stats come across, and the creature is hidden until you log an encounter with it.
 - **Encounters.** Log where and when the party met a creature. Logging the first one shows its basics (its kind and size) to everyone.
 - **Facts, one at a time.** Each part of the record (threat, defenses, movement, abilities, resistances, languages, skills, attacks, traits and spells, tactics, lore, habitat) is revealed on its own, to everyone or to chosen players, with a chip for each. Players see a locked card for anything not yet revealed, and nothing hidden is shown on their screen.

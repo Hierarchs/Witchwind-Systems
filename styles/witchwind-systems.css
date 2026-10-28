@@ -5589,3 +5589,416 @@ ul.wws-chips {
     transition: none !important;
   }
 }
+
+/* ============================================ */
+/*  The bestiary, after the Witcher's           */
+/* ============================================ */
+
+/*
+ * Three panels on dark leather, as the Witcher 3 lays out its bestiary: the creatures grouped by kind on the left,
+ * the creature itself in the middle over what it's vulnerable to, and its page of the book on the right, in the
+ * book's own parchment. Witchwind's gold runs through the rules, the selection and the headings.
+ */
+.wws-spread.wws-bestiary {
+  grid-template-columns: minmax(220px, 0.8fr) minmax(240px, 1fr) minmax(320px, 1.25fr);
+  grid-template-areas: "list stage book";
+  background: var(--wws-grain), radial-gradient(ellipse at 50% 40%, #2a231b 0%, #16130f 62%, #0f0d0a 100%);
+  color: var(--wws-ink);
+  box-shadow: var(--wws-inner-rule), 0 6px 18px rgb(0 0 0 / 55%);
+}
+
+/* The list: dark, with gold for the heading and the chosen creature. */
+.wws-spread.wws-bestiary > .wws-beast-list {
+  grid-area: list;
+  --color-text-primary: var(--wws-ink);
+  --color-text-secondary: var(--wws-ink-muted);
+  padding: 18px 12px 12px 18px;
+  color: var(--wws-ink);
+  border-right: 1px solid var(--wws-line);
+  box-shadow: none;
+}
+
+.wws-beast-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--wws-gold-dim);
+}
+
+.wws-beast-head h2 {
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws-beast-count {
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  color: var(--wws-ink-faint);
+}
+
+.wws-bestiary .wws-beast-search {
+  border-color: var(--wws-line-strong);
+  background: rgb(0 0 0 / 30%);
+  color: var(--wws-ink-faint);
+}
+
+.wws-bestiary .wws-beast-search input {
+  color: var(--wws-ink);
+}
+
+.wws-bestiary .wws-beast-list .wws-empty,
+.wws-bestiary .wws-drop-hint {
+  color: var(--wws-ink-muted);
+}
+
+/* Each kind of creature, under a heading that folds it away. */
+.wws button.wws-beast-group-head {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 6px 6px 2px;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-ivory);
+  transition: color 140ms ease-out;
+}
+
+.wws button.wws-beast-group-head:hover {
+  color: var(--wws-gold-bright);
+}
+
+.wws button.wws-beast-group-head:focus-visible {
+  outline: 1px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws-beast-group-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws-beast-group-count {
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  letter-spacing: 0;
+  color: var(--wws-ink-faint);
+}
+
+.wws-beast-group-head i {
+  font-size: 11px;
+  color: var(--wws-gold-dim);
+}
+
+.wws-beast-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+/* A creature in the list: its picture in sepia, as the Witcher's are, and its name. */
+.wws .wws-bestiary button.wws-creature-row {
+  gap: 10px;
+  padding: 4px 8px 4px 4px;
+  border: 1px solid transparent;
+  border-bottom-color: rgb(61 51 38 / 70%);
+  color: var(--wws-ink);
+}
+
+.wws .wws-bestiary button.wws-creature-row:hover {
+  background: var(--wws-gold-wash);
+}
+
+/* The chosen creature: a gold double rule around it, as the Witcher marks its selection. */
+.wws .wws-bestiary button.wws-creature-row.selected {
+  background: linear-gradient(90deg, rgb(201 164 92 / 16%), rgb(201 164 92 / 4%));
+  border-color: var(--wws-gold);
+  box-shadow: inset 0 0 0 2px #120f0b, inset 0 0 0 3px rgb(201 164 92 / 45%);
+}
+
+.wws-beast-thumb {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid var(--wws-line-strong);
+  background: var(--wws-dark);
+  color: var(--wws-gold-dim);
+}
+
+.wws-beast-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+  filter: sepia(0.45) contrast(1.05);
+  transition: filter 160ms ease-out;
+}
+
+.wws-creature-row.selected .wws-beast-thumb img,
+.wws-creature-row:hover .wws-beast-thumb img {
+  filter: none;
+}
+
+.wws-bestiary .wws-creature-row .wws-row-title {
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  color: var(--wws-ink);
+}
+
+.wws-bestiary .wws-creature-row.selected .wws-row-title {
+  color: var(--wws-gold-bright);
+}
+
+.wws-bestiary .wws-creature-row .wws-row-sub {
+  color: var(--wws-ink-faint);
+}
+
+/* The stage: the creature large on the dark, lit softly from behind, over what it's vulnerable to. */
+.wws-beast-stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  min-height: 0;
+  padding: 22px 14px 18px;
+}
+
+.wws-beast-art {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 160px;
+  margin: 0;
+  background: radial-gradient(closest-side, rgb(201 164 92 / 16%), rgb(201 164 92 / 0%) 72%);
+}
+
+.wws-beast-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: none;
+  filter: drop-shadow(0 12px 18px rgb(0 0 0 / 70%));
+}
+
+.wws-beast-art > i {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 96px;
+  color: rgb(201 164 92 / 22%);
+}
+
+.wws-beast-weak {
+  width: min(100%, 320px);
+  text-align: center;
+}
+
+/* "Vulnerable against", between two gold rules. */
+.wws-beast-weak-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-ivory);
+}
+
+.wws-beast-weak-head::before,
+.wws-beast-weak-head::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(143 116 66 / 0%), var(--wws-gold-dim));
+}
+
+.wws-beast-weak-head::after {
+  background: linear-gradient(90deg, var(--wws-gold-dim), rgb(143 116 66 / 0%));
+}
+
+.wws-beast-weak-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 0 10px;
+  list-style: none;
+  border-bottom: 1px solid var(--wws-gold-dim);
+}
+
+.wws-beast-weak-icons li {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--wws-gold-dim);
+  background: linear-gradient(180deg, #2a231b, #16130f);
+  box-shadow: inset 0 0 0 2px #120f0b, 0 3px 8px rgb(0 0 0 / 50%);
+}
+
+.wws-beast-weak-icons img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border: none;
+}
+
+.wws-beast-weak-icons i {
+  font-size: 20px;
+  color: var(--wws-gold);
+}
+
+.wws-beast-weak-none,
+.wws-beast-weak-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--wws-font-body);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--wws-ink-muted);
+}
+
+.wws-beast-weak-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--wws-ink-faint);
+}
+
+/* The book: the creature's page in parchment, set into the dark like the open book in the Witcher. */
+.wws-spread.wws-bestiary > .wws-beast-book {
+  grid-area: book;
+  margin: 14px 14px 14px 0;
+  background: var(--wws-paper);
+  color: var(--wws-parch-ink);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  box-shadow: var(--wws-page-rule), inset 0 0 40px rgb(120 84 40 / 35%), 0 8px 22px rgb(0 0 0 / 60%);
+}
+
+.wws-beast-title {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-beast-title .wws-entry-title {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wws-beast-title .wws-byline {
+  margin: 4px 0 0;
+}
+
+/* The lore, set as the book's text. */
+.wws-beast-story {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.wws-beast-story .wws-prose {
+  font-size: 15.5px;
+  line-height: 1.55;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.wws-beast-story > .wws-fact-tag {
+  float: right;
+  margin: 0 0 4px 8px;
+}
+
+/* The other facts, as short sections of the book rather than cards. */
+.wws-beast-book .wws-beast-facts {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 4px 18px;
+}
+
+.wws-beast-book .wws-fact {
+  padding: 8px 2px 6px;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--wws-parch-rule);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.wws-beast-book .wws-fact.wws-locked {
+  background: none;
+  border-style: solid;
+  border-color: var(--wws-parch-rule);
+  opacity: 0.8;
+}
+
+/* A new creature's picture rises into view, and its weaknesses come in one after another. */
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-beast-art img {
+  animation: wws-rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+#witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-beast-weak-icons li {
+  animation: wws-pop-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(200ms + var(--wws-i, 0) * 70ms);
+}
+
+/* Narrower screens: the list down the left, the creature over its page on the right. */
+@media (max-width: 1180px) {
+  .wws-spread.wws-bestiary {
+    grid-template-columns: minmax(200px, 0.75fr) minmax(0, 1.5fr);
+    grid-template-rows: minmax(200px, 40%) minmax(0, 1fr);
+    grid-template-areas:
+      "list stage"
+      "list book";
+  }
+
+  .wws-spread.wws-bestiary > .wws-beast-book {
+    margin: 0 14px 14px;
+  }
+
+  .wws-beast-stage {
+    flex-direction: row;
+    padding: 14px;
+  }
+
+  .wws-beast-art {
+    height: 100%;
+    min-height: 0;
+  }
+}

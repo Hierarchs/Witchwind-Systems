@@ -20,19 +20,33 @@ export default {
     if ( !listed.some(c => c.id === app.selected.bestiary) ) app.selected.bestiary = listed[0]?.id ?? null;
     const creature = listed.find(c => c.id === app.selected.bestiary);
 
-    return {
-      isGM,
-      search: app.search.bestiary ?? "",
-      empty: !listed.length,
-      rows: listed.map(c => ({
+    // Grouped by kind, as the Witcher's bestiary is. A kind is only known once the creature's basics are, so the
+    // rest gather under Unknown, last. A group the reader folded stays folded, unless they're searching.
+    app.bestiaryClosed ??= new Set();
+    const groups = new Map();
+    for ( const c of listed ) {
+      const kind = kindOf(c);
+      const key = kind.toLowerCase() || UNKNOWN;
+      if ( !groups.has(key) ) groups.set(key, { key, label: kind || loc("Bestiary.Unknown"), rows: [] });
+      groups.get(key).rows.push({
         id: c.id,
         name: c.name || loc("Untitled"),
         img: c.img,
-        type: knows(c, "basics") ? c.type : "",
         encountered: (c.encounters ?? []).length,
         hidden: !c.visible,
         selected: c.id === app.selected.bestiary
-      })),
+      });
+    }
+    const ordered = [...groups.values()]
+      .sort((a, b) => (a.key === UNKNOWN) - (b.key === UNKNOWN) || a.label.localeCompare(b.label))
+      .map(g => ({ ...g, count: g.rows.length, open: !!search || !app.bestiaryClosed.has(g.key) }));
+
+    return {
+      isGM,
+      search: app.search.bestiary ?? "",
+      total: creatures.length,
+      empty: !listed.length,
+      groups: ordered,
       creature: creature ? await detail(creature) : null
     };
   },
@@ -64,6 +78,14 @@ export default {
   actions: {
     bestiarySelect(event, target) {
       this.selected.bestiary = target.dataset.id;
+      this.render();
+    },
+
+    /** Fold or unfold one kind of creature in the list. */
+    bestiaryGroup(event, target) {
+      const key = target.dataset.group;
+      if ( this.bestiaryClosed.has(key) ) this.bestiaryClosed.delete(key);
+      else this.bestiaryClosed.add(key);
       this.render();
     },
 
@@ -238,6 +260,34 @@ export async function importCreature(actor) {
 
 const label = name => loc(`Bestiary.Lines.${name}`);
 
+/** The key of the list's group for creatures whose kind isn't known yet. */
+const UNKNOWN = "?";
+
+/** A creature's kind for the list, without its subtype ("Dragon", not "Dragon (Chromatic)"), once its basics are known. */
+function kindOf(c) {
+  return knows(c, "basics") ? String(c.type ?? "").split(" (")[0].trim() : "";
+}
+
+/** Damage types as Font Awesome icons, for systems that don't have pictures of their own for them. */
+const DAMAGE_ICONS = {
+  acid: "fa-flask", bludgeoning: "fa-hammer", cold: "fa-snowflake", fire: "fa-fire", force: "fa-burst",
+  lightning: "fa-bolt", necrotic: "fa-skull", piercing: "fa-bullseye", poison: "fa-skull-crossbones",
+  psychic: "fa-brain", radiant: "fa-sun", slashing: "fa-khanda", thunder: "fa-volume-high"
+};
+
+/** Damage types as icons: dnd5e's own pictures where it has them, otherwise Font Awesome. */
+function damageIcons(names) {
+  return (names ?? []).map(name => {
+    const key = String(name).toLowerCase();
+    const config = CONFIG.DND5E?.damageTypes?.[key];
+    return {
+      label: config?.label ? game.i18n.localize(config.label) : String(name),
+      img: config?.icon ?? "",
+      icon: `fa-solid ${DAMAGE_ICONS[key] ?? "fa-circle-exclamation"}`
+    };
+  });
+}
+
 const SIZES = ["tiny", "sm", "med", "lg", "huge", "grg"];
 function sizeLabel(size) {
   return SIZES.includes(size) ? loc(`Bestiary.Sizes.${size}`) : titleCase(size);
@@ -343,8 +393,18 @@ async function detail(c) {
       html: show && isText ? await enrich(textFor(c, fact.key)) : ""
     };
   }));
+  // The lore is the book's main text, written out above the rest. What the creature is vulnerable to stands under its
+  // picture, as in the Witcher; it's part of the resistances fact, and shown only when that is.
+  const resist = facts.find(f => f.key === "resistances");
+  const vulnerable = {
+    known: resist.known || isGM,
+    hiddenFromPlayers: resist.hiddenFromPlayers,
+    items: (resist.known || isGM) ? damageIcons(c.vulnerabilities) : []
+  };
   // Only what the page prints: the facts carry everything else, and each one is filled in only when it may be seen.
   return {
+    story: facts.find(f => f.key === "lore"),
+    vulnerable,
     id: c.id,
     img: c.img,
     art: c.art || c.img || "",
@@ -356,6 +416,6 @@ async function detail(c) {
     typeLabel: (isGM || knows(c, "basics")) ? (c.type ?? "") : "",
     sizeLabel: (isGM || knows(c, "basics")) ? sizeLabel(c.size) : "",
     canRefresh: isGM && !!c.sourceUuid,
-    facts
+    facts: facts.filter(f => f.key !== "lore")
   };
 }
