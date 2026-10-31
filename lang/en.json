@@ -168,6 +168,27 @@
       "CombatLog": {
         "Name": "Log fights in the bestiary",
         "Hint": "When a fight starts, add the creatures the party faces to the bestiary (if they aren’t there yet) and log an encounter with each; count each one that falls as slain. Friendly tokens and the players’ own are left out."
+      },
+      "TurnOrder": {
+        "Name": "Turn-order bar",
+        "Hint": "In a fight, show the combatants in initiative order across the top of the screen, as portraits, with whoever’s turn it is first. Each player’s own choice."
+      },
+      "TurnOrderScale": {
+        "Name": "Turn-order bar size",
+        "Hint": "How large the turn-order bar’s portraits are. Each player’s own choice."
+      },
+      "SceneTitles": {
+        "Name": "Scene title cards",
+        "Hint": "When the party arrives at a scene, its name fades in large over the screen with its region. The GM writes each scene’s card from its entry in the Scenes sidebar.",
+        "Choices": {
+          "all": "Every scene",
+          "written": "Only scenes given a title card",
+          "off": "None"
+        }
+      },
+      "SceneTitlesShow": {
+        "Name": "Show scene title cards",
+        "Hint": "Turn this off to never see scene title cards on this screen. Each player’s own choice."
       }
     },
     "Keys": {
@@ -186,7 +207,8 @@
       "bestiary": "Open the bestiary",
       "notices": "Open the notice board",
       "party": "Show or hide the party frame",
-      "calendar": "Open the calendar"
+      "calendar": "Open the calendar",
+      "search": "Search the book"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -928,6 +950,47 @@
       "Report": "{who} rolled {skill} {total} against DC {dc}.",
       "ReportLearned": "Recalled: {facts}.",
       "ReportNothing": "Recalled nothing."
+    },
+    "Search": {
+      "Title": "Search the book",
+      "Placeholder": "Search quests, people, letters, creatures, maps…",
+      "Hint": "↑ ↓ to choose · Enter to open · Esc to close",
+      "None": "Nothing found.",
+      "Gave": "Gave you {quest}",
+      "Kinds": {
+        "section": "Tab",
+        "quest": "Quest",
+        "note": "Note",
+        "letter": "Letter",
+        "creature": "Creature",
+        "map": "Map",
+        "marker": "Marker",
+        "faction": "Faction",
+        "merchant": "Merchant",
+        "notice": "Notice",
+        "event": "Event",
+        "location": "Location",
+        "person": "Person"
+      }
+    },
+    "SceneTitles": {
+      "Edit": "Title card…",
+      "Show": "Show the title card to everyone",
+      "EditTitle": "Title card: {name}",
+      "Name": "Name",
+      "Region": "Region",
+      "RegionPlaceholder": "The Vale of Ravensmoor",
+      "Line": "A line beneath",
+      "LinePlaceholder": "Seat of the Ember Vigil",
+      "Enabled": "Show it when the party arrives",
+      "EditorHint": "The name, large, with the region above it and a line beneath, fades in over the screen when the party arrives here. Leave the name empty to use the scene’s navigation name. Show it to everyone at any time from the scene’s menu or the button in the token controls."
+    },
+    "Turns": {
+      "Title": "Turn order",
+      "Round": "Round",
+      "Unknown": "Unknown",
+      "Initiative": "Initiative {n}",
+      "YourTurn": "Your Turn"
     }
   }
 }

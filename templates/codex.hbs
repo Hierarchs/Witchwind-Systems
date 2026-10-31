@@ -1,7 +1,12 @@
 <div class="wws-book" data-section="{{sectionId}}">
   {{!-- The tabs across the top, on a leather bar over a double gold rule. --}}
   <header class="wws-topbar">
-    <span class="wws-topbar-hint"><kbd>Esc</kbd> {{localize "WITCHWIND_SYSTEMS.Close"}}</span>
+    <span class="wws-topbar-hint">
+      <span><kbd>Esc</kbd> {{localize "WITCHWIND_SYSTEMS.Close"}}</span>
+      <button type="button" class="wws-topbar-search" data-action="search" data-tooltip="WITCHWIND_SYSTEMS.Search.Title">
+        <i class="fa-solid fa-magnifying-glass" inert></i> <kbd>Ctrl</kbd><kbd>K</kbd>
+      </button>
+    </span>
     <nav class="wws-tabs" aria-label="{{localize "WITCHWIND_SYSTEMS.Title"}}">
       {{#each tabs}}
       <button type="button" class="wws-tab{{#if active}} active{{/if}}" data-action="section" data-section="{{id}}"

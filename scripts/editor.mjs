@@ -8,7 +8,7 @@ import { dayOf, dateOf, dayFromDate, daysInMonth, months, moonPhase, offsetFor }
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680, event: 540, moons: 660 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680, event: 540, moons: 660, sceneTitle: 500 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -123,6 +123,9 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.skills = KNOWLEDGE_SKILL_IDS.map(id => ({ id, label: skillLabel(id), selected: entry.knowledgeSkill === id }));
         context.autoSkill = this.extra.autoSkill ? skillLabel(this.extra.autoSkill) : "";
         context.autoDC = this.extra.autoDC ?? "";
+        break;
+      case "sceneTitle":
+        context.sceneName = this.extra.sceneName ?? "";
         break;
       case "event":
         context.date = dateContext(Number.isFinite(entry.month) ? { year: entry.year ?? dateOf(dayOf())?.year, month: entry.month, day: entry.day } : null, true);

@@ -1,0 +1,25 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.SceneTitles.Name"}}</label>
+    <input type="text" name="title" value="{{entry.title}}" placeholder="{{sceneName}}">
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.SceneTitles.Region"}}</label>
+    <input type="text" name="region" value="{{entry.region}}" placeholder="{{localize "WITCHWIND_SYSTEMS.SceneTitles.RegionPlaceholder"}}">
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.SceneTitles.Line"}}</label>
+    <input type="text" name="line" value="{{entry.line}}" placeholder="{{localize "WITCHWIND_SYSTEMS.SceneTitles.LinePlaceholder"}}">
+  </div>
+  <label class="wws-toggle">
+    <input type="checkbox" name="enabled" {{#if entry.enabled}}checked{{/if}}>
+    <span>{{localize "WITCHWIND_SYSTEMS.SceneTitles.Enabled"}}</span>
+  </label>
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.SceneTitles.EditorHint"}}</p>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-heading" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

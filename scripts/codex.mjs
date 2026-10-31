@@ -9,6 +9,7 @@ import factions from "./sections/factions.mjs";
 import bestiary from "./sections/bestiary.mjs";
 import notices from "./sections/notices.mjs";
 import merchants from "./sections/merchants.mjs";
+import { openSearch } from "./search.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -75,7 +76,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "witchwind-codex",
     classes: ["wws", "wws-codex"],
     window: { frame: false, positioned: false },
-    actions: Object.assign({ section: Codex.#onSection }, ...Object.values(SECTIONS).map(s => s.actions))
+    actions: Object.assign({ section: Codex.#onSection, search: () => openSearch() }, ...Object.values(SECTIONS).map(s => s.actions))
   };
 
   /** Re-render after a change to a collection, if the open section shows it. */

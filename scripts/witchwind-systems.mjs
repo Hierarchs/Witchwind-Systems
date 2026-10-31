@@ -15,6 +15,9 @@ import { registerCalendar, newDay } from "./calendar.mjs";
 import { registerRewards } from "./rewards.mjs";
 import { registerKnowledge } from "./knowledge.mjs";
 import { registerEncounters } from "./encounters.mjs";
+import QuickSearch, { openSearch } from "./search.mjs";
+import { registerSceneTitles, showToEveryone, editTitle } from "./scene-titles.mjs";
+import { registerTurnOrder, draw as drawTurnOrder } from "./turn-order.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
 import { SECTION_KINDS, resolveKind } from "./helpers.mjs";
@@ -197,6 +200,52 @@ Hooks.once("init", () => {
     onChange: () => Party.refresh()
   });
 
+  // The turn-order bar across the top in a fight, each player's own, and its size.
+  register("turnOrder", {
+    name: `${L}.Settings.TurnOrder.Name`,
+    hint: `${L}.Settings.TurnOrder.Hint`,
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => drawTurnOrder()
+  });
+
+  register("turnOrderScale", {
+    name: `${L}.Settings.TurnOrderScale.Name`,
+    hint: `${L}.Settings.TurnOrderScale.Hint`,
+    scope: "client",
+    config: true,
+    type: Number,
+    range: { ...PARTY_SCALE },
+    default: 1,
+    onChange: () => drawTurnOrder()
+  });
+
+  // Scene title cards: which scenes have them, for the world, and whether this player sees them.
+  register("sceneTitles", {
+    name: `${L}.Settings.SceneTitles.Name`,
+    hint: `${L}.Settings.SceneTitles.Hint`,
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      all: `${L}.Settings.SceneTitles.Choices.all`,
+      written: `${L}.Settings.SceneTitles.Choices.written`,
+      off: `${L}.Settings.SceneTitles.Choices.off`
+    },
+    default: "all"
+  });
+
+  register("sceneTitlesShow", {
+    name: `${L}.Settings.SceneTitlesShow.Name`,
+    hint: `${L}.Settings.SceneTitlesShow.Hint`,
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   register("partyLayout", {
     name: `${L}.Settings.PartyLayout.Name`,
     hint: `${L}.Settings.PartyLayout.Hint`,
@@ -240,6 +289,18 @@ Hooks.once("init", () => {
     });
   }
 
+  // Quick search: Ctrl+K anywhere (Cmd+K on a Mac), to find anything in the book.
+  game.keybindings.register(MODULE_ID, "search", {
+    name: `${L}.Keys.search`,
+    editable: [{ key: "KeyK", modifiers: ["Control"] }],
+    precedence: CONST.KEYBINDING_PRECEDENCE.PRIORITY,
+    onDown: () => {
+      if ( !enabledSections().length ) return false;
+      openSearch();
+      return true;
+    }
+  });
+
   // The party frame has a key of its own, left unbound until a player chooses one.
   game.keybindings.register(MODULE_ID, "party", {
     name: `${L}.Keys.party`,
@@ -256,7 +317,7 @@ Hooks.once("init", () => {
   const bookKey = fn => () => {
     if ( !Codex.existing?.rendered ) return false;
     const framed = Array.from(foundry.applications.instances.values()).some(app => app.hasFrame && app.rendered);
-    if ( framed || Object.keys(ui.windows ?? {}).length || LocationGallery.isOpen ) return false;
+    if ( framed || Object.keys(ui.windows ?? {}).length || LocationGallery.isOpen || QuickSearch.isOpen ) return false;
     fn(Codex.existing);
     return true;
   };
@@ -318,6 +379,16 @@ Hooks.on("getSceneControlButtons", controls => {
     active: isPlacing(),
     onChange: (event, active) => setPlacing(active, { fromControls: true })
   };
+
+  // And a button to show this scene's title card to everyone.
+  if ( game.user.isGM ) tokens.tools.witchwindSceneTitle = {
+    name: "witchwindSceneTitle",
+    title: `${L}.SceneTitles.Show`,
+    icon: "fa-solid fa-heading",
+    order: Object.keys(tokens.tools).length,
+    button: true,
+    onChange: () => showToEveryone()
+  };
 });
 
 // And one at the top of the Journal tab, which works even with no scene open.
@@ -368,6 +439,8 @@ Hooks.once("ready", () => {
   registerRewards();
   registerKnowledge();
   registerEncounters();
+  registerSceneTitles();
+  registerTurnOrder();
 
   // As the world's clock moves, held-back letters arrive and merchants restock.
   Hooks.on("updateWorldTime", () => {
@@ -389,6 +462,12 @@ Hooks.once("ready", () => {
     playSound,
     /** Move the world's clock on by one day, as the calendar's New Day button does. GM only. */
     newDay,
+    /** Open or close the quick search, as Ctrl+K does. */
+    search: () => QuickSearch.toggle(),
+    /** Show a scene's title card (the viewed scene's by default) to everyone. GM only. */
+    showSceneTitle: sceneId => showToEveryone(sceneId ? game.scenes.get(sceneId) : undefined),
+    /** Write a scene's title card, in the editor. GM only. */
+    editSceneTitle: sceneId => editTitle(game.scenes.get(sceneId ?? globalThis.canvas?.scene?.id)),
     store
   };
 });

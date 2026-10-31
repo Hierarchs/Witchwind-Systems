@@ -9,6 +9,25 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Sounds.** The book plays a sound as it opens and closes, and turns a page on each new tab or entry, on each picture in a location's gallery, and with the banners and pop-ups for letters, notices, the bestiary, titles and factions. Quests started, updated, completed or failed sound a fanfare. The module brings its own sounds; to use others, choose any audio file on your Foundry server under **Configure Settings > Witchwind Systems**, or clear one for silence. Each player sets their own volume, or turns it to zero.
 - **Keyboard.** Up and Down move through the list, Left and Right change tab, Esc closes. While the book is open they don't pan the map underneath.
 
+### Quick search
+
+Press **Ctrl+K** (**Cmd+K** on a Mac) anywhere, or click the search button in the book's top bar, and type. Every quest, note, letter, person, creature, map, marker, faction, merchant, notice, location card and calendar event you can see is listed as you type, best match first, with the words you typed marked. **Up** and **Down** choose, **Enter** opens it in the book (a location card opens its gallery), and **Esc** closes. With nothing typed, it lists the book's tabs. People are the members of factions you know of (not the players' own characters) and the people who gave you quests; each opens the faction or the quest they're known from. Nothing hidden from you is listed.
+
+### Scene title cards
+
+When the party arrives at a scene, its name fades in large over the screen, with its region above it and a line beneath, then fades away, as the Elder Scrolls and Souls games announce a place. As GM, right-click a scene in the Scenes sidebar for **Title card…** to write its name (left empty, the scene's navigation name), region and line, or to turn it off for that scene. **Show the title card to everyone** in the same menu, or the heading button in the token controls, shows it again at any time. **Scene title cards** in the settings chooses every scene, only scenes given a card, or none, and each player can turn them off for themselves.
+
+### Turn-order bar
+
+In a fight, the combatants run across the top of the screen in initiative order, after Baldur's Gate 3's bar, as portraits in the party frame's leather and gold. Whoever's turn it is comes first, standing larger in gold with their name beneath; after them come the rest of the round, then a gold diamond with the next round's number and those who've already gone. The round shows in a medallion at the left.
+
+- **Sides.** Each portrait's foot is the colour of its side: gold for the party, blue for friendly, grey for neutral, red for hostile.
+- **Hit points.** A thin bar under each portrait, green to amber to red, glides to its new length when hit points change. Players see it for their own characters and wherever the token's bars are shown to everyone; the GM sees them all.
+- **What players see.** Hidden combatants aren't shown to them, and a name the token keeps hidden reads "Unknown". The fallen grey out under a skull.
+- **Your Turn.** When a player's character's turn comes, "Your Turn" crosses their screen for a moment.
+- **Click** a portrait to look at its token (and take control of it if it's yours); **double-click** it for its sheet. Pointing at one lights its token.
+- When the turn passes, the portraits slide to their new places. Each player can turn the bar off or change its size in the settings.
+
 ### Quests
 
 - **Two pages.** Current quests on the left, in groups, with Completed, Failed and Recent Updates across the top as in Oblivion. The chosen quest fills the right page.
@@ -172,12 +191,16 @@ Under **Configure Settings > Witchwind Systems**:
 | Party frame size | How large the party frame is; − and + on the frame change it too. Each player's own choice. |
 | Party frame layout | The boxes in a column down the side of the screen, or in a row. Each player's own choice. |
 | Party name | The name over the party frame, for everyone. The GM can also click the name on the frame. |
+| Turn-order bar | The fight's portraits in initiative order across the top of the screen. Each player's own choice. |
+| Turn-order bar size | How large the turn-order bar's portraits are. Each player's own choice. |
+| Scene title cards | Every scene, only scenes given a title card, or none. |
+| Show scene title cards | Each player's own choice. |
 | Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
 | Sounds: book opens, closes, page turns (two), quest updates | The module's own sounds, or audio files on your server chosen by the GM. Empty plays nothing. |
 | Sound volume | Each player's own volume; zero turns the sounds off. |
 | Backups and Imports | Download, restore or import from the Journal (GM only). |
 
-Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the book, M opens the maps, and the other sections and the party frame can be given keys of their own.
+Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the book, M opens the maps, Ctrl+K searches, and the other sections and the party frame can be given keys of their own.
 
 ## For macros and other modules
 
@@ -186,6 +209,8 @@ const api = game.modules.get("witchwind-systems").api;
 api.open("quests");              // or "journal", "calendar", "maps", "factions"; add an entry's id to open it
 api.toggle();
 api.newDay();                    // GM only: the clock moves on by one day
+api.search();                    // open or close the quick search
+api.showSceneTitle();            // GM only: show the viewed scene's title card to everyone (or pass a scene's id)
 api.announce({ label: "Quest Started", title: "The Hollow Crown", detail: "Speak to Captain Holt" });
 api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave robbers took the crown." });
 ```

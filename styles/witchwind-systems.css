@@ -8273,3 +8273,659 @@ ul.wws-chips {
     transition: none;
   }
 }
+
+/* ============================================ */
+/*  Quick search                                */
+/* ============================================ */
+
+/* The book's top bar: Esc to close, and the search button with its keys. */
+.wws-topbar-hint {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wws button.wws-topbar-search {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--wws-ink-muted);
+  transition: border-color 140ms ease-out, color 140ms ease-out;
+}
+
+.wws button.wws-topbar-search:hover,
+.wws button.wws-topbar-search:focus-visible {
+  border-color: var(--wws-gold-dim);
+  color: var(--wws-gold);
+}
+
+.wws button.wws-topbar-search i {
+  margin-right: 2px;
+}
+
+/*
+ * The search box: a strip of leather over the game, high on the screen as command boxes are, with the matches
+ * listed under it. The chosen one is lit in gold; each has its picture or icon, its name with the words typed marked,
+ * a line about it, and what kind of thing it is.
+ */
+.wws-search-shade {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-index-tooltip, 9999) - 3);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 14vh;
+  background: rgb(8 6 4 / 45%);
+  animation: wws-search-shade 140ms ease-out both;
+}
+
+@keyframes wws-search-shade {
+  from { opacity: 0; }
+}
+
+.wws-search-box {
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100vw - 32px));
+  max-height: 68vh;
+  overflow: hidden;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  background: var(--wws-grain), linear-gradient(180deg, #221c16, #16130f);
+  box-shadow: inset 0 0 0 2px #120f0b, inset 0 0 0 3px rgb(201 164 92 / 25%), 0 18px 48px rgb(0 0 0 / 70%);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  animation: wws-search-box 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes wws-search-box {
+  from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+}
+
+.wws-search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 3px double var(--wws-gold-dim);
+  cursor: text;
+}
+
+.wws-search-field > i {
+  font-size: 16px;
+  color: var(--wws-gold);
+}
+
+.wws .wws-search-field input {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  padding: 2px 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  outline: none;
+  color: var(--wws-ivory);
+  font-family: var(--wws-font-body);
+  font-size: 19px;
+}
+
+.wws .wws-search-field input::placeholder {
+  color: var(--wws-ink-faint);
+  font-style: italic;
+}
+
+.wws-search-field kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 2px;
+  background: var(--wws-slot-bg);
+  color: var(--wws-ink-muted);
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  box-shadow: none;
+}
+
+.wws-search-results {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+
+.wws-search-result {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.wws-search-result.active {
+  border-color: var(--wws-gold);
+  background: linear-gradient(90deg, rgb(201 164 92 / 18%), rgb(201 164 92 / 4%));
+  box-shadow: inset 0 0 0 2px #120f0b, inset 0 0 0 3px rgb(201 164 92 / 35%);
+}
+
+.wws-search-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 2px;
+  background: var(--wws-dark);
+  color: var(--wws-gold-dim);
+  font-size: 15px;
+}
+
+.wws-search-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+.wws-search-result.active .wws-search-icon {
+  border-color: var(--wws-gold-dim);
+  color: var(--wws-gold);
+}
+
+.wws-search-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wws-search-title,
+.wws-search-detail {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws-search-title {
+  font-family: var(--wws-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wws-ivory);
+}
+
+.wws-search-result.active .wws-search-title {
+  color: var(--wws-gold-bright);
+}
+
+.wws-search-detail {
+  font-size: 12.5px;
+  color: var(--wws-ink-muted);
+}
+
+.wws-search-results mark {
+  padding: 0;
+  background: none;
+  color: var(--wws-gold-bright);
+  text-decoration: underline;
+  text-decoration-color: rgb(201 164 92 / 60%);
+  text-underline-offset: 2px;
+}
+
+.wws-search-kind {
+  padding: 1px 7px;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  font-family: var(--wws-font-display);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wws-ink-faint);
+}
+
+.wws-search-none {
+  padding: 18px 8px;
+  text-align: center;
+  font-style: italic;
+  color: var(--wws-ink-muted);
+}
+
+.wws-search-foot {
+  padding: 6px 16px 8px;
+  border-top: 1px solid var(--wws-line);
+  font-size: 11.5px;
+  color: var(--wws-ink-faint);
+}
+
+/* ============================================ */
+/*  Scene title cards                           */
+/* ============================================ */
+
+/*
+ * A place announced as the Elder Scrolls and Souls games do: the region in small capitals, the name large in Cinzel
+ * drawing its letters together as it fades in, a gold rule opening out beneath, and a line under that, over a soft
+ * shadow so it reads on any map. It holds, then fades. Nothing on it can be clicked, so it never gets in the way.
+ */
+.wws-scene-title {
+  position: fixed;
+  top: 24vh;
+  left: 50%;
+  z-index: calc(var(--z-index-tooltip, 9999) - 4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: min(1100px, 92vw);
+  padding: 34px 40px 38px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 58% 80% at center, rgb(8 6 4 / 72%) 0%, rgb(8 6 4 / 46%) 52%, rgb(8 6 4 / 0%) 100%);
+  pointer-events: none;
+  text-align: center;
+  animation: wws-scene-title 6400ms ease-out both;
+}
+
+@keyframes wws-scene-title {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.wws-st-region {
+  font-family: var(--wws-font-display);
+  font-size: clamp(13px, 1.3vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--wws-gold-bright);
+  text-shadow: 0 2px 8px rgb(0 0 0 / 95%), 0 0 14px rgb(0 0 0 / 90%);
+  animation: wws-st-rise 1400ms cubic-bezier(0.2, 0.8, 0.2, 1) 300ms both;
+}
+
+.wws .wws-st-name {
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: clamp(38px, 5.2vw, 84px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.12em;
+  color: var(--wws-ivory);
+  text-shadow: 0 3px 14px rgb(0 0 0 / 95%), 0 0 40px rgb(0 0 0 / 70%);
+  animation: wws-st-name 2400ms cubic-bezier(0.16, 0.8, 0.24, 1) both;
+}
+
+@keyframes wws-st-name {
+  from { opacity: 0; letter-spacing: 0.4em; filter: blur(4px); }
+}
+
+@keyframes wws-st-rise {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.wws-st-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(560px, 70%);
+  height: 10px;
+  margin-top: 4px;
+  background: linear-gradient(90deg, rgb(201 164 92 / 0%), var(--wws-gold) 20%, var(--wws-gold) 80%, rgb(201 164 92 / 0%)) center / 100% 1px no-repeat;
+  animation: wws-st-rule 1600ms cubic-bezier(0.2, 0.8, 0.2, 1) 500ms both;
+}
+
+.wws-st-rule span {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--wws-gold);
+  background: #16130f;
+  transform: rotate(45deg);
+}
+
+@keyframes wws-st-rule {
+  from { opacity: 0; transform: scaleX(0); }
+}
+
+.wws-st-line {
+  margin-top: 4px;
+  font-family: var(--wws-font-body);
+  font-size: clamp(15px, 1.4vw, 22px);
+  font-style: italic;
+  color: var(--wws-ink);
+  text-shadow: 0 2px 8px rgb(0 0 0 / 95%);
+  animation: wws-st-rise 1400ms cubic-bezier(0.2, 0.8, 0.2, 1) 900ms both;
+}
+
+/* ============================================ */
+/*  The turn-order bar                          */
+/* ============================================ */
+
+/*
+ * The fight's order across the top of the screen, after Baldur's Gate 3's: the round in a medallion, then a portrait
+ * for each combatant in the party frame's see-through leather and gold, starting with whoever's turn it is. Each
+ * frame's foot is the colour of its side, with a thin hit point bar under it as the party frame's. The current
+ * portrait stands larger in gold with its name beneath. Everything is in em, so the size setting scales it all.
+ */
+#witchwind-turns {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: var(--z-index-ui, 60);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  max-width: calc(100vw - 360px);
+  font-size: calc(13px * var(--wws-turns-scale, 1));
+  font-family: var(--wws-font-ui);
+  color: var(--wws-ink);
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: wws-turns-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes wws-turns-in {
+  from { opacity: 0; transform: translate(-50%, -1.2em); }
+}
+
+.wws-turns-round {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 3.4em;
+  height: 3.4em;
+  margin-top: 0.5em;
+  border: 1px solid rgb(143 116 66 / 80%);
+  border-radius: 50%;
+  background: var(--wws-grain), radial-gradient(circle, rgb(42 35 27 / 92%), rgb(15 13 10 / 85%));
+  box-shadow: inset 0 0 0 2px rgb(18 15 11 / 80%), inset 0 0 0 3px rgb(201 164 92 / 30%), 0 2px 8px rgb(0 0 0 / 50%);
+  pointer-events: auto;
+}
+
+.wws-turns-round span {
+  font-family: var(--wws-font-display);
+  font-size: 0.55em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-ink-muted);
+}
+
+.wws-turns-round strong {
+  font-family: var(--wws-font-display);
+  font-size: 1.35em;
+  line-height: 1;
+  color: var(--wws-gold-bright);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 90%);
+}
+
+.wws-turns-list {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35em;
+  min-width: 0;
+  margin: 0;
+  padding: 0.5em 0.3em 1.6em;
+  overflow: hidden;
+  list-style: none;
+  pointer-events: auto;
+}
+
+.wws-turn {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2em;
+  cursor: pointer;
+}
+
+/* A portrait: a tall leather frame with a gold rim, its foot the colour of its side. */
+.wws-turn-frame {
+  position: relative;
+  display: block;
+  width: 3.1em;
+  height: 3.9em;
+  overflow: hidden;
+  border: 1px solid rgb(143 116 66 / 75%);
+  border-bottom: 0.22em solid var(--wws-team, var(--wws-red));
+  border-radius: 2px;
+  background: rgb(15 13 10 / 80%);
+  box-shadow: inset 0 0 0 1px rgb(18 15 11 / 70%), 0 2px 8px rgb(0 0 0 / 50%);
+  transform-origin: center top;
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+.wws-turn-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border: none;
+}
+
+.wws-team-party { --wws-team: var(--wws-gold); }
+.wws-team-friendly { --wws-team: var(--wws-blue); }
+.wws-team-neutral { --wws-team: #a39478; }
+.wws-team-hostile { --wws-team: var(--wws-red); }
+.wws-team-secret { --wws-team: var(--wws-purple); }
+
+.wws-turn:hover .wws-turn-frame {
+  border-color: var(--wws-gold);
+}
+
+/* Whoever's turn it is: larger, in gold, with a glow, and their name beneath. */
+.wws-turn.wws-current {
+  margin: 0 0.35em;
+}
+
+.wws-turn.wws-current .wws-turn-frame {
+  border-color: var(--wws-gold);
+  box-shadow: inset 0 0 0 1px rgb(18 15 11 / 70%), 0 0 0 1px rgb(201 164 92 / 50%), 0 0 14px rgb(201 164 92 / 55%), 0 3px 10px rgb(0 0 0 / 60%);
+  transform: scale(1.22);
+}
+
+.wws-turn.wws-current .wws-turn-bar {
+  margin-top: 0.95em;
+}
+
+.wws-turn-name {
+  position: absolute;
+  top: calc(100% + 0.2em);
+  left: 50%;
+  max-width: 9em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+  font-family: var(--wws-font-display);
+  font-size: 0.74em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--wws-ivory);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 95%), 0 0 6px rgb(0 0 0 / 80%);
+}
+
+.wws-turn.wws-mine .wws-turn-name {
+  color: var(--wws-gold-bright);
+}
+
+/* The hit point bar: as the party frame's, green to amber to red, gliding on the compositor. */
+.wws-turn-bar {
+  position: relative;
+  width: 3.1em;
+  height: 0.32em;
+  overflow: hidden;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 1px;
+  background: #0f0d0a;
+}
+
+.wws-turn-bar.wws-turn-nobar {
+  visibility: hidden;
+}
+
+.wws-turn-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #8fc77d 0%, var(--wws-green) 55%, #2f5a2a 100%);
+  transform: scaleX(var(--wws-hp, 0));
+  transform-origin: left center;
+  transition: transform 420ms ease-out;
+}
+
+.wws-turn.wws-hp-hurt .wws-turn-fill {
+  background: linear-gradient(180deg, #e8b066 0%, var(--wws-orange) 55%, #7d4a12 100%);
+}
+
+.wws-turn.wws-hp-low .wws-turn-fill {
+  background: linear-gradient(180deg, #e5806c 0%, var(--wws-red) 55%, #6e2117 100%);
+}
+
+/* The fallen grey out under a skull; the GM's hidden combatants are see-through. */
+.wws-turn.wws-defeated .wws-turn-frame img,
+.wws-turn.wws-hp-down .wws-turn-frame img {
+  filter: grayscale(1) brightness(0.5);
+}
+
+.wws-turn-skull,
+.wws-turn-hidden {
+  position: absolute;
+  color: var(--wws-ivory);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 95%);
+}
+
+.wws-turn-skull {
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.3em;
+  color: rgb(239 227 200 / 85%);
+}
+
+.wws-turn-hidden {
+  top: 0.2em;
+  right: 0.25em;
+  font-size: 0.7em;
+}
+
+.wws-turn.wws-hidden {
+  opacity: 0.55;
+}
+
+/* Where the next round begins: a gold diamond with its number. */
+.wws-turns-wrap {
+  display: grid;
+  flex: none;
+  place-items: center;
+  align-self: center;
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0 0.25em 0.9em;
+  border: 1px solid var(--wws-gold-dim);
+  background: #16130f;
+  transform: rotate(45deg);
+}
+
+.wws-turns-wrap span {
+  transform: rotate(-45deg);
+  font-family: var(--wws-font-display);
+  font-size: 0.68em;
+  font-weight: 700;
+  color: var(--wws-gold);
+}
+
+.wws-turns-more {
+  align-self: center;
+  margin: 0 0 0.9em 0.2em;
+  font-family: var(--wws-font-display);
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--wws-ink-muted);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 95%);
+}
+
+/* "Your Turn", across the screen for a moment, as Baldur's Gate says it. */
+.wws-your-turn {
+  position: fixed;
+  top: 30vh;
+  left: 50%;
+  z-index: calc(var(--z-index-tooltip, 9999) - 4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 16px 60px 18px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent 0%, rgb(15 13 10 / 78%) 25%, rgb(15 13 10 / 78%) 75%, transparent 100%);
+  pointer-events: none;
+  animation: wws-your-turn 2400ms ease-out both;
+}
+
+.wws-your-turn strong {
+  font-family: var(--wws-font-display);
+  font-size: clamp(28px, 3vw, 46px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wws-gold-bright);
+  text-shadow: 0 2px 10px rgb(0 0 0 / 95%);
+}
+
+.wws-your-turn span {
+  font-family: var(--wws-font-body);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--wws-ink);
+  text-shadow: 0 1px 6px rgb(0 0 0 / 95%);
+}
+
+@keyframes wws-your-turn {
+  0% { opacity: 0; transform: translate(-50%, 8px) scale(0.96); }
+  15% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* With reduced motion, the title card and "Your Turn" simply show for their time and go; nothing else moves. */
+@keyframes wws-shown-still {
+  0%, 99% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wws-scene-title,
+  .wws-your-turn {
+    animation-name: wws-shown-still;
+  }
+
+  .wws-st-region,
+  .wws .wws-st-name,
+  .wws-st-rule,
+  .wws-st-line,
+  #witchwind-turns,
+  .wws-search-shade,
+  .wws-search-box {
+    animation: none;
+  }
+
+  .wws-turn-frame,
+  .wws-turn-fill {
+    transition: none;
+  }
+}
