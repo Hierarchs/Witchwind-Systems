@@ -1,0 +1,59 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body wws-rewards">
+  <p class="wws-reward-quest"><i class="fa-solid fa-scroll-old" inert></i> {{title}}</p>
+  {{#if rewarded}}<p class="hint"><i class="fa-solid fa-circle-info" inert></i> {{localize "WITCHWIND_SYSTEMS.Rewards.Already"}}</p>{{/if}}
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Rewards.Who"}}</legend>
+    {{#if people.length}}
+    <div class="wws-reward-people">
+      {{#each people}}
+      <label class="wws-reward-person">
+        <input type="checkbox" name="to" value="{{uuid}}" checked>
+        {{#if img}}<img src="{{img}}" alt="">{{/if}}
+        <span>{{name}}</span>
+      </label>
+      {{/each}}
+    </div>
+    {{else}}
+    <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Rewards.NoOne"}}</p>
+    {{/if}}
+  </fieldset>
+
+  {{#if xp}}
+  <div class="wws-reward-line">
+    <span class="wws-reward-kind">{{localize "WITCHWIND_SYSTEMS.Rewards.XP"}}</span>
+    <strong>{{xp}}</strong>
+    <label class="wws-toggle"><input type="checkbox" name="splitXp"><span>{{localize "WITCHWIND_SYSTEMS.Rewards.SplitXP"}}</span></label>
+  </div>
+  {{/if}}
+
+  {{#if coins.length}}
+  <div class="wws-reward-line">
+    <span class="wws-reward-kind">{{localize "WITCHWIND_SYSTEMS.Rewards.Coins"}}</span>
+    <strong>{{coinsLabel}}</strong>
+    <span class="hint">{{localize "WITCHWIND_SYSTEMS.Rewards.SharedOut"}}</span>
+  </div>
+  {{/if}}
+
+  {{#if items.length}}
+  <ol class="wws-reward-items">
+    {{#each items}}
+    <li>
+      <span class="wws-slot" data-wws-rarity="{{rarity}}">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-gift" inert></i>{{/if}}</span>
+      <span class="wws-reward-item-name">{{name}}{{#if (gt qty 1)}} ×{{qty}}{{/if}}</span>
+      <select data-item="{{index}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Rewards.GoesTo"}}">
+        {{#if canGive}}{{#each ../people}}<option value="{{uuid}}">{{name}}</option>{{/each}}{{/if}}
+        <option value="">{{localize "WITCHWIND_SYSTEMS.Rewards.ByHandOption"}}</option>
+      </select>
+    </li>
+    {{/each}}
+  </ol>
+  {{/if}}
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="button" data-action="rewardsLater"><i class="fa-solid fa-clock" inert></i> {{localize "WITCHWIND_SYSTEMS.Rewards.Later"}}</button>
+  <button type="submit"><i class="fa-solid fa-hand-holding-heart" inert></i> {{localize "WITCHWIND_SYSTEMS.Rewards.Give"}}</button>
+</footer>
+</div>

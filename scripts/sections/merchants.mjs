@@ -1,11 +1,12 @@
-import { PATH } from "../config.mjs";
+import { PATH, L, STANDING_PRICES, standingTier } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { enrich, asHTML, loc, confirmDelete, openSheet, showToPlayers, viewerNames, worldDate, worldNow, secondsPerDay, byName } from "../helpers.mjs";
 
 /*
  * Merchants: who sells what, for how much, and how many are left. Players browse; the GM edits stock or marks a
- * sale from the page. A merchant can restock every so many days of the world's calendar.
+ * sale from the page. A merchant can restock every so many days of the world's calendar. A merchant of a faction
+ * charges the party more or less with the party's standing in it, unless the GM turns that off.
  */
 export default {
   id: "merchants",
@@ -96,6 +97,8 @@ async function detail(merchant) {
   const currency = merchant.currency || "gp";
   const faction = store.get("factions", merchant.faction);
   const days = Number(merchant.restockDays) || 0;
+  const markup = markupOf(merchant, faction);
+  const price = n => `${Number(n ?? 0).toLocaleString(game.i18n.lang, { maximumFractionDigits: 2 })} ${currency}`;
   return {
     ...merchant,
     name: merchant.name || loc("Untitled"),
@@ -103,14 +106,44 @@ async function detail(merchant) {
     viewers: game.user.isGM ? viewerNames(merchant) : "",
     description: await enrich(asHTML(merchant.description)),
     faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name } : null,
-    stock: (merchant.stock ?? []).map(s => ({
-      ...s,
-      priceLabel: `${Number(s.price ?? 0).toLocaleString(game.i18n.lang)} ${currency}`,
-      counted: Number.isFinite(s.qty),
-      out: Number.isFinite(s.qty) && (s.qty <= 0)
-    })),
+    markup: markup.percent ? {
+      percent: markup.percent,
+      up: markup.percent > 0,
+      label: `${markup.percent > 0 ? "+" : "−"}${Math.abs(markup.percent)}%`,
+      tier: game.i18n.localize(`${L}.Factions.Tiers.${markup.tier}`),
+      faction: store.isVisible("factions", faction) ? faction.name : ""
+    } : null,
+    stock: (merchant.stock ?? []).map(s => {
+      const base = Number(s.price ?? 0);
+      const asked = adjusted(base, markup.percent);
+      return {
+        ...s,
+        priceLabel: price(asked),
+        basePriceLabel: (asked !== base) ? price(base) : "",
+        counted: Number.isFinite(s.qty),
+        out: Number.isFinite(s.qty) && (s.qty <= 0)
+      };
+    }),
     restock: days ? { days, next: worldDate((merchant.restockedAt ?? worldNow()) + (days * secondsPerDay())) } : null
   };
+}
+
+/**
+ * How much more (or less) a merchant charges the party, in percent, from the party's standing with the merchant's
+ * faction: none for a merchant with no faction, or one the GM has set to keep their own prices.
+ */
+function markupOf(merchant, faction) {
+  if ( !faction || (merchant.standingPrices === false) ) return { percent: 0 };
+  const tier = standingTier(Number(faction.standing) || 0);
+  return { percent: STANDING_PRICES[tier] ?? 0, tier };
+}
+
+/** A price with a markup, to the copper: two places for anything under ten, whole coins above a hundred. */
+function adjusted(price, percent) {
+  if ( !percent || !price ) return price;
+  const value = price * (1 + (percent / 100));
+  const places = value >= 100 ? 0 : (value >= 10 ? 1 : 2);
+  return Math.round(value * (10 ** places)) / (10 ** places);
 }
 
 /** A merchant's stock refilled to each item's usual amount, as of now. */

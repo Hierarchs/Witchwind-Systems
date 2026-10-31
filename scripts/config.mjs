@@ -5,11 +5,12 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "bestiary", "notices", "maps", "factions", "merchants"];
+export const SECTION_IDS = ["quests", "journal", "calendar", "bestiary", "notices", "maps", "factions", "merchants"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
   journal: "fa-solid fa-feather-pointed",
+  calendar: "fa-solid fa-calendar-days",
   bestiary: "fa-solid fa-dragon",
   notices: "fa-solid fa-thumbtack",
   maps: "fa-solid fa-map",
@@ -59,6 +60,25 @@ export const BESTIARY_FACTS = [
   { key: "tactics", icon: "fa-solid fa-chess" },
   { key: "habitat", icon: "fa-solid fa-tree" }
 ];
+
+/*
+ * Knowledge checks: which skill recalls what about each kind of creature, as the Monster Manual suggests, the
+ * skills a GM can choose from instead, and the order a check reveals facts in, the most telling first.
+ */
+export const KNOWLEDGE_SKILLS = {
+  aberration: "arc", construct: "arc", dragon: "arc", elemental: "arc", fey: "arc", monstrosity: "arc",
+  beast: "nat", ooze: "nat", plant: "nat",
+  celestial: "rel", fiend: "rel", undead: "rel",
+  giant: "his", humanoid: "his"
+};
+
+export const KNOWLEDGE_SKILL_IDS = ["arc", "his", "nat", "rel"];
+
+export const KNOWLEDGE_ORDER = ["basics", "lore", "threat", "resistances", "defense", "attacks", "traits", "abilities",
+  "movement", "skills", "languages", "habitat", "tactics"];
+
+/** A check that meets the DC recalls one fact, and one more for each full this-many points over it. */
+export const KNOWLEDGE_STEP = 5;
 
 /* -------------------------------------------- */
 /*  The Xerseraya calendar                      */
@@ -187,3 +207,22 @@ export function standingTier(value) {
   for ( const t of STANDING_TIERS ) if ( value >= t.min ) tier = t;
   return tier.id;
 }
+
+/** How much more (or less) a faction's merchants charge the party at each standing, in percent. */
+export const STANDING_PRICES = { hated: 50, hostile: 30, unfriendly: 15, neutral: 0, friendly: -5, trusted: -10, revered: -20 };
+
+/* -------------------------------------------- */
+/*  Rewards and the calendar                    */
+/* -------------------------------------------- */
+
+/** dnd5e's coins, most valuable first. */
+export const CURRENCIES = ["pp", "gp", "ep", "sp", "cp"];
+
+/** A moon's eight phases, from new round to new again. */
+export const MOON_PHASES = ["new", "waxingCrescent", "firstQuarter", "waxingGibbous", "full", "waningGibbous", "lastQuarter",
+  "waningCrescent"];
+
+/** The marks a calendar event can carry. */
+export const EVENT_ICONS = ["fa-solid fa-star", "fa-solid fa-champagne-glasses", "fa-solid fa-place-of-worship",
+  "fa-solid fa-crown", "fa-solid fa-skull", "fa-solid fa-sun", "fa-solid fa-moon", "fa-solid fa-leaf", "fa-solid fa-snowflake",
+  "fa-solid fa-coins", "fa-solid fa-flag", "fa-solid fa-circle"];

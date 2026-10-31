@@ -2,6 +2,8 @@ import { PATH, L, QUEST_STATUSES } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { enrich, asHTML, plainText, formatDate, loc, confirmDelete, openSheet, showToPlayers, viewerNames, byTitle } from "../helpers.mjs";
+import { deadlineOf, dayOf } from "../calendar.mjs";
+import { hasRewards, coinList, offerRewards } from "../rewards.mjs";
 
 /** The list filters across the top of the left page, as in Oblivion: current, completed, failed, recent updates. */
 const FILTERS = ["active", "completed", "failed", "updates"];
@@ -224,6 +226,17 @@ export default {
 
     questShow(event, target) {
       return showToPlayers("quests", target.dataset.id);
+    },
+
+    questRewards(event, target) {
+      return offerRewards(target.dataset.id);
+    },
+
+    /** The day a quest is due, on the calendar. */
+    questDeadline(event, target) {
+      this.selected.calendar = Number(target.dataset.day);
+      this.calendarMonth = null;
+      this.open("calendar");
     }
   }
 };
@@ -250,6 +263,7 @@ function groupedList(shown, groups, tracked, app, showEmpty) {
   const ids = new Set(shown.map(q => q.id));
   const isRoot = q => !q.parent || (q.parent === q.id) || !ids.has(q.parent);
   const collapsed = app.collapsed ?? new Set();
+  const today = dayOf();
   const rows = (quest, depth, seen) => {
     if ( seen.has(quest.id) ) return [];
     seen.add(quest.id);
@@ -266,7 +280,8 @@ function groupedList(shown, groups, tracked, app, showEmpty) {
       collapsed: collapsed.has(quest.id),
       appearing: !!quest.parent && (quest.parent === app.expandedQuest),
       stepCount: steps.length,
-      stepsDone: steps.filter(s => statusOf(s) === "completed").length
+      stepsDone: steps.filter(s => statusOf(s) === "completed").length,
+      deadline: deadlineOf(quest, today)
     };
     if ( row.collapsed ) return [row];
     return [row, ...steps.flatMap(s => rows(s, depth + 1, seen))];
@@ -323,6 +338,12 @@ async function detail(quest, quests, groups, tracked, app) {
     hasObjectives: objectives.length > 0,
     log,
     rewards: quest.rewards ?? [],
+    xp: Number(quest.xp) || 0,
+    coins: coinList(quest.coins),
+    hasRewards: hasRewards(quest),
+    canHandOut: isGM && (status === "completed") && hasRewards(quest),
+    rewarded: quest.rewarded ? formatDate(quest.rewarded) : "",
+    deadline: deadlineOf(quest),
     giver: (quest.giverName || quest.giverImg) ? { name: quest.giverName, img: quest.giverImg, uuid: quest.giverUuid } : null,
     faction: store.isVisible("factions", faction) ? { id: faction.id, name: faction.name, img: faction.img } : null,
     pin: pin ? pin.id : null,

@@ -9,7 +9,7 @@ import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
  */
 
 /** Collections the GM keeps in world settings. */
-export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary", "notices", "locations"];
+export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary", "notices", "locations", "events"];
 
 /** Collections each user keeps on their own User document. */
 export const USER_KINDS = ["notes", "pins"];
@@ -45,6 +45,15 @@ export function registerData() {
     type: Array,
     default: [],
     onChange: (value, options, userId) => emit("noticeRegions", userId)
+  });
+
+  // The world's moons, each { id, name, cycle, offset, color }, in the order the GM set them.
+  game.settings.register(MODULE_ID, "moons", {
+    scope: "world",
+    config: false,
+    type: Array,
+    default: [],
+    onChange: (value, options, userId) => emit("moons", userId)
   });
 
   // The GM's own quest groups, in order. Empty means the four defaults.
@@ -280,6 +289,16 @@ export function noticeRegions() {
 
 export function setNoticeRegions(regions) {
   return game.settings.set(MODULE_ID, "noticeRegions", regions);
+}
+
+/** The world's moons, each { id, name, cycle, offset, color }. */
+export function moons() {
+  const moons = game.settings.get(MODULE_ID, "moons");
+  return Array.isArray(moons) ? foundry.utils.deepClone(moons) : [];
+}
+
+export function setMoons(moons) {
+  return game.settings.set(MODULE_ID, "moons", moons);
 }
 
 /** The quest groups in order, each { id, name }; a blank name shows the default group's translated name. */

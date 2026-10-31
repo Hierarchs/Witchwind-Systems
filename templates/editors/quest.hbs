@@ -28,6 +28,9 @@
         </select>
       </div>
     </div>
+    {{> "modules/witchwind-systems/templates/editors/date.hbs" date=deadline prefix="deadline-" label="WITCHWIND_SYSTEMS.Quests.Deadline"}}
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Quests.DeadlineHint"}}</p>
+
     <div class="form-group">
       <label>{{localize "WITCHWIND_SYSTEMS.Quests.PartOf"}}</label>
       <select name="parent">
@@ -144,6 +147,24 @@
 
   {{!-- Rewards --}}
   <section class="wws-panel" data-panel="rewards">
+    <div class="wws-purse">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Rewards.XP"}}</label>
+        <input type="number" name="xp" value="{{#if entry.xp}}{{entry.xp}}{{/if}}" min="0" step="1" placeholder="0">
+      </div>
+      <div class="form-group wws-coin-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Rewards.Coins"}}</label>
+        <div class="wws-coin-inputs">
+          {{#each coins}}
+          <label class="wws-coin wws-coin-{{id}}">
+            <input type="number" name="coin-{{id}}" value="{{value}}" min="0" step="1" placeholder="0" aria-label="{{label}}">
+            <span>{{label}}</span>
+          </label>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Rewards.EditorHint"}}</p>
     <div class="wws-drop-zone" data-drop="rewards">
       <i class="fa-solid fa-hand-holding-heart" inert></i> {{localize "WITCHWIND_SYSTEMS.Editor.RewardsDrop"}}
     </div>

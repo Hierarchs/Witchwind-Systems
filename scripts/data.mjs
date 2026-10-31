@@ -62,7 +62,8 @@ export default class DataManager extends HandlebarsApplicationMixin(ApplicationV
       world: game.world?.id,
       exported: new Date().toISOString(),
       questGroups: store.questGroups(),
-      noticeRegions: store.noticeRegions()
+      noticeRegions: store.noticeRegions(),
+      moons: store.moons()
     };
     for ( const kind of [...WORLD, ...OWNED] ) data[kind] = store.all(kind);
     const date = new Date().toISOString().slice(0, 10);
@@ -99,6 +100,7 @@ export default class DataManager extends HandlebarsApplicationMixin(ApplicationV
     }
     if ( Array.isArray(data.questGroups) && data.questGroups.length ) await store.setQuestGroups(data.questGroups);
     if ( Array.isArray(data.noticeRegions) && data.noticeRegions.length ) await store.setNoticeRegions(data.noticeRegions);
+    if ( Array.isArray(data.moons) && data.moons.length ) await store.setMoons(data.moons);
     for ( const kind of OWNED ) await store.importOwned(kind, Array.isArray(data[kind]) ? data[kind] : [], replace);
     ui.notifications.info(loc("Data.Restored"));
     this.render();

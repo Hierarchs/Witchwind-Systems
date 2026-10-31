@@ -1,0 +1,56 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Calendar.MoonsHint"}}</p>
+  <div class="wws-moon-head" aria-hidden="true">
+    <span>{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}</span><span>{{localize "WITCHWIND_SYSTEMS.Calendar.Cycle"}}</span>
+    <span>{{localize "WITCHWIND_SYSTEMS.Calendar.PhaseToday"}}</span><span>{{localize "WITCHWIND_SYSTEMS.Maps.Color"}}</span><span></span>
+  </div>
+  <ol class="wws-rows" data-list="moons">
+    {{#each moons}}
+    <li class="wws-edit-row wws-moon-row" data-list-row>
+      <input type="hidden" data-field="id" value="{{id}}">
+      <input type="hidden" data-field="offset" value="{{offset}}">
+      <input type="hidden" data-field="phaseWas" value="{{phase}}">
+      <input type="hidden" data-field="cycleWas" value="{{cycle}}">
+      <input type="text" data-field="name" value="{{name}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Calendar.MoonPlaceholder"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}">
+      <input type="number" class="wws-qty-input" data-field="cycle" value="{{cycle}}" min="1" step="0.5" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.Cycle"}}">
+      <select data-field="phase" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.PhaseToday"}}">
+        {{#each phases}}<option value="{{index}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+      <select data-field="color" aria-label="{{localize "WITCHWIND_SYSTEMS.Maps.Color"}}">
+        {{#each colors}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+      <span class="wws-row-buttons">
+        <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+        <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+      </span>
+    </li>
+    {{/each}}
+  </ol>
+  <button type="button" class="wws-add" data-action="addRow" data-list="moons"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Calendar.AddMoon"}}</button>
+  <template data-row-template="moons">
+    <li class="wws-edit-row wws-moon-row" data-list-row>
+      <input type="hidden" data-field="id" value="">
+      <input type="hidden" data-field="offset" value="">
+      <input type="hidden" data-field="phaseWas" value="">
+      <input type="hidden" data-field="cycleWas" value="">
+      <input type="text" data-field="name" value="" placeholder="{{localize "WITCHWIND_SYSTEMS.Calendar.MoonPlaceholder"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Name"}}">
+      <input type="number" class="wws-qty-input" data-field="cycle" value="30" min="1" step="0.5" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.Cycle"}}">
+      <select data-field="phase" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.PhaseToday"}}">
+        {{#each newPhases}}<option value="{{index}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+      <select data-field="color" aria-label="{{localize "WITCHWIND_SYSTEMS.Maps.Color"}}">
+        {{#each newColors}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}
+      </select>
+      <span class="wws-row-buttons">
+        <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+        <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+      </span>
+    </li>
+  </template>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-moon" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

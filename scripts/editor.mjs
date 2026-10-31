@@ -1,12 +1,14 @@
-import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS, LOCATION_THEMES } from "./config.mjs";
+import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS, LOCATION_THEMES,
+  CURRENCIES, MOON_PHASES, EVENT_ICONS, KNOWLEDGE_SKILL_IDS } from "./config.mjs";
 import * as store from "./store.mjs";
 import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
 import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "./helpers.mjs";
+import { dayOf, dateOf, dayFromDate, daysInMonth, months, moonPhase, offsetFor } from "./calendar.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680, event: 540, moons: 660 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -24,7 +26,8 @@ const VISIBILITY = {
   merchant: { field: "visible", label: "Editor.VisibleMerchant" },
   creature: { field: "visible", label: "Editor.VisibleCreature" },
   notice: { field: "visible", label: "Editor.VisibleNotice" },
-  location: { field: "visible", label: "Editor.VisibleLocation" }
+  location: { field: "visible", label: "Editor.VisibleLocation" },
+  event: { field: "visible", label: "Editor.VisibleEvent" }
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
@@ -42,11 +45,12 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {string} config.title         Window title
    * @param {Function} config.onSave      Called with the form's data when it's saved
    */
-  constructor({ kind, entry = {}, title, onSave, ...options }) {
+  constructor({ kind, entry = {}, title, onSave, extra = {}, ...options }) {
     super(foundry.utils.mergeObject({ position: { width: WIDTHS[kind] ?? 560 } }, options));
     this.kind = kind;
     this.entry = foundry.utils.deepClone(entry);
     this.onSave = onSave;
+    this.extra = extra;
     this.#title = title;
   }
 
@@ -83,7 +87,7 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
     return {
       form: {
         template: `${PATH}/templates/editors/${this.kind}.hbs`,
-        templates: [`${PATH}/templates/editors/image.hbs`, `${PATH}/templates/editors/visibility.hbs`]
+        templates: [`${PATH}/templates/editors/image.hbs`, `${PATH}/templates/editors/visibility.hbs`, `${PATH}/templates/editors/date.hbs`]
       }
     };
   }
@@ -111,6 +115,32 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.objectives = entry.objectives ?? [];
         context.log = entry.log ?? [];
         context.rewards = entry.rewards ?? [];
+        context.deadline = dateContext(hasDay(entry.deadline) ? dateOf(Number(entry.deadline)) : null, false);
+        context.coins = CURRENCIES.map(id => ({ id, label: currencyLabel(id), value: entry.coins?.[id] || "" }));
+        break;
+      }
+      case "creature":
+        context.skills = KNOWLEDGE_SKILL_IDS.map(id => ({ id, label: skillLabel(id), selected: entry.knowledgeSkill === id }));
+        context.autoSkill = this.extra.autoSkill ? skillLabel(this.extra.autoSkill) : "";
+        context.autoDC = this.extra.autoDC ?? "";
+        break;
+      case "event":
+        context.date = dateContext(Number.isFinite(entry.month) ? { year: entry.year ?? dateOf(dayOf())?.year, month: entry.month, day: entry.day } : null, true);
+        context.icons = EVENT_ICONS.map(value => ({ value, checked: (entry.icon ?? EVENT_ICONS[0]) === value }));
+        context.colors = Object.entries(PIN_COLORS).map(([id, value]) => ({
+          id, value, label: `${L}.Maps.Colors.${id}`, checked: (entry.color ?? "gold") === id
+        }));
+        break;
+      case "moons": {
+        const today = dayOf();
+        const phases = selected => MOON_PHASES.map((id, index) => ({ index, label: `${L}.Calendar.Phases.${id}`, selected: index === selected }));
+        const colors = selected => Object.keys(PIN_COLORS).map(id => ({ id, label: `${L}.Maps.Colors.${id}`, selected: id === selected }));
+        context.moons = (entry.moons ?? []).map(m => {
+          const phase = moonPhase(m, today);
+          return { ...m, phase, phases: phases(phase), colors: colors(m.color ?? "ivory") };
+        });
+        context.newPhases = phases(4);
+        context.newColors = colors("ivory");
         break;
       }
       case "note":
@@ -278,6 +308,39 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       data.objectives = (data.objectives ?? []).filter(o => o.text).map(o => ({ ...o, id: o.id || foundry.utils.randomID() }));
       data.log = (data.log ?? []).filter(e => e.text).map(e => ({ ...e, id: e.id || foundry.utils.randomID(), date: Number(e.date) || Date.now() }));
       data.rewards = (data.rewards ?? []).filter(r => r.name).map(r => ({ ...r, qty: Number(r.qty) || 1 }));
+      // A deadline is a day of the world's calendar; with no day of the month written, there's none.
+      data.deadline = readDate(data, "deadline-");
+      data.xp = Math.max(0, Math.round(Number(data.xp) || 0));
+      data.coins = Object.fromEntries(CURRENCIES.map(id => [id, Math.max(0, Math.round(Number(data[`coin-${id}`]) || 0))]).filter(([, n]) => n));
+      for ( const id of CURRENCIES ) delete data[`coin-${id}`];
+    }
+    if ( this.kind === "creature" ) {
+      data.knowledgeSkill = KNOWLEDGE_SKILL_IDS.includes(data.knowledgeSkill) ? data.knowledgeSkill : "";
+      data.knowledgeDC = Number.isFinite(data.knowledgeDC) ? Math.max(0, Math.round(data.knowledgeDC)) : null;
+    }
+    if ( this.kind === "event" ) {
+      const month = Number(data.month) || 0;
+      const year = Math.round(Number(data.year) || 0);
+      data.month = month;
+      data.day = Math.clamp(Math.round(Number(data.day) || 1), 1, daysInMonth(year, month));
+      data.year = year;
+      data.yearly = !!data.yearly;
+      data.visible = !!data.visible;
+    }
+    if ( this.kind === "moons" ) {
+      // A moon keeps its place in its cycle unless its phase today or its length was changed.
+      data.moons = (data.moons ?? []).map(m => {
+        const cycle = Math.max(1, Number(m.cycle) || 30);
+        const phase = Number(m.phase) || 0;
+        const kept = (String(m.phaseWas) === String(phase)) && (Number(m.cycleWas) === cycle) && (m.offset !== "") && Number.isFinite(Number(m.offset));
+        return {
+          id: m.id || foundry.utils.randomID(),
+          name: m.name,
+          cycle,
+          offset: kept ? Number(m.offset) : offsetFor(cycle, phase),
+          color: m.color || "ivory"
+        };
+      });
     }
     await this.onSave?.(data);
   }
@@ -541,13 +604,13 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
 /* -------------------------------------------- */
 
 /** Open an editor for an entry, or bring forward the one already open for it. onSave receives the form's data. */
-export function openEditor(kind, { entry, title, onSave }={}) {
+export function openEditor(kind, { entry, title, onSave, extra }={}) {
   const existing = foundry.applications.instances.get(`${MODULE_ID}-editor-${kind}-${entry?.id ?? "new"}`);
   if ( existing ) {
     existing.bringToFront();
     return existing;
   }
-  const app = new EntryEditor({ kind, entry, title, onSave, id: `${MODULE_ID}-editor-${kind}-${entry?.id ?? "new"}` });
+  const app = new EntryEditor({ kind, entry, title, onSave, extra, id: `${MODULE_ID}-editor-${kind}-${entry?.id ?? "new"}` });
   app.render({ force: true });
   return app;
 }
@@ -644,3 +707,32 @@ function journalName(uuid) {
 
 const byTitle = (a, b) => (a.title ?? "").localeCompare(b.title ?? "");
 const byName = (a, b) => (a.name ?? "").localeCompare(b.name ?? "");
+
+const hasDay = v => (v !== null) && (v !== undefined) && (v !== "") && Number.isFinite(Number(v));
+
+/** A date for the date fields: its day, month and year, with every month to choose from. Blank, it starts at this month. */
+function dateContext(date, required) {
+  const now = dateOf(dayOf()) ?? { year: 0, month: 0, day: 1 };
+  const shown = date ?? { year: now.year, month: now.month, day: required ? now.day : "" };
+  return { ...shown, months: months().map(m => ({ ...m, selected: m.index === shown.month })) };
+}
+
+/** The day written in a form's date fields ({prefix}day, month and year), or null when its day is left empty. */
+function readDate(data, prefix) {
+  const day = Math.round(Number(data[`${prefix}day`]) || 0);
+  const month = Number(data[`${prefix}month`]) || 0;
+  const year = Math.round(Number(data[`${prefix}year`]) || 0);
+  for ( const part of ["day", "month", "year"] ) delete data[`${prefix}${part}`];
+  if ( day < 1 ) return null;
+  return dayFromDate({ year, month, day: Math.min(day, daysInMonth(year, month)) });
+}
+
+function currencyLabel(id) {
+  const label = CONFIG.DND5E?.currencies?.[id]?.abbreviation;
+  return label ? game.i18n.localize(label) : id;
+}
+
+export function skillLabel(id) {
+  const label = CONFIG.DND5E?.skills?.[id]?.label;
+  return label ? game.i18n.localize(label) : game.i18n.localize(`${L}.Bestiary.Skills.${id}`);
+}

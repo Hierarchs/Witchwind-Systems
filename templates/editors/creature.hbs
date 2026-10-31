@@ -12,6 +12,24 @@
     {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
   </div>
 
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Bestiary.KnowledgeCheck"}}</legend>
+    <div class="wws-form-row">
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.KnowledgeSkill"}}</label>
+        <select name="knowledgeSkill">
+          <option value="">{{#if autoSkill}}{{localize "WITCHWIND_SYSTEMS.Bestiary.ByKind" skill=autoSkill}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.ByKindPlain"}}{{/if}}</option>
+          {{#each skills}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.KnowledgeDC"}}</label>
+        <input type="number" name="knowledgeDC" value="{{entry.knowledgeDC}}" min="0" step="1" placeholder="{{autoDC}}">
+      </div>
+    </div>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Bestiary.KnowledgeHint"}}</p>
+  </fieldset>
+
   <div class="form-group">
     <label>{{localize "WITCHWIND_SYSTEMS.Bestiary.Habitat"}}</label>
     <input type="text" name="habitat" value="{{entry.habitat}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Bestiary.HabitatPlaceholder"}}">

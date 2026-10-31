@@ -29,7 +29,8 @@
       "letters": "Letters",
       "merchants": "Merchants",
       "bestiary": "Bestiary",
-      "notices": "Notices"
+      "notices": "Notices",
+      "calendar": "Calendar"
     },
     "Settings": {
       "Sections": {
@@ -64,6 +65,10 @@
         "notices": {
           "Name": "Notice board tab",
           "Hint": "Show the notice board, with contracts and bounties by region, for everyone in this world."
+        },
+        "calendar": {
+          "Name": "Calendar tab",
+          "Hint": "Show the Calendar tab, with the world’s holidays, events, moons and quest deadlines, for everyone in this world."
         }
       },
       "PlayerNotes": {
@@ -143,6 +148,26 @@
           "column": "Column",
           "row": "Row"
         }
+      },
+      "KnowledgeChecks": {
+        "Name": "Bestiary knowledge checks",
+        "Hint": "Let players roll to recall what they know of a creature: Recall Lore on its page, or the skill it calls for (Arcana, History, Nature or Religion) with one of its tokens targeted. Meeting the DC reveals one fact, and each full 5 over it one more. One try per character per creature a day."
+      },
+      "KnowledgeShare": {
+        "Name": "Knowledge checks teach",
+        "Hint": "Who learns what a knowledge check recalls: only the player who rolled, or the whole party.",
+        "Choices": {
+          "roller": "The player who rolled",
+          "party": "The whole party"
+        }
+      },
+      "KnowledgeDC": {
+        "Name": "Knowledge check DC",
+        "Hint": "The DC to recall something about a creature is this plus its challenge rating. The GM can set a creature’s own DC in its editor."
+      },
+      "CombatLog": {
+        "Name": "Log fights in the bestiary",
+        "Hint": "When a fight starts, add the creatures the party faces to the bestiary (if they aren’t there yet) and log an encounter with each; count each one that falls as slain. Friendly tokens and the players’ own are left out."
       }
     },
     "Keys": {
@@ -160,7 +185,8 @@
       "merchants": "Open the merchants",
       "bestiary": "Open the bestiary",
       "notices": "Open the notice board",
-      "party": "Show or hide the party frame"
+      "party": "Show or hide the party frame",
+      "calendar": "Open the calendar"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -236,7 +262,13 @@
       "AddStep": "Add a step",
       "Steps": "Steps",
       "Group": "Group",
-      "NoParent": "Nothing (a quest of its own)"
+      "NoParent": "Nothing (a quest of its own)",
+      "Deadline": "Deadline",
+      "DeadlineHint": "The day it must be done by, in the world’s calendar. Leave the day empty for no deadline. It shows on the calendar, and everyone is told when it passes.",
+      "DeadlineOpen": "Show on the calendar",
+      "DueOn": "Due {when} · {date}",
+      "Overdue": "Overdue · was due {date}",
+      "WasDue": "Was due {date}"
     },
     "Journal": {
       "New": "New Note",
@@ -442,7 +474,8 @@
       "VisibleMerchant": "Players can see this merchant",
       "VisibleCreature": "Players can see this creature",
       "VisibleNotice": "Players can see this notice",
-      "VisibleLocation": "Players can see this card"
+      "VisibleLocation": "Players can see this card",
+      "VisibleEvent": "Players can see this event"
     },
     "Banners": {
       "Started": "Quest Started",
@@ -457,7 +490,10 @@
       "StandingDown": "Standing Falls",
       "NewCreature": "New Creature",
       "Learned": "Learned",
-      "Notice": "New Notice"
+      "Notice": "New Notice",
+      "NewDay": "A New Day",
+      "DaysPass": "{n} Days Pass",
+      "DeadlinePassed": "Deadline Passed"
     },
     "Tracker": {
       "Title": "Tracked Quests",
@@ -579,7 +615,11 @@
       "Sold": "Sold one",
       "AddOne": "One more in stock",
       "RestockNow": "Restock now",
-      "Restocks": "Restocks every {days} days · next on {date}"
+      "Restocks": "Restocks every {days} days · next on {date}",
+      "Markup": "Prices {percent} · {tier} with {faction}",
+      "MarkupPlain": "Prices {percent} · {tier} standing",
+      "StandingPrices": "Prices follow the party’s standing with this merchant’s faction",
+      "StandingPricesHint": "Hated +50%, Hostile +30%, Unfriendly +15%, Friendly −5%, Trusted −10%, Revered −20%. Turn this off for a merchant who charges everyone the same."
     },
     "Bestiary": {
       "Search": "Search creatures",
@@ -590,6 +630,7 @@
       "DropHint": "Drop a monster from the Monsters compendium here to add it",
       "Unknown": "Unknown creature",
       "Times": "Met {count} times",
+      "Once": "Met once",
       "NotYet": "Not yet met",
       "LogEncounter": "Log an encounter with {name}",
       "LogEncounterShort": "Log encounter",
@@ -652,7 +693,24 @@
         "spells": "Spells",
         "habitat": "Habitat"
       },
-      "VulnerableTo": "Vulnerable against"
+      "VulnerableTo": "Vulnerable against",
+      "Slain": "{count} slain",
+      "CheckInfo": "Recall: {skill}, DC {dc}",
+      "Recall": "Recall Lore ({skill})",
+      "FromCombat": "Logged from combat",
+      "UnknownPlace": "Somewhere",
+      "KnowledgeCheck": "Knowledge check",
+      "KnowledgeSkill": "Skill",
+      "KnowledgeDC": "DC",
+      "ByKind": "By its kind ({skill})",
+      "ByKindPlain": "By its kind",
+      "KnowledgeHint": "The skill a player rolls to recall what they know of it, and the DC. Left alone, the skill follows its kind (Arcana for dragons, Religion for the undead) and the DC is the world’s base plus its challenge rating.",
+      "Skills": {
+        "arc": "Arcana",
+        "his": "History",
+        "nat": "Nature",
+        "rel": "Religion"
+      }
     },
     "Notices": {
       "NewShort": "Pin up",
@@ -785,6 +843,91 @@
         "ink": "Ink & Seal",
         "gothic": "Gothic"
       }
+    },
+    "Calendar": {
+      "Today": "Today",
+      "Tomorrow": "Tomorrow",
+      "Yesterday": "Yesterday",
+      "InDays": "In {n} days",
+      "DaysAgo": "{n} days ago",
+      "PreviousMonth": "Previous month",
+      "NextMonth": "Next month",
+      "NewDay": "New Day",
+      "NewDayHint": "Move the world’s clock on by one day",
+      "AddEvent": "Add event",
+      "Moons": "Moons",
+      "Moon": "The moon",
+      "FullMoon": "{name} is full",
+      "Events": "Holidays and events",
+      "Yearly": "Every year",
+      "Due": "Quests due",
+      "Arriving": "Letters arriving",
+      "NothingToday": "Nothing is marked for this day.",
+      "ComingUp": "Coming up",
+      "NewEvent": "New Event",
+      "EditEvent": "Edit {name}",
+      "EditMoons": "The Moons",
+      "CreateEvent": "Create Event",
+      "EventPlaceholder": "The Feast of Lanterns",
+      "YearlyLabel": "Every year, as a holiday",
+      "YearlyHint": "A holiday falls on its day and month every year. Anything else happens once, on its date.",
+      "DescriptionPlaceholder": "What happens on this day",
+      "Date": "Date",
+      "DayShort": "Day",
+      "Month": "Month",
+      "Year": "Year",
+      "MoonsHint": "Each moon goes round its cycle of days, and the calendar marks its new, full and quarter moons. Choose the phase each shows today; it carries on from there.",
+      "Cycle": "Days in its cycle",
+      "PhaseToday": "Phase today",
+      "MoonPlaceholder": "The Pale Lady",
+      "AddMoon": "Add moon",
+      "Phases": {
+        "new": "New moon",
+        "waxingCrescent": "Waxing crescent",
+        "firstQuarter": "First quarter",
+        "waxingGibbous": "Waxing gibbous",
+        "full": "Full moon",
+        "waningGibbous": "Waning gibbous",
+        "lastQuarter": "Last quarter",
+        "waningCrescent": "Waning crescent"
+      }
+    },
+    "Rewards": {
+      "XP": "Experience",
+      "XPAmount": "{n} XP",
+      "Coins": "Coins",
+      "EditorHint": "When the quest is completed, you’re asked who gets what: each character can have the experience (or a share of it), the coins are shared out evenly, and each item goes to whoever you choose.",
+      "Title": "Rewards: {name}",
+      "Who": "Who receives them",
+      "NoOne": "No characters found. Assign the players their characters, or set dnd5e’s primary party.",
+      "SplitXP": "Split it between them",
+      "SharedOut": "Shared out evenly",
+      "GoesTo": "Who gets this",
+      "ByHandOption": "No one: I’ll hand it out",
+      "Later": "Not now",
+      "Give": "Hand out",
+      "GiveShort": "Hand out rewards",
+      "GiveAgain": "Hand out again",
+      "GivenOn": "Handed out {date}",
+      "Already": "These rewards have been handed out once already.",
+      "CardLabel": "Rewards",
+      "Speaker": "Quest Rewards",
+      "ByHand": "Still to hand out: {items}"
+    },
+    "Knowledge": {
+      "NoCharacter": "You need a character of your own to recall anything.",
+      "Who": "Who tries to remember?",
+      "WhoHint": "Choose the character who rolls.",
+      "Learned": "You recall {facts} about {name}.",
+      "Failed": "You can’t recall anything useful about {name}.",
+      "Tried": "You’ve already tried to recall what you know of {name} today.",
+      "All": "You already know all there is to know of {name}.",
+      "ThisCreature": "this creature",
+      "CardLabel": "Knowledge Check",
+      "Speaker": "Bestiary",
+      "Report": "{who} rolled {skill} {total} against DC {dc}.",
+      "ReportLearned": "Recalled: {facts}.",
+      "ReportNothing": "Recalled nothing."
     }
   }
 }

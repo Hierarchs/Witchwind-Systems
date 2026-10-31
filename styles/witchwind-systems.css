@@ -7522,3 +7522,754 @@ ul.wws-chips {
     transition: none !important;
   }
 }
+
+/* ============================================ */
+/*  The calendar                                */
+/* ============================================ */
+
+/* The month takes the larger left page; the chosen day is written on the right. */
+.wws-spread.wws-calendar {
+  grid-template-columns: minmax(340px, 50%) minmax(0, 1fr);
+}
+
+.wws-cal-head h2 {
+  flex: 1;
+  text-align: center;
+}
+
+.wws-cal-year {
+  font-weight: 400;
+  color: var(--wws-parch-muted);
+}
+
+/* Today's date, and for the GM the button that moves the clock on. */
+.wws-cal-now {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 6px 10px 0;
+}
+
+.wws-cal-now p {
+  flex: 1;
+  margin: 0;
+  font-family: var(--wws-font-body);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--wws-parch-muted);
+}
+
+.wws-cal-now p i {
+  margin-right: 4px;
+  color: var(--wws-gold-dim);
+}
+
+/* The month: a row of weekdays, then a box for each day. */
+.wws-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--wws-week, 7), minmax(0, 1fr));
+  gap: 4px;
+  padding: 0 6px 6px 0;
+}
+
+.wws-cal-weekday {
+  padding: 2px 0 4px;
+  font-family: var(--wws-font-display);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--wws-parch-muted);
+}
+
+.wws button.wws-cal-day {
+  all: unset;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 58px;
+  padding: 3px 5px 4px;
+  cursor: pointer;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 2px;
+  background: rgb(255 250 235 / 32%);
+  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+}
+
+.wws button.wws-cal-day:hover {
+  background: var(--wws-parch-wash);
+  border-color: var(--wws-gold-dim);
+}
+
+.wws button.wws-cal-day:focus-visible {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 1px;
+}
+
+.wws-cal-num {
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--wws-parch-ink);
+}
+
+.wws-cal-day.wws-past .wws-cal-num {
+  color: var(--wws-parch-faint);
+  font-weight: 400;
+}
+
+/* Today in gold; the chosen day under a gold double rule, as the book marks a choice. */
+.wws button.wws-cal-day.wws-today {
+  border-color: var(--wws-gold);
+  background: linear-gradient(180deg, rgb(201 164 92 / 30%), rgb(201 164 92 / 12%));
+}
+
+.wws-cal-day.wws-today .wws-cal-num {
+  color: var(--wws-parch-head);
+}
+
+.wws button.wws-cal-day.selected {
+  border-color: var(--wws-gold-dim);
+  box-shadow: inset 0 0 0 2px var(--wws-parch), inset 0 0 0 3px var(--wws-gold-dim);
+  background-color: var(--wws-parch-pick);
+}
+
+.wws-cal-moons {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 2px;
+}
+
+.wws-cal-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  margin-top: auto;
+  font-size: 10px;
+}
+
+.wws-cal-marks i {
+  color: var(--wws-mark, var(--wws-gold-dim));
+  filter: drop-shadow(0 1px 0 rgb(255 250 235 / 60%));
+}
+
+.wws-cal-marks em {
+  font-family: var(--wws-font-ui);
+  font-size: 10px;
+  font-style: normal;
+  color: var(--wws-parch-muted);
+}
+
+.wws .wws-mark-deadline {
+  color: var(--wws-bad);
+}
+
+.wws-cal-tools {
+  margin: 10px 6px 0 0;
+}
+
+.wws-cal-tools .wws-button {
+  margin-left: 4px;
+}
+
+/* A moon: a dark disc with its lit part over it. */
+.wws-moon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  overflow: visible;
+}
+
+.wws-moon circle {
+  fill: #2b2116;
+  stroke: rgb(0 0 0 / 35%);
+  stroke-width: 1;
+}
+
+.wws-moon path {
+  fill: var(--wws-moon, var(--wws-ivory));
+}
+
+.wws-moon.wws-moon-small {
+  width: 12px;
+  height: 12px;
+}
+
+/* The chosen day: its moons, its holidays and events, what's due and what's coming. */
+.wws-cal-moonlist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-cal-moonlist li {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  align-items: center;
+}
+
+.wws-cal-moonlist .wws-moon {
+  grid-row: span 2;
+}
+
+.wws-cal-moon-name {
+  font-family: var(--wws-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wws-parch-head);
+}
+
+.wws-cal-moon-phase {
+  font-family: var(--wws-font-body);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--wws-parch-muted);
+}
+
+.wws-cal-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-cal-event {
+  padding: 4px 0 4px 12px;
+  border-left: 3px solid var(--wws-mark, var(--wws-gold-dim));
+}
+
+.wws-cal-event header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wws-cal-event h4 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  border: none;
+  font-family: var(--wws-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--wws-parch-head);
+}
+
+.wws-cal-event-icon {
+  color: var(--wws-mark, var(--wws-gold-dim));
+}
+
+.wws-cal-event .wws-prose {
+  margin-top: 4px;
+}
+
+.wws-cal-event .wws-row-tools {
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.wws-cal-event:is(:hover, :focus-within) .wws-row-tools {
+  opacity: 1;
+}
+
+.wws-cal-tag {
+  padding: 0 6px;
+  border: 1px solid var(--wws-parch-rule);
+  border-radius: 2px;
+  font-family: var(--wws-font-ui);
+  font-size: 11px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-cal-upcoming {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-cal-upcoming .wws-link {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 3px 4px;
+  text-align: left;
+}
+
+.wws-cal-upcoming i {
+  color: var(--wws-mark, var(--wws-gold-dim));
+}
+
+.wws-cal-up-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws-cal-up-when {
+  font-family: var(--wws-font-body);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--wws-parch-muted);
+}
+
+/* A date in an editor: day, month and year side by side. */
+.wws-date-inputs {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 90px;
+  gap: 6px;
+}
+
+/* The moons editor's rows. */
+.wws-moon-head,
+.wws-moon-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 76px 150px 110px auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.wws-moon-head {
+  padding: 0 7px;
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wws-ink-muted);
+}
+
+.wws-moon-row > input[type="hidden"] {
+  display: none;
+}
+
+.wws-moon-row .wws-qty-input {
+  width: 100%;
+}
+
+/* ============================================ */
+/*  Quest deadlines and rewards                 */
+/* ============================================ */
+
+.wws button.wws-deadline {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  cursor: pointer;
+  font-family: var(--wws-font-ui);
+  font-size: 13.5px;
+  color: var(--wws-parch-muted);
+}
+
+.wws button.wws-deadline:hover {
+  color: var(--wws-parch-head);
+  text-decoration: underline;
+}
+
+.wws button.wws-deadline:focus-visible {
+  outline: 1px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws .wws-deadline-soon {
+  color: #9a5a10;
+}
+
+.wws .wws-deadline-overdue {
+  color: var(--wws-bad);
+}
+
+.wws button.wws-deadline.wws-deadline-soon,
+.wws button.wws-deadline.wws-deadline-overdue {
+  font-weight: 600;
+}
+
+/* A quest's experience and coins, as chips over its item rewards. */
+.wws-purse-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-purse-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 2px;
+  background: rgb(255 250 235 / 30%);
+  font-family: var(--wws-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wws-parch-ink);
+}
+
+.wws-purse-chips i {
+  color: var(--wws-coin, var(--wws-gold-dim));
+}
+
+.wws-coin-pp { --wws-coin: #8d9aa6; }
+.wws-coin-gp { --wws-coin: #b8892e; }
+.wws-coin-ep { --wws-coin: #8f8a5a; }
+.wws-coin-sp { --wws-coin: #8a8f96; }
+.wws-coin-cp { --wws-coin: #a5612c; }
+
+.wws-reward-gm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+}
+
+/* The quest editor's experience and coins, a row each. */
+.wws-purse {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wws-editor .wws-purse input[name="xp"] {
+  flex: 0 0 110px;
+}
+
+.wws-editor .form-group > :is(.wws-coin-inputs, .wws-date-inputs) {
+  flex: 1;
+  min-width: 0;
+}
+
+.wws-coin-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.wws-coin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wws-editor .wws-coin input {
+  width: 62px;
+}
+
+.wws-coin span {
+  font-family: var(--wws-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--wws-coin, var(--wws-ink-muted));
+}
+
+/* Handing out rewards: who gets them, the experience and coins, and where each item goes. */
+.wws-reward-quest {
+  margin: 0 0 10px;
+  font-family: var(--wws-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--wws-gold-bright);
+}
+
+.wws-reward-quest i {
+  margin-right: 6px;
+  color: var(--wws-gold-dim);
+}
+
+.wws-reward-people {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 6px;
+}
+
+.wws-reward-person {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.wws-reward-person:has(input:checked) {
+  border-color: var(--wws-gold-dim);
+  background: var(--wws-gold-wash);
+}
+
+.wws-reward-person img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 50%;
+}
+
+.wws-reward-person span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws-reward-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--wws-line);
+}
+
+.wws-reward-kind {
+  min-width: 90px;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wws-ink-muted);
+}
+
+.wws-reward-line strong {
+  flex: 1;
+  color: var(--wws-ivory);
+}
+
+.wws-reward-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-reward-items li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 190px;
+  align-items: center;
+  gap: 8px;
+}
+
+.wws-reward-items .wws-slot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border: 2px solid var(--wws-frame, var(--wws-line-strong));
+  background: var(--wws-tint, var(--wws-slot-bg));
+}
+
+.wws-reward-items .wws-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+/* Not now beside Hand out, as a quiet outlined button. */
+.wws-rewards-dialog .wws-editor-footer {
+  display: flex;
+  gap: 8px;
+}
+
+.wws-rewards-dialog .wws-editor-footer button[data-action="rewardsLater"] {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--wws-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wws-ink-muted);
+}
+
+.wws-rewards-dialog .wws-editor-footer button[data-action="rewardsLater"]:hover {
+  border-color: var(--wws-gold-dim);
+  color: var(--wws-ivory);
+}
+
+.wws-rewards-dialog .wws-editor-footer button[type="submit"] {
+  flex: 1;
+}
+
+/* The chat's cards for handed-out rewards and knowledge checks, in the book's leather and gold. */
+.wws-reward-card,
+.wws-knowledge-card {
+  padding: 8px 10px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  background: var(--wws-grain), linear-gradient(180deg, #221c16, #16130f);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  box-shadow: inset 0 0 0 2px #120f0b, inset 0 0 0 3px rgb(201 164 92 / 25%);
+}
+
+.wws-reward-card header,
+.wws-knowledge-card header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.wws-reward-card header i,
+.wws-knowledge-card header i {
+  grid-row: span 2;
+  font-size: 18px;
+  color: var(--wws-gold);
+}
+
+.wws-reward-card header span,
+.wws-knowledge-card header span {
+  font-family: var(--wws-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wws-ink-muted);
+}
+
+.wws-reward-card header strong,
+.wws-knowledge-card header strong {
+  font-family: var(--wws-font-display);
+  font-size: 15px;
+  color: var(--wws-ivory);
+}
+
+.wws-reward-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-reward-card li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: center;
+}
+
+.wws-reward-card li img {
+  grid-row: span 2;
+  width: 26px;
+  height: 26px;
+  object-fit: cover;
+  border: 1px solid var(--wws-line-strong);
+  border-radius: 50%;
+}
+
+.wws-reward-name {
+  font-weight: 700;
+  color: var(--wws-gold-bright);
+}
+
+.wws-reward-got {
+  font-size: 13px;
+}
+
+.wws-reward-kept,
+.wws-knowledge-card p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--wws-ink-muted);
+}
+
+.wws-knowledge-card .wws-knowledge-outcome {
+  color: var(--wws-ink);
+  font-weight: 600;
+}
+
+/* ============================================ */
+/*  Merchants' prices by standing               */
+/* ============================================ */
+
+.wws-markup i {
+  margin-right: 4px;
+}
+
+.wws .wws-markup-up i { color: var(--wws-bad); }
+.wws .wws-markup-down i { color: var(--wws-good); }
+
+.wws-ware-price s {
+  margin-right: 4px;
+  font-weight: 400;
+  opacity: 0.55;
+}
+
+/* ============================================ */
+/*  The bestiary's knowledge checks and kills   */
+/* ============================================ */
+
+.wws-beast-check {
+  margin: 4px 0 0;
+  font-family: var(--wws-font-ui);
+  font-size: 12.5px;
+  color: var(--wws-parch-muted);
+}
+
+.wws-beast-check i {
+  margin-right: 4px;
+  color: var(--wws-gold-dim);
+}
+
+.wws-beast-recall {
+  margin-top: 8px;
+}
+
+.wws-encounter-slain {
+  font-style: italic;
+  color: var(--wws-bad);
+}
+
+.wws-encounter-combat {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--wws-parch-faint);
+}
+
+/* Narrow books: the month above the day. */
+@media (max-width: 900px) {
+  .wws-spread.wws-calendar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wws button.wws-cal-day {
+    transition: none;
+  }
+}

@@ -11,6 +11,10 @@ import { registerSheet } from "./sheet.mjs";
 import { registerNoticeBoard } from "./sections/notices.mjs";
 import { restockDue } from "./sections/merchants.mjs";
 import { registerSounds, playSound } from "./sounds.mjs";
+import { registerCalendar, newDay } from "./calendar.mjs";
+import { registerRewards } from "./rewards.mjs";
+import { registerKnowledge } from "./knowledge.mjs";
+import { registerEncounters } from "./encounters.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
 import { SECTION_KINDS, resolveKind } from "./helpers.mjs";
@@ -81,6 +85,47 @@ Hooks.once("init", () => {
   register("announce", {
     name: `${L}.Settings.Announce.Name`,
     hint: `${L}.Settings.Announce.Hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  // World: the bestiary's knowledge checks, and its record of the party's fights.
+  register("knowledgeChecks", {
+    name: `${L}.Settings.KnowledgeChecks.Name`,
+    hint: `${L}.Settings.KnowledgeChecks.Hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => Codex.refresh("bestiary")
+  });
+
+  register("knowledgeShare", {
+    name: `${L}.Settings.KnowledgeShare.Name`,
+    hint: `${L}.Settings.KnowledgeShare.Hint`,
+    scope: "world",
+    config: true,
+    type: String,
+    choices: { roller: `${L}.Settings.KnowledgeShare.Choices.roller`, party: `${L}.Settings.KnowledgeShare.Choices.party` },
+    default: "roller"
+  });
+
+  register("knowledgeDC", {
+    name: `${L}.Settings.KnowledgeDC.Name`,
+    hint: `${L}.Settings.KnowledgeDC.Hint`,
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 0, max: 30, step: 1 },
+    default: 10,
+    onChange: () => Codex.refresh("bestiary")
+  });
+
+  register("combatLog", {
+    name: `${L}.Settings.CombatLog.Name`,
+    hint: `${L}.Settings.CombatLog.Hint`,
     scope: "world",
     config: true,
     type: Boolean,
@@ -182,7 +227,7 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, bestiary: null, notices: null, maps: "KeyM", factions: null, merchants: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, calendar: null, bestiary: null, notices: null, maps: "KeyM", factions: null, merchants: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,
@@ -319,6 +364,10 @@ Hooks.once("ready", () => {
   registerLocations();
   registerSheet();
   registerNoticeBoard();
+  registerCalendar();
+  registerRewards();
+  registerKnowledge();
+  registerEncounters();
 
   // As the world's clock moves, held-back letters arrive and merchants restock.
   Hooks.on("updateWorldTime", () => {
@@ -338,6 +387,8 @@ Hooks.once("ready", () => {
     notice: showNotice,
     /** Play one of the module's sounds on this client: "open", "close", "page" or "quest". */
     playSound,
+    /** Move the world's clock on by one day, as the calendar's New Day button does. GM only. */
+    newDay,
     store
   };
 });

@@ -46,6 +46,7 @@
               {{else if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}
             </span>
             {{#if tracked}}<i class="fa-solid fa-location-crosshairs wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Quests.Tracked"></i>{{/if}}
+            {{#if deadline}}{{#unless (eq deadline.state "done")}}<i class="fa-solid fa-hourglass-half wws-row-mark wws-deadline-{{deadline.state}}" data-tooltip="{{deadline.relative}} · {{deadline.label}}"></i>{{/unless}}{{/if}}
             {{#if restricted}}<i class="fa-solid fa-user-lock wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Visibility.Limited"></i>{{/if}}
             {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
           </button>
@@ -104,6 +105,15 @@
             <span class="wws-status-word{{#if quest.statusChanged}} wws-stamp{{/if}}">{{localize quest.statusLabel}}</span>
           </p>
           <h1 class="wws-entry-title">{{quest.title}}</h1>
+          {{#with quest.deadline as |deadline|}}
+          <button type="button" class="wws-deadline wws-deadline-{{deadline.state}}" data-action="questDeadline" data-day="{{deadline.day}}"
+                  data-tooltip="WITCHWIND_SYSTEMS.Quests.DeadlineOpen">
+            <i class="fa-solid {{#if (eq deadline.state "overdue")}}fa-hourglass-end{{else}}fa-hourglass-half{{/if}}" inert></i>
+            {{#if (eq deadline.state "overdue")}}{{localize "WITCHWIND_SYSTEMS.Quests.Overdue" date=deadline.label}}
+            {{else if (eq deadline.state "done")}}{{localize "WITCHWIND_SYSTEMS.Quests.WasDue" date=deadline.label}}
+            {{else}}{{localize "WITCHWIND_SYSTEMS.Quests.DueOn" when=deadline.relative date=deadline.label}}{{/if}}
+          </button>
+          {{/with}}
         </header>
 
         <div class="wws-actions">
@@ -263,8 +273,23 @@
         <div class="wws-prose">{{{quest.description}}}</div>
         {{/if}}
 
-        {{#if quest.rewards.length}}
+        {{#if quest.hasRewards}}
         <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Quests.Rewards"}}</h3>
+        {{#if (or quest.xp quest.coins.length)}}
+        <ul class="wws-purse-chips">
+          {{#if quest.xp}}<li class="wws-purse-xp"><i class="fa-solid fa-star" inert></i> {{localize "WITCHWIND_SYSTEMS.Rewards.XPAmount" n=quest.xp}}</li>{{/if}}
+          {{#each quest.coins}}<li class="wws-purse-coin wws-coin-{{id}}"><i class="fa-solid fa-coins" inert></i> {{label}}</li>{{/each}}
+        </ul>
+        {{/if}}
+        {{#if quest.canHandOut}}
+        <p class="wws-reward-gm">
+          <button type="button" class="wws-button" data-action="questRewards" data-id="{{quest.id}}">
+            <i class="fa-solid fa-hand-holding-heart" inert></i> {{#if quest.rewarded}}{{localize "WITCHWIND_SYSTEMS.Rewards.GiveAgain"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Rewards.GiveShort"}}{{/if}}
+          </button>
+          {{#if quest.rewarded}}<span class="hint">{{localize "WITCHWIND_SYSTEMS.Rewards.GivenOn" date=quest.rewarded}}</span>{{/if}}
+        </p>
+        {{/if}}
+        {{#if quest.rewards.length}}
         <ul class="wws-slots">
           {{#each quest.rewards}}
           <li>
@@ -277,6 +302,7 @@
           </li>
           {{/each}}
         </ul>
+        {{/if}}
         {{/if}}
 
         {{#if quest.notes.length}}
@@ -295,7 +321,7 @@
         </aside>
         {{/if}}
 
-        {{#unless (or quest.hasObjectives quest.log.length quest.description quest.rewards.length)}}
+        {{#unless (or quest.hasObjectives quest.log.length quest.description quest.hasRewards)}}
         <p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Quests.NothingYet"}}</p>
         {{/unless}}
       </article>

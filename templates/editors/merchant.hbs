@@ -34,6 +34,11 @@
       </div>
     </div>
     <p class="hint">{{localize "WITCHWIND_SYSTEMS.Merchants.RestockHint"}}</p>
+    <label class="wws-toggle">
+      <input type="checkbox" name="standingPrices" {{#unless (eq entry.standingPrices false)}}checked{{/unless}}>
+      <span>{{localize "WITCHWIND_SYSTEMS.Merchants.StandingPrices"}}</span>
+    </label>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Merchants.StandingPricesHint"}}</p>
     {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
     <div class="form-group stacked">
       <label>{{localize "WITCHWIND_SYSTEMS.Editor.Picture"}}</label>

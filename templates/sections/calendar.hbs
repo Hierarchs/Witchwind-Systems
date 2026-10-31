@@ -1,0 +1,145 @@
+{{!-- A moon's face: the dark disc, and its lit part over it. --}}
+{{#*inline "wws-moon"}}
+<svg class="wws-moon{{#if class}} {{class}}{{/if}}" viewBox="-12 -12 24 24" style="--wws-moon: {{color}};" aria-hidden="true">
+  <circle r="10"></circle>{{#if path}}<path d="{{path}}"></path>{{/if}}
+</svg>
+{{/inline}}
+
+<div class="wws-spread wws-calendar">
+
+  {{!-- Left: the month --}}
+  <section class="wws-page wws-page-list wws-cal-month">
+    <header class="wws-page-head wws-cal-head">
+      <button type="button" class="wws-tool" data-action="calendarMonth" data-delta="-1" data-tooltip="WITCHWIND_SYSTEMS.Calendar.PreviousMonth"
+              aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.PreviousMonth"}}"><i class="fa-solid fa-chevron-left" inert></i></button>
+      <h2>{{page.monthName}} <span class="wws-cal-year">{{page.year}}</span></h2>
+      <button type="button" class="wws-tool" data-action="calendarMonth" data-delta="1" data-tooltip="WITCHWIND_SYSTEMS.Calendar.NextMonth"
+              aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.NextMonth"}}"><i class="fa-solid fa-chevron-right" inert></i></button>
+      {{#unless page.showingToday}}
+      <button type="button" class="wws-ink" data-action="calendarToday">{{localize "WITCHWIND_SYSTEMS.Calendar.Today"}}</button>
+      {{/unless}}
+    </header>
+
+    <div class="wws-cal-now">
+      <p><i class="fa-solid fa-sun" inert></i> {{page.todayLabel}}</p>
+      {{#if page.isGM}}
+      <button type="button" class="wws-button wws-cal-newday" data-action="calendarNewDay" data-tooltip="WITCHWIND_SYSTEMS.Calendar.NewDayHint">
+        <i class="fa-solid fa-forward-step" inert></i> {{localize "WITCHWIND_SYSTEMS.Calendar.NewDay"}}
+      </button>
+      {{/if}}
+    </div>
+
+    <div class="wws-list-scroll">
+      <div class="wws-cal-grid" style="--wws-week: {{page.week}};">
+        {{#each page.weekdays}}<span class="wws-cal-weekday">{{this}}</span>{{/each}}
+        {{#each page.cells}}
+        {{#if blank}}<span class="wws-cal-blank" aria-hidden="true"></span>
+        {{else}}
+        <button type="button" class="wws-cal-day{{#if today}} wws-today{{/if}}{{#if selected}} selected{{/if}}{{#if past}} wws-past{{/if}}"
+                data-action="calendarDay" data-day="{{dayNumber}}" aria-label="{{label}}" aria-pressed="{{#if selected}}true{{else}}false{{/if}}"
+                {{#if tooltip}}data-tooltip="{{tooltip}}"{{/if}}>
+          <span class="wws-cal-num">{{day}}</span>
+          {{#if moons.length}}<span class="wws-cal-moons">{{#each moons}}{{> wws-moon class="wws-moon-small"}}{{/each}}</span>{{/if}}
+          {{#if marks.length}}
+          <span class="wws-cal-marks">
+            {{#each marks}}<i class="{{icon}}{{#if deadline}} wws-mark-deadline{{/if}}" {{#if color}}style="--wws-mark: {{color}};"{{/if}} inert></i>{{/each}}
+            {{#if more}}<em>+{{more}}</em>{{/if}}
+          </span>
+          {{/if}}
+        </button>
+        {{/if}}
+        {{/each}}
+      </div>
+    </div>
+
+    {{#if page.isGM}}
+    <div class="wws-gm-bar wws-cal-tools">
+      <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+      <button type="button" class="wws-button" data-action="calendarEventNew"><i class="fa-solid fa-calendar-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Calendar.AddEvent"}}</button>
+      <button type="button" class="wws-button" data-action="calendarMoons"><i class="fa-solid fa-moon" inert></i> {{localize "WITCHWIND_SYSTEMS.Calendar.Moons"}}</button>
+    </div>
+    {{/if}}
+  </section>
+
+  {{!-- Right: the chosen day --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#with page.day as |day|}}
+      <article class="wws-entry wws-cal-dayview">
+        <header class="wws-entry-head">
+          <p class="wws-kicker">{{day.relative}}</p>
+          <h1 class="wws-entry-title">{{day.label}}</h1>
+        </header>
+
+        {{#if day.moons.length}}
+        <ul class="wws-cal-moonlist">
+          {{#each day.moons}}
+          <li>{{> wws-moon}}<span class="wws-cal-moon-name">{{name}}</span><span class="wws-cal-moon-phase">{{label}}</span></li>
+          {{/each}}
+        </ul>
+        {{/if}}
+
+        {{#if day.events.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Calendar.Events"}}</h3>
+        <ol class="wws-cal-events">
+          {{#each day.events}}
+          <li class="wws-cal-event{{#if hidden}} wws-is-hidden{{/if}}" style="--wws-mark: {{color}};">
+            <header>
+              <i class="{{icon}} wws-cal-event-icon" inert></i>
+              <h4>{{title}}</h4>
+              {{#if yearly}}<span class="wws-cal-tag">{{localize "WITCHWIND_SYSTEMS.Calendar.Yearly"}}</span>{{/if}}
+              {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
+              {{#if @root.isGM}}
+              <span class="wws-row-tools">
+                <button type="button" class="wws-tool wws-mini" data-action="calendarEventEdit" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit"><i class="fa-solid fa-pen-to-square" inert></i></button>
+                <button type="button" class="wws-tool wws-mini" data-action="calendarEventVisible" data-id="{{id}}"
+                        data-tooltip="{{#if hidden}}WITCHWIND_SYSTEMS.Reveal{{else}}WITCHWIND_SYSTEMS.Hide{{/if}}"><i class="fa-solid {{#if hidden}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+                <button type="button" class="wws-tool wws-mini wws-bad" data-action="calendarEventDelete" data-id="{{id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+              </span>
+              {{/if}}
+            </header>
+            {{#if description}}<div class="wws-prose">{{{description}}}</div>{{/if}}
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if day.due.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Calendar.Due"}}</h3>
+        <ol class="wws-quest-links">
+          {{#each day.due}}
+          <li><button type="button" class="wws-link wws-status-{{status}}" data-action="calendarQuest" data-id="{{id}}"><i class="fa-solid fa-hourglass-half" inert></i> {{title}}</button></li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if day.arriving.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Calendar.Arriving"}}</h3>
+        <ol class="wws-quest-links">
+          {{#each day.arriving}}
+          <li><button type="button" class="wws-link" data-action="calendarLetter" data-id="{{id}}"><i class="fa-solid fa-envelope" inert></i> {{title}}</button></li>
+          {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if day.empty}}<p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Calendar.NothingToday"}}</p>{{/if}}
+
+        {{#if @root.page.upcoming.length}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Calendar.ComingUp"}}</h3>
+        <ol class="wws-cal-upcoming">
+          {{#each @root.page.upcoming}}
+          <li>
+            <button type="button" class="wws-link" data-action="calendarGo" data-day="{{day}}">
+              <i class="{{icon}}{{#if deadline}} wws-mark-deadline{{/if}}" {{#if color}}style="--wws-mark: {{color}};"{{/if}} inert></i>
+              <span class="wws-cal-up-title">{{title}}</span>
+              <span class="wws-cal-up-when">{{when}}</span>
+            </button>
+          </li>
+          {{/each}}
+        </ol>
+        {{/if}}
+      </article>
+      {{/with}}
+    </div>
+  </section>
+</div>

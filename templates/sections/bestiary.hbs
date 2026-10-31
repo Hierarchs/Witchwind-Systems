@@ -45,7 +45,7 @@
               <span class="wws-beast-thumb">{{#if img}}<img src="{{img}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}</span>
               <span class="wws-row-text">
                 <span class="wws-row-title">{{name}}</span>
-                {{#if encountered}}<span class="wws-row-sub">{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=encountered}}</span>{{/if}}
+                {{#if encountered}}<span class="wws-row-sub">{{#if (eq encountered 1)}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Once"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=encountered}}{{/if}}{{#if slain}} · {{localize "WITCHWIND_SYSTEMS.Bestiary.Slain" count=slain}}{{/if}}</span>{{/if}}
               </span>
               {{#if hidden}}<i class="fa-solid fa-eye-slash wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"></i>{{/if}}
             </button>
@@ -93,8 +93,15 @@
             <h1 class="wws-entry-title">{{c.name}}</h1>
             <p class="wws-byline">
               {{#if c.typeLabel}}{{c.typeLabel}}{{/if}}{{#if c.sizeLabel}}{{#if c.typeLabel}} · {{/if}}{{c.sizeLabel}}{{/if}}{{#if (or c.typeLabel c.sizeLabel)}} · {{/if}}
-              {{#if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}
+              {{#if (eq c.encounteredCount 1)}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Once"}}{{else if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}
+              {{#if c.slainCount}} · {{localize "WITCHWIND_SYSTEMS.Bestiary.Slain" count=c.slainCount}}{{/if}}
             </p>
+            {{#if c.check}}<p class="wws-beast-check"><i class="fa-solid fa-brain" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.CheckInfo" skill=c.check.skill dc=c.check.dc}}</p>{{/if}}
+            {{#if c.recall}}
+            <button type="button" class="wws-button wws-beast-recall" data-action="bestiaryRecall" data-id="{{c.id}}">
+              <i class="fa-solid fa-brain" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.Recall" skill=c.recall.skill}}
+            </button>
+            {{/if}}
           </div>
           {{#if c.vulnerable.length}}
           <div class="wws-beast-weak">
@@ -155,8 +162,8 @@
         <ol class="wws-log wws-encounters">
           {{#each c.encounters}}
           <li class="wws-log-entry">
-            <div class="wws-log-meta"><time>{{dateLabel}}</time></div>
-            <p class="wws-encounter-place">{{place}}</p>
+            <div class="wws-log-meta"><time>{{dateLabel}}</time>{{#if fromCombat}}<i class="fa-solid fa-swords wws-encounter-combat" data-tooltip="WITCHWIND_SYSTEMS.Bestiary.FromCombat"></i>{{/if}}</div>
+            <p class="wws-encounter-place">{{place}}{{#if slain}} <span class="wws-encounter-slain">· {{localize "WITCHWIND_SYSTEMS.Bestiary.Slain" count=slain}}</span>{{/if}}</p>
           </li>
           {{/each}}
         </ol>

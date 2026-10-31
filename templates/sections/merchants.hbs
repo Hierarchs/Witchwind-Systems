@@ -59,6 +59,13 @@
         {{#if merchant.description}}<div class="wws-prose">{{{merchant.description}}}</div>{{/if}}
 
         <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Merchants.Stock"}}</h3>
+        {{#with merchant.markup as |markup|}}
+        <p class="wws-hint wws-markup wws-markup-{{#if markup.up}}up{{else}}down{{/if}}">
+          <i class="fa-solid {{#if markup.up}}fa-arrow-trend-up{{else}}fa-arrow-trend-down{{/if}}" inert></i>
+          {{#if markup.faction}}{{localize "WITCHWIND_SYSTEMS.Merchants.Markup" percent=markup.label tier=markup.tier faction=markup.faction}}
+          {{else}}{{localize "WITCHWIND_SYSTEMS.Merchants.MarkupPlain" percent=markup.label tier=markup.tier}}{{/if}}
+        </p>
+        {{/with}}
         {{#if merchant.restock}}<p class="wws-hint wws-restock"><i class="fa-solid fa-boxes-stacked" inert></i> {{localize "WITCHWIND_SYSTEMS.Merchants.Restocks" days=merchant.restock.days date=merchant.restock.next}}</p>{{/if}}
         {{#if merchant.stock.length}}
         <ol class="wws-wares">
@@ -69,7 +76,7 @@
             </button>
             <span class="wws-ware-name">{{name}}</span>
             <span class="wws-ware-count">{{#if counted}}{{#if out}}{{localize "WITCHWIND_SYSTEMS.Merchants.SoldOut"}}{{else}}× {{qty}}{{/if}}{{/if}}</span>
-            <strong class="wws-ware-price">{{priceLabel}}</strong>
+            <strong class="wws-ware-price">{{#if basePriceLabel}}<s>{{basePriceLabel}}</s> {{/if}}{{priceLabel}}</strong>
             {{#if @root.isGM}}{{#if counted}}
             <span class="wws-row-tools">
               <button type="button" class="wws-tool wws-mini" data-action="merchantCount" data-id="{{merchant.id}}" data-item="{{id}}" data-delta="-1" data-tooltip="WITCHWIND_SYSTEMS.Merchants.Sold"><i class="fa-solid fa-minus" inert></i></button>

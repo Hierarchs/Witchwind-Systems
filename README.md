@@ -17,10 +17,20 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Objectives** are gold diamonds: hollow while open, filled when done, struck through when failed. Optional ones say so. The GM ticks them off right on the page.
 - **A journal per quest.** Dated entries, newest first, tell the story as it's played. The GM can write entries ahead of time, hidden, and reveal them when the moment comes; the same goes for objectives.
 - **Giver, location, faction and rewards.** Drop an actor in as the quest giver and items in as rewards; rewards are Witchwind Inventory's slots, framed by rarity. Click either to open its sheet.
+- **Experience and coins.** A quest's rewards can also carry experience and coins (pp, gp, ep, sp, cp), shown as chips over its items.
+- **Handing out rewards.** When the GM completes a quest that has rewards, a window asks who receives them. Each chosen character gets the experience, or a share of it if you tick **Split it between them**. The coins are shared out evenly, with any left over going to the first character. Each item goes to whoever you pick, and items typed in by hand can be left for you to hand out yourself. The characters' sheets are updated (Witchwind Inventory shows the new items and coins at once), and a card in the chat says who got what. **Not now** leaves it for later; the quest's page keeps a **Hand out rewards** button for the GM.
+- **Deadlines.** Give a quest the day it must be done by. Its page says "Due in 3 days", amber when it's close and red once it's overdue. An hourglass marks it in the list and on the calendar, and everyone who can see the quest gets a "Deadline Passed" banner when the day goes by.
 - **Track quests.** Tracked quests and their open objectives sit in a small steel card on your screen; drag it wherever you like. A tracked quest's marker on the map breathes with a gold ring.
 - **Quest pop-ups.** When a quest is added, completed or failed, each player gets Oblivion's box in Witchwind's leather and parchment: "Quest Added" over the quest's icon (its picture or its faction's emblem), its name, the date in red in the world's own calendar ("27th of Last Seed, 433"), a line about it, and **Continue** (or Enter, or Esc). **View Quest** opens the book at it. Several arriving together follow one another. Each player can switch them off for banners instead.
 - **Announcements.** "Objective Complete", "New Objective" and "Quest Updated" fade in across the top of each player's screen, Elder Scrolls style.
 - **GM tools** sit on their own dashed strip: add an entry, edit, hide or reveal, show to players, complete, fail, reopen, delete. New quests start hidden, so you can prepare them in advance.
+
+### Calendar
+
+- **The month and the day.** The month is laid out on the left page, with today in gold. The chosen day is on the right: its date, each moon's phase, its holidays and events, the quests due that day, and for the GM the letters arriving. **Coming up** lists the next month's holidays, events and deadlines.
+- **New Day.** The GM's **New Day** button moves the world's clock on by one day. Everyone gets an "A New Day" banner with the date, that day's holidays and any full moon. The banner shows whenever the clock passes into a new day, however it was moved.
+- **Holidays and events.** As GM, **Add event** puts one on the chosen day, with an icon, a colour and a few lines. A holiday falls on its day every year; anything else happens once. Events can be hidden or limited to chosen players, like everything else.
+- **Moons.** **Moons** in the GM's tools sets the world's moons, each with its name, the days in its cycle, its colour and the phase it shows today. The calendar marks each one's new, full and quarter moons, and draws its phase on every day.
 
 ### Journal
 
@@ -71,6 +81,8 @@ The Journal has two tabs. **Notes** are the table's own session notes, which any
 - **Laid out like the Witcher's bestiary**, in Witchwind's leather and gold. The creatures are grouped by kind on the left; fold a kind away by its heading. The chosen creature's page of the book is on the right: its name with what it's vulnerable to beside it as icons, its picture (unless the lore has one of its own), the lore, then the other facts. A creature's kind and weaknesses show only once they're revealed.
 - **Creatures the party has met**, copied from their monster in the Monsters compendium. As GM, drag a monster from the compendium onto the Bestiary page; the stats come across, and the creature is hidden until you log an encounter with it.
 - **Encounters.** Log where and when the party met a creature. Logging the first one shows its basics (its kind and size) to everyone.
+- **Logged from combat.** When a fight starts in the combat tracker, each creature the party faces is added to the bestiary if it isn't there yet, and an encounter is logged at the scene, once per fight. Each one that falls, at 0 hit points or marked defeated, is counted as slain. Friendly tokens and the players' own characters are left out. The list and the creature's page show "Met 3 times · 7 slain".
+- **Knowledge checks.** A player can roll to recall what they know of a creature, either with **Recall Lore** on its page or by rolling the right skill from their sheet with one of its tokens targeted. The skill follows the creature's kind: Arcana for aberrations, constructs, dragons, elementals, fey and monstrosities; History for giants and humanoids; Nature for beasts, oozes and plants; Religion for celestials, fiends and the undead. The DC is 10 plus its challenge rating. Meeting the DC recalls one fact, and each full 5 over it recalls one more, the most telling first: what it is, its lore, its threat, its resistances and weaknesses, then the rest. Each character gets one try at each creature a day. The roll is checked by the GM's client from its chat message, the GM gets a whispered note of how it went, and the GM can set a creature's own skill and DC in its editor. A creature that isn't in the bestiary yet is added when someone rolls for it.
 - **Facts, one at a time.** Each part of the record (threat, defenses, movement, abilities, resistances, languages, skills, attacks, traits and spells, tactics, lore, habitat) is revealed on its own, to everyone or to chosen players, with a chip for each. Players see a locked card for anything not yet revealed, and nothing hidden is shown on their screen.
 - **Learned pop-ups.** A player gets a pop-up when a fact about a creature is revealed to them.
 - **Refresh from the compendium** brings a creature's stats, biography and picture up to date with its monster, keeping what the table has learned.
@@ -97,6 +109,7 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 
 - **Who sells what**: each merchant's wares as slots with prices and how many are left, their location and faction. Players browse; the GM marks sales with − and + on the page, or edits the stock.
 - **Restocking.** A merchant can restock every so many days of the world's calendar, refilling each ware to its usual amount as the clock passes; the GM can restock early. Drop items from the sidebar or a compendium into the stock to add them with their picture and price.
+- **Prices by standing.** A merchant of a faction charges the party more or less with the party's standing in it: Hated +50%, Hostile +30%, Unfriendly +15%, Neutral as marked, Friendly −5%, Trusted −10%, Revered −20%. The page shows the marked price struck through beside the one asked, and says why. Turn it off in a merchant's editor for one who charges everyone the same.
 
 ### Party frame
 
@@ -110,7 +123,7 @@ A creature's record is copied, not linked, so it stays whole if the compendium c
 
 ### The Xerseraya calendar
 
-The world runs on the Xerseraya calendar: seven days to the week (Dawnwake, Morrow, Highsun, Waning, Evenfall, Deepnight, Stillhour) and twelve months of thirty days (First Light, Snow's End, Soils Break, Seeds Rest, Guiding Rain, Cloudbreak, Sun's Mantle, First Harvest, Harvest's End, Waning Sun, Flakefall, Last Light), 360 days a year with no leap years. Pop-ups, letters, titles and restocks give dates in it ("Highsun, 27th of First Harvest, 433"), and so does Foundry's own clock. **World calendar** in the settings switches back to Foundry's calendar, or another calendar module's.
+The world runs on the Xerseraya calendar (the Calendar tab shows whichever calendar the world uses): seven days to the week (Dawnwake, Morrow, Highsun, Waning, Evenfall, Deepnight, Stillhour) and twelve months of thirty days (First Light, Snow's End, Soils Break, Seeds Rest, Guiding Rain, Cloudbreak, Sun's Mantle, First Harvest, Harvest's End, Waning Sun, Flakefall, Last Light), 360 days a year with no leap years. Pop-ups, letters, titles and restocks give dates in it ("Highsun, 27th of First Harvest, 433"), and so does Foundry's own clock. **World calendar** in the settings switches back to Foundry's calendar, or another calendar module's.
 
 ### Who can see it
 
@@ -127,7 +140,7 @@ Under **Configure Settings > Witchwind Systems > Backups and Imports** (GM only)
 ## Requirements
 
 - Foundry VTT v14
-- Any system. Rewards read dnd5e's item rarity for their frames when it's there.
+- Any system. Rewards read dnd5e's item rarity for their frames when it's there. Handing out experience and coins, knowledge checks and combat logging are made for dnd5e.
 
 ## Installing
 
@@ -145,11 +158,15 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Bestiary, Notice board, Maps, Standing and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Calendar, Bestiary, Notice board, Maps, Standing and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
 | Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |
-| Announce quest updates | The Elder Scrolls style banners for quest and faction changes. |
+| Announce quest updates | The Elder Scrolls style banners for quest and faction changes, new days and passed deadlines. |
+| Bestiary knowledge checks | Players roll to recall what they know of creatures. |
+| Knowledge checks teach | Only the player who rolled, or the whole party. |
+| Knowledge check DC | The base DC, plus each creature's challenge rating. 10 to start. |
+| Log fights in the bestiary | Adds the creatures the party fights, logs the encounters and counts the slain. |
 | Show the quest tracker | Each player's own choice. |
 | Party frame | The party's portraits, names and hit points at the left of the screen. Each player's own choice. |
 | Party frame size | How large the party frame is; − and + on the frame change it too. Each player's own choice. |
@@ -166,8 +183,9 @@ Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the
 
 ```js
 const api = game.modules.get("witchwind-systems").api;
-api.open("quests");              // or "journal", "maps", "factions"; add an entry's id to open it
+api.open("quests");              // or "journal", "calendar", "maps", "factions"; add an entry's id to open it
 api.toggle();
+api.newDay();                    // GM only: the clock moves on by one day
 api.announce({ label: "Quest Started", title: "The Hollow Crown", detail: "Speak to Captain Holt" });
 api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave robbers took the crown." });
 ```

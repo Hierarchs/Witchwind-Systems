@@ -1,0 +1,13 @@
+{{!-- A date in the world's calendar: the day of the month, the month and the year. Named {prefix}day, {prefix}month
+      and {prefix}year; an empty day means no date, unless one is required. --}}
+<div class="form-group wws-date-field">
+  <label>{{#if label}}{{localize label}}{{else}}{{localize "WITCHWIND_SYSTEMS.Calendar.Date"}}{{/if}}</label>
+  <div class="wws-date-inputs">
+    <input type="number" name="{{prefix}}day" value="{{date.day}}" min="1" max="99" step="1" {{#if required}}required{{/if}}
+           placeholder="{{localize "WITCHWIND_SYSTEMS.Calendar.DayShort"}}" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.DayShort"}}">
+    <select name="{{prefix}}month" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.Month"}}">
+      {{#each date.months}}<option value="{{index}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+    </select>
+    <input type="number" name="{{prefix}}year" value="{{date.year}}" step="1" aria-label="{{localize "WITCHWIND_SYSTEMS.Calendar.Year"}}">
+  </div>
+</div>

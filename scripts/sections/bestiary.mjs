@@ -1,7 +1,8 @@
-import { PATH, L, BESTIARY_FACTS } from "../config.mjs";
+import { MODULE_ID, PATH, L, BESTIARY_FACTS, KNOWLEDGE_SKILLS } from "../config.mjs";
 import * as store from "../store.mjs";
-import { openEditor } from "../editor.mjs";
+import { openEditor, skillLabel } from "../editor.mjs";
 import { enrich, loc, confirmDelete, knows, worldDate, worldNow, byName } from "../helpers.mjs";
+import { recallLore } from "../knowledge.mjs";
 
 /*
  * The bestiary: creatures the party has met. A creature is copied from its monster in the compendium, not linked to
@@ -33,6 +34,7 @@ export default {
         name: c.name || loc("Untitled"),
         img: c.img,
         encountered: (c.encounters ?? []).length,
+        slain: slainCount(c),
         hidden: !c.visible,
         selected: c.id === app.selected.bestiary
       });
@@ -95,8 +97,14 @@ export default {
       openEditor("creature", {
         entry: creature,
         title: loc("Bestiary.Edit", { name: creature.name }),
+        extra: { autoSkill: kindSkill(creature), autoDC: autoDC(creature) },
         onSave: data => store.update("bestiary", creature.id, data)
       });
+    },
+
+    /** A player recalls what they know of a creature: their character rolls the skill it calls for. */
+    bestiaryRecall(event, target) {
+      return recallLore(target.dataset.id);
     },
 
     async bestiaryDelete(event, target) {
@@ -208,6 +216,7 @@ export function snapshotCreature(actor) {
 
   return {
     name: actor.name ?? "",
+    typeKey: details.type?.value ?? "",
     img: actor.img ?? "",
     art: firstImage(biographyOf(details)) || actor.img || "",
     biography: biographyOf(details),
@@ -252,6 +261,88 @@ export async function importCreature(actor) {
   });
   ui.notifications.info(loc("Bestiary.Added", { name: stats.name }));
   return id;
+}
+
+/** The world actor behind an actor, which for an unlinked token is the one it was made from. */
+function baseActorOf(actor) {
+  if ( !actor ) return null;
+  if ( actor.isToken ) return actor.token?.baseActor ?? game.actors?.get(actor.id) ?? actor;
+  return actor;
+}
+
+/** The compendium entry an actor was imported from, if Foundry remembers it. */
+function compendiumSourceOf(actor) {
+  return actor?._stats?.compendiumSource ?? actor?.flags?.core?.sourceId ?? null;
+}
+
+/**
+ * The bestiary's creature for an actor: the one copied from it or from the compendium entry it came from, and failing
+ * those, one of the same name.
+ */
+export function creatureFor(actor) {
+  const base = baseActorOf(actor);
+  if ( !base ) return null;
+  const sources = new Set([actor.uuid, base.uuid, compendiumSourceOf(base), compendiumSourceOf(actor)].filter(Boolean));
+  const all = store.all("bestiary");
+  const name = String(base.name ?? "").trim().toLowerCase();
+  return all.find(c => c.sourceUuid && sources.has(c.sourceUuid))
+    ?? all.find(c => name && (String(c.name ?? "").trim().toLowerCase() === name)) ?? null;
+}
+
+/** The creature for an actor, added to the bestiary from its compendium entry (or from itself) if it isn't there. GM only. */
+export async function creatureForActor(actor, { create=false }={}) {
+  const found = creatureFor(actor);
+  if ( found || !create || !game.user.isGM ) return found ? store.get("bestiary", found.id) : null;
+  const base = baseActorOf(actor);
+  const sourceUuid = compendiumSourceOf(base);
+  const source = sourceUuid ? await foundry.utils.fromUuid(sourceUuid).catch(() => null) : null;
+  const id = await importCreature(source ?? base);
+  return store.get("bestiary", id);
+}
+
+/* -------------------------------------------- */
+/*  Knowledge checks                            */
+/* -------------------------------------------- */
+
+/** A creature's kind as dnd5e names it ("undead"), from the record or, for older ones, its written type. */
+function typeKeyOf(c) {
+  return String(c.typeKey || String(c.type ?? "").split(/[\s(]/)[0]).trim().toLowerCase();
+}
+
+/** The skill its kind calls for. */
+function kindSkill(c) {
+  return KNOWLEDGE_SKILLS[typeKeyOf(c)] ?? "arc";
+}
+
+/** The skill that recalls what's known of a creature: the GM's choice, or the one its kind calls for. */
+export function skillFor(c) {
+  return c?.knowledgeSkill || kindSkill(c ?? {});
+}
+
+/** A challenge rating as a number, fractions counting as nothing. */
+function crNumber(cr) {
+  const n = Number(cr);
+  return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+}
+
+function autoDC(c) {
+  return (Number(game.settings.get(MODULE_ID, "knowledgeDC")) || 0) + crNumber(c?.cr);
+}
+
+/** The DC to recall something about a creature: the GM's own, or the world's base plus its challenge rating. */
+export function dcFor(c) {
+  return Number.isFinite(c?.knowledgeDC) ? c.knowledgeDC : autoDC(c);
+}
+
+/** Whether a fact has anything to tell, so a check doesn't spend itself on an empty one. */
+export function factHasContent(c, key) {
+  if ( (key === "lore") || (key === "tactics") ) return !!textFor(c, key).trim();
+  return lines(c, key).length > 0;
+}
+
+/** How many of a creature the party has slain, over all its encounters. */
+function slainCount(c) {
+  return (c.encounters ?? []).reduce((n, e) => n + (e.slain?.length ?? 0), 0);
 }
 
 /* -------------------------------------------- */
@@ -398,9 +489,15 @@ async function detail(c) {
   // and shown only when that is.
   const story = facts.find(f => f.key === "lore");
   const resist = facts.find(f => f.key === "resistances");
+  // A player with a character can try to recall more, once a day; the GM sees which skill it takes and the DC.
+  const skill = skillFor(c);
+  const knowsAll = !isGM && BESTIARY_FACTS.every(f => knows(c, f.key) || !factHasContent(c, f.key));
   // Only what the page prints: the facts carry everything else, and each one is filled in only when it may be seen.
   return {
     story,
+    recall: (!isGM && game.settings.get(MODULE_ID, "knowledgeChecks") && !knowsAll) ? { skill: skillLabel(skill) } : null,
+    check: isGM ? { skill: skillLabel(skill), dc: dcFor(c) } : null,
+    slainCount: slainCount(c),
     vulnerable: (resist.known || isGM) ? damageIcons(c.vulnerabilities) : [],
     id: c.id,
     art: /<img\b/i.test(story.html) ? "" : (c.art || c.img || ""),
@@ -408,7 +505,7 @@ async function detail(c) {
     hidden: !c.visible,
     encounteredCount: encounters.length,
     encounters: encounters.slice().sort((a, b) => (b.date ?? 0) - (a.date ?? 0))
-      .map(e => ({ id: e.id, place: e.place, dateLabel: worldDate(e.date ?? 0) })),
+      .map(e => ({ id: e.id, place: e.place, dateLabel: worldDate(e.date ?? 0), slain: e.slain?.length ?? 0, fromCombat: !!e.combat })),
     typeLabel: (isGM || knows(c, "basics")) ? (c.type ?? "") : "",
     sizeLabel: (isGM || knows(c, "basics")) ? sizeLabel(c.size) : "",
     canRefresh: isGM && !!c.sourceUuid,
