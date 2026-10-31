@@ -6136,12 +6136,11 @@ ul.wws-chips {
   color: var(--loc-accent);
 }
 
-/* A drop cap two lines deep, only on text long enough to wrap around it. */
-.wws-loc-drop > p:first-child::first-letter {
+.wws-loc-body > p:first-child::first-letter {
   float: left;
-  margin: 0.1em 0.12em 0 0;
+  margin: 0.06em 0.1em 0 0;
   font-family: var(--loc-drop-font);
-  font-size: 2.3em;
+  font-size: 3.1em;
   line-height: 0.8;
   color: var(--loc-drop);
 }
@@ -6547,7 +6546,7 @@ ul.wws-chips {
   font-size: 11px;
 }
 
-.wws-theme-woodcut .wws-loc-drop > p:first-child::first-letter {
+.wws-theme-woodcut .wws-loc-body > p:first-child::first-letter {
   padding: 0.06em 0.14em;
   margin-right: 0.14em;
   background: #111;
@@ -6971,7 +6970,7 @@ ul.wws-chips {
   background: none;
 }
 
-:is(.wws-theme-holo, .wws-theme-dossier, .wws-theme-terminal, .wws-theme-neon, .wws-theme-ink) .wws-loc-drop > p:first-child::first-letter {
+:is(.wws-theme-holo, .wws-theme-dossier, .wws-theme-terminal, .wws-theme-neon, .wws-theme-ink) .wws-loc-body > p:first-child::first-letter {
   float: none;
   margin: 0;
   font-family: inherit;

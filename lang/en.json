@@ -85,7 +85,7 @@
       "Sounds": {
         "open": {
           "Name": "Sound: book opens",
-          "Hint": "Played when the book opens. Pick any audio file on the server, such as one you have uploaded."
+          "Hint": "Played when the book opens. The module brings its own sounds; pick any audio file on the server instead, or clear the box for silence."
         },
         "close": {
           "Name": "Sound: book closes",
@@ -93,7 +93,7 @@
         },
         "page": {
           "Name": "Sound: page turns",
-          "Hint": "Played on each new tab or entry."
+          "Hint": "Played on each new tab or entry, on turning the pictures in a location's gallery, and with the banners and pop-ups for letters, notices, the bestiary, titles and factions."
         },
         "page2": {
           "Name": "Sound: page turns (second)",
@@ -101,7 +101,7 @@
         },
         "quest": {
           "Name": "Sound: quest updates",
-          "Hint": "Played with the banners for quests started, updated, completed or failed, and for faction promotions."
+          "Hint": "Played with the banners and pop-ups for quests started, updated, completed or failed."
         },
         "Volume": {
           "Name": "Sound volume",

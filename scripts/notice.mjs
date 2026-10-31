@@ -14,7 +14,7 @@ const CLOSE_DURATION = 160;
 const queue = [];
 let showing = false;
 
-/** Queue a pop-up: { label, title, detail, img, icon, tone, open: { section, id }, openLabel }. */
+/** Queue a pop-up: { label, title, detail, img, icon, tone, open: { section, id }, openLabel, sound }. */
 export function showNotice(notice) {
   queue.push(notice);
   if ( !showing ) next();
@@ -102,6 +102,6 @@ function next() {
   window.addEventListener("keydown", onKey, { capture: true });
   document.body.append(shade);
   proceed.focus();
-  playSound("quest");
+  playSound(notice.sound ?? "page");
 }
 

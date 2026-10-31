@@ -3,6 +3,7 @@ import * as store from "./store.mjs";
 import { openEditor } from "./editor.mjs";
 import { enrich, loc, confirmDelete } from "./helpers.mjs";
 import { broadcast, listen } from "./socket.mjs";
+import { playSound } from "./sounds.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -16,9 +17,6 @@ export const CARD_TEMPLATE = `${PATH}/templates/location-card.hbs`;
 
 /** A press on a marker that moves less than this many pixels is a click, not a drag. */
 const DRAG_THRESHOLD = 4;
-
-/** Text shorter than this many letters gets no drop cap: a big letter beside a line or two looks lost. */
-const DROP_CAP_LENGTH = 90;
 
 const themeOf = location => (LOCATION_THEMES.includes(location?.theme) ? location.theme : LOCATION_THEMES[0]);
 
@@ -34,7 +32,6 @@ export async function locationView(location) {
     kicker: location.kicker ?? "",
     chips: (location.chips ?? []).filter(c => c.label || c.value),
     body: await enrich(location.body ?? ""),
-    drop: (location.body ?? "").replace(/<[^>]*>/g, "").trim().length >= DROP_CAP_LENGTH,
     caption: location.caption ?? "",
     images,
     cover: images[0] ?? "",
@@ -214,6 +211,7 @@ export class LocationGallery extends HandlebarsApplicationMixin(ApplicationV2) {
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
     window.addEventListener("keydown", this.#onKey, true);
+    playSound("page");
   }
 
   /** @override */
@@ -237,9 +235,17 @@ export class LocationGallery extends HandlebarsApplicationMixin(ApplicationV2) {
     run();
   }
 
-  #step(delta) {
-    this.index += delta;
+  /** Turn to another picture, with a page turn when there's more than one to turn to. */
+  #turnTo(index) {
+    const location = store.get("locations", this.locationId);
+    const count = [location?.img, ...(location?.images ?? [])].filter(Boolean).length;
+    if ( (count > 1) && (index !== this.index) ) playSound("page");
+    this.index = index;
     this.render();
+  }
+
+  #step(delta) {
+    this.#turnTo(this.index + delta);
   }
 
   static #onClose() {
@@ -255,8 +261,7 @@ export class LocationGallery extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static #onPick(event, target) {
-    this.index = Number(target.dataset.index) || 0;
-    this.render();
+    this.#turnTo(Number(target.dataset.index) || 0);
   }
 
   static #onJournal() {

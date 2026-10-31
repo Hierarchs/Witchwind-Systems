@@ -1,9 +1,9 @@
-import { MODULE_ID, L } from "./config.mjs";
+import { MODULE_ID, PATH, L } from "./config.mjs";
 
 /*
  * Sound effects: the book opening and closing, a page turning on each new tab or entry, and a fanfare for quest
- * banners. The GM picks the files (any audio on the server), each player can turn them off or down. No sounds ship
- * with the module, so nothing plays until a file is chosen.
+ * banners. The module brings its own; the GM can choose others (any audio on the server) or clear one to silence it,
+ * and each player can turn them down or off.
  */
 
 /** Each sound's world setting, holding a file path. */
@@ -13,6 +13,15 @@ const SOUNDS = {
   page: "soundPage",
   page2: "soundPage2",
   quest: "soundQuest"
+};
+
+/** The sounds that come with the module, played until the GM chooses others. */
+const DEFAULTS = {
+  open: `${PATH}/sounds/book-open.wav`,
+  close: `${PATH}/sounds/book-close.wav`,
+  page: `${PATH}/sounds/page-1.wav`,
+  page2: `${PATH}/sounds/page-2.wav`,
+  quest: `${PATH}/sounds/quest.mp3`
 };
 
 /** Page turns closer together than this are skipped, so flicking through a list doesn't stutter. */
@@ -28,7 +37,7 @@ export function registerSounds() {
       scope: "world",
       config: true,
       type: String,
-      default: "",
+      default: DEFAULTS[key],
       filePicker: "audio"
     });
   }

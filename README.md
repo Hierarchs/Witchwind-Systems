@@ -6,7 +6,7 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 
 - **Big screens.** On 1440p and 4K screens the whole menu scales up together and fills the screen, and the map takes the full width.
 - **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab and filter, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. A ticked objective's diamond fills with a pop of gold, a quest's new status stamps onto the page, a faction's standing marker slides to its new place, a promoted member's portrait glows, unfolded steps drop into place, and new quests and objectives slide into the tracker. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
-- **Sounds.** The book can play a sound as it opens and closes, turn a page on each new tab or entry, and sound a fanfare with quest banners. No sounds ship with the module: upload your own audio files to your Foundry server and choose them under **Configure Settings > Witchwind Systems**. Each player sets their own volume, or turns it to zero.
+- **Sounds.** The book plays a sound as it opens and closes, and turns a page on each new tab or entry, on each picture in a location's gallery, and with the banners and pop-ups for letters, notices, the bestiary, titles and factions. Quests started, updated, completed or failed sound a fanfare. The module brings its own sounds; to use others, choose any audio file on your Foundry server under **Configure Settings > Witchwind Systems**, or clear one for silence. Each player sets their own volume, or turns it to zero.
 - **Keyboard.** Up and Down move through the list, Left and Right change tab, Esc closes. While the book is open they don't pan the map underneath.
 
 ### Quests
@@ -156,7 +156,7 @@ Under **Configure Settings > Witchwind Systems**:
 | Party frame layout | The boxes in a column down the side of the screen, or in a row. Each player's own choice. |
 | Party name | The name over the party frame, for everyone. The GM can also click the name on the frame. |
 | Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
-| Sounds: book opens, closes, page turns (two), quest updates | Audio files on your server, chosen by the GM. Empty plays nothing. |
+| Sounds: book opens, closes, page turns (two), quest updates | The module's own sounds, or audio files on your server chosen by the GM. Empty plays nothing. |
 | Sound volume | Each player's own volume; zero turns the sounds off. |
 | Backups and Imports | Download, restore or import from the Journal (GM only). |
 

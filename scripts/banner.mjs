@@ -119,11 +119,11 @@ function titleAwards(before, after) {
 
 /**
  * Show a banner, after any already showing. A quest added, completed or failed (an event with a popup) shows
- * Oblivion's pop-up instead, unless the player has turned pop-ups off.
+ * Oblivion's pop-up instead, unless the player has turned pop-ups off. The sound is "quest" or "page".
  */
-export function announce({ label, title, detail, tone="gold", icon="fa-solid fa-scroll-old", popup }) {
-  if ( popup && game.settings.get(MODULE_ID, "questPopups") ) return showNotice({ title, tone, icon, ...popup });
-  queue.push({ label, title, detail, tone, icon });
+export function announce({ label, title, detail, tone="gold", icon="fa-solid fa-scroll-old", popup, sound="page" }) {
+  if ( popup && game.settings.get(MODULE_ID, "questPopups") ) return showNotice({ title, tone, icon, sound, ...popup });
+  queue.push({ label, title, detail, tone, icon, sound });
   if ( !showing ) next();
 }
 
@@ -146,7 +146,7 @@ function next() {
   if ( banner.detail ) detail.textContent = banner.detail;
   else detail.remove();
   document.body.append(el);
-  playSound("quest");
+  playSound(banner.sound);
   setTimeout(() => {
     el.remove();
     next();
@@ -217,7 +217,8 @@ function questEvents(before, after, factions) {
     if ( added ) events.push({ label: t("NewObjective"), title: added.text, detail: title, icon: "fa-regular fa-diamond" });
     else if ( entry && !done ) events.push({ label: t("Updated"), title, detail: clip(plainText(entry.text)), icon: "fa-solid fa-feather" });
   }
-  return events;
+  // Quests sound their fanfare; everything else turns a page.
+  return events.map(event => ({ ...event, sound: "quest" }));
 }
 
 /** Joining, promotions and changes of standing tier, for the viewer's own characters. Players only. */
