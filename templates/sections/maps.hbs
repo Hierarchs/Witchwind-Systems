@@ -135,7 +135,17 @@
       {{/if}}
 
       {{#with @root.page.card as |card|}}
-      <div class="wws-pin-card" hidden style="--wws-pin: {{card.color}};">
+      <div class="wws-pin-card{{#if card.location}} wws-pin-card-location{{/if}}" hidden style="--wws-pin: {{card.color}};">
+        {{#if card.location}}
+        {{> "modules/witchwind-systems/templates/location-card.hbs" card.location}}
+        <div class="wws-pin-card-tools">
+          {{#if card.canEdit}}
+          <button type="button" class="wws-tool wws-mini" data-action="pinEdit" data-id="{{card.id}}" data-tooltip="WITCHWIND_SYSTEMS.Locations.EditMarker"><i class="fa-solid fa-pen-to-square" inert></i></button>
+          <button type="button" class="wws-tool wws-mini wws-bad" data-action="pinDelete" data-id="{{card.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title"><i class="fa-solid fa-trash" inert></i></button>
+          {{/if}}
+          <button type="button" class="wws-tool wws-mini" data-action="pinClose" data-tooltip="WITCHWIND_SYSTEMS.Close" aria-label="{{localize "WITCHWIND_SYSTEMS.Close"}}"><i class="fa-solid fa-xmark" inert></i></button>
+        </div>
+        {{else}}
         <div class="wws-pin-card-inner">
         <header>
           <span class="wws-pin-mark"><i class="fa-solid {{card.icon}}" inert></i></span>
@@ -181,6 +191,7 @@
         </footer>
         {{/if}}
         </div>
+        {{/if}}
       </div>
       {{/with}}
     </div>

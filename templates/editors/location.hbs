@@ -1,0 +1,123 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="wws-form-row">
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Locations.TitleLabel"}}</label>
+      <input type="text" name="title" value="{{entry.title}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.TitlePlaceholder"}}">
+    </div>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Locations.Kicker"}}</label>
+      <input type="text" name="kicker" value="{{entry.kicker}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.KickerPlaceholder"}}">
+    </div>
+  </div>
+
+  {{!-- Each theme as a small swatch in its own colours and type. --}}
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Locations.Theme"}}</legend>
+    <div class="wws-theme-grid">
+      {{#each themes}}
+      <label class="wws-theme-choice wws-theme-{{id}}">
+        <input type="radio" name="theme" value="{{id}}" {{#if checked}}checked{{/if}}>
+        <span class="wws-theme-swatch"><b>Aa</b><i></i></span>
+        <span class="wws-theme-name">{{localize label}}</span>
+      </label>
+      {{/each}}
+    </div>
+  </fieldset>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Picture"}}</label>
+    {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Pictures"}}</label>
+    <ol class="wws-rows" data-list="images">
+      {{#each images}}
+      <li class="wws-edit-row wws-picture-row" data-list-row>
+        <img data-show="src" src="{{src}}" alt="">
+        <input type="text" data-field="src" value="{{src}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Editor.ImagePath"}}">
+        <span class="wws-row-buttons">
+          {{#if @root.canBrowse}}<button type="button" data-action="browseRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Browse"}}"><i class="fa-solid fa-folder-open" inert></i></button>{{/if}}
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+      {{/each}}
+    </ol>
+    <button type="button" class="wws-add" data-action="addRow" data-list="images"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Locations.AddPicture"}}</button>
+    <template data-row-template="images">
+      <li class="wws-edit-row wws-picture-row" data-list-row>
+        <img data-show="src" src="" alt="">
+        <input type="text" data-field="src" value="" placeholder="{{localize "WITCHWIND_SYSTEMS.Editor.ImagePath"}}">
+        <span class="wws-row-buttons">
+          {{#if canBrowse}}<button type="button" data-action="browseRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Browse"}}"><i class="fa-solid fa-folder-open" inert></i></button>{{/if}}
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+    </template>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Locations.PicturesHint"}}</p>
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Tags"}}</label>
+    <ol class="wws-rows" data-list="chips">
+      {{#each chips}}
+      <li class="wws-edit-row" data-list-row>
+        <input type="hidden" data-field="id" value="{{id}}">
+        <input type="text" data-field="label" value="{{label}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.TagLabel"}}">
+        <input type="text" data-field="value" value="{{value}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.TagValue"}}">
+        <span class="wws-row-buttons">
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+      {{/each}}
+    </ol>
+    <button type="button" class="wws-add" data-action="addRow" data-list="chips"><i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Locations.AddTag"}}</button>
+    <template data-row-template="chips">
+      <li class="wws-edit-row" data-list-row>
+        <input type="hidden" data-field="id" value="">
+        <input type="text" data-field="label" value="" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.TagLabel"}}">
+        <input type="text" data-field="value" value="" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.TagValue"}}">
+        <span class="wws-row-buttons">
+          <button type="button" data-action="moveRow" data-direction="up" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveUp"}}"><i class="fa-solid fa-chevron-up" inert></i></button>
+          <button type="button" data-action="moveRow" data-direction="down" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.MoveDown"}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+          <button type="button" data-action="removeRow" aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Remove"}}"><i class="fa-solid fa-trash" inert></i></button>
+        </span>
+      </li>
+    </template>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Caption"}}</label>
+    <input type="text" name="caption" value="{{entry.caption}}" placeholder="{{localize "WITCHWIND_SYSTEMS.Locations.CaptionPlaceholder"}}">
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Body"}}</label>
+    <prose-mirror name="body" value="{{entry.body}}"></prose-mirror>
+  </div>
+
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.Journal"}}</label>
+    <div class="wws-journal-link{{#if journalName}} wws-linked{{/if}}" data-drop="journal">
+      <i class="fa-solid fa-book-open" inert></i>
+      <span data-journal-name>{{#if journalName}}{{journalName}}{{else}}{{localize "WITCHWIND_SYSTEMS.Locations.JournalDrop"}}{{/if}}</span>
+      <input type="hidden" name="journal" value="{{entry.journal}}">
+      <button type="button" class="wws-tool wws-mini" data-action="clearJournal" data-tooltip="WITCHWIND_SYSTEMS.Editor.Clear"
+              aria-label="{{localize "WITCHWIND_SYSTEMS.Editor.Clear"}}"><i class="fa-solid fa-xmark" inert></i></button>
+    </div>
+  </div>
+
+  {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-map-location-dot" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Locations.Create"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

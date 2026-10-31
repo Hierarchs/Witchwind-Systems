@@ -1,0 +1,24 @@
+<article class="wws-loc wws-theme-{{theme}}{{#if cover}} wws-loc-has-art{{/if}}" data-location="{{id}}">
+  {{#if cover}}
+  <figure class="wws-loc-art" data-stamp="{{stamp}}"><img src="{{cover}}" alt="" loading="lazy"></figure>
+  {{/if}}
+  <header class="wws-loc-head" data-initial="{{initial}}">
+    {{#if kicker}}<p class="wws-loc-kicker">{{kicker}}</p>{{/if}}
+    <h2 class="wws-loc-title">{{title}}</h2>
+  </header>
+  {{#if chips.length}}
+  <ul class="wws-loc-chips">
+    {{#each chips}}<li>{{#if label}}<span class="wws-loc-k">{{label}}</span> {{/if}}<span class="wws-loc-v">{{value}}</span></li>{{/each}}
+  </ul>
+  {{/if}}
+  <div class="wws-loc-rule" aria-hidden="true"><span></span></div>
+  {{#if body}}<div class="wws-loc-body">{{{body}}}</div>{{/if}}
+  <footer class="wws-loc-foot">
+    {{#if caption}}<span class="wws-loc-caption">{{caption}}</span>{{/if}}
+    {{#if dots.length}}<span class="wws-loc-dots" aria-hidden="true">{{#each dots}}<i{{#if on}} class="on"{{/if}}></i>{{/each}}</span>{{/if}}
+    <button type="button" class="wws-loc-hint" data-action="locationGallery" data-id="{{id}}">
+      <i class="fa-solid fa-book-open" inert></i> {{localize "WITCHWIND_SYSTEMS.Locations.GalleryHint"}}
+    </button>
+  </footer>
+  {{#if hidden}}<span class="wws-loc-hidden" data-tooltip="WITCHWIND_SYSTEMS.HiddenFromPlayers"><i class="fa-solid fa-eye-slash" inert></i></span>{{/if}}
+</article>

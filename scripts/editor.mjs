@@ -1,4 +1,4 @@
-import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS } from "./config.mjs";
+import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS, LOCATION_THEMES } from "./config.mjs";
 import * as store from "./store.mjs";
 import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
 import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "./helpers.mjs";
@@ -6,7 +6,7 @@ import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -23,11 +23,12 @@ const VISIBILITY = {
   letter: { field: "visible", label: "Editor.VisibleLetter" },
   merchant: { field: "visible", label: "Editor.VisibleMerchant" },
   creature: { field: "visible", label: "Editor.VisibleCreature" },
-  notice: { field: "visible", label: "Editor.VisibleNotice" }
+  notice: { field: "visible", label: "Editor.VisibleNotice" },
+  location: { field: "visible", label: "Editor.VisibleLocation" }
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
-const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants", creature: "bestiary" };
+const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants", creature: "bestiary", location: "locations" };
 
 /**
  * One small form window for writing or changing any entry: a quest, note, map, marker, faction or quest log entry.
@@ -67,7 +68,9 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       clearGiver: EntryEditor.#onClearGiver,
       importText: EntryEditor.#onImportText,
       editorTab: EntryEditor.#onEditorTab,
-      addParty: EntryEditor.#onAddParty
+      addParty: EntryEditor.#onAddParty,
+      browseRow: EntryEditor.#onBrowseRow,
+      clearJournal: EntryEditor.#onClearJournal
     }
   };
 
@@ -158,6 +161,16 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         context.quests = store.all("quests").filter(q => store.isVisible("quests", q))
           .sort(byTitle).map(q => ({ id: q.id, title: q.title, selected: q.id === entry.quest }));
         context.factions = factionChoices(entry.faction);
+        context.locations = store.all("locations").filter(l => store.isVisible("locations", l)).sort(byTitle)
+          .map(l => ({ id: l.id, title: l.title || game.i18n.localize(`${L}.Untitled`), selected: l.id === entry.location }));
+        break;
+      case "location":
+        context.themes = LOCATION_THEMES.map(id => ({
+          id, label: `${L}.Locations.Themes.${id}`, checked: (entry.theme ?? LOCATION_THEMES[0]) === id
+        }));
+        context.chips = entry.chips ?? [];
+        context.images = (entry.images ?? []).map(src => ({ src }));
+        context.journalName = journalName(entry.journal);
         break;
       case "faction":
         context.ranksText = (entry.ranks ?? DEFAULT_RANKS).join("\n");
@@ -195,6 +208,12 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( out ) out.value = event.target.value;
     });
     form.querySelector("textarea[name=ranks]")?.addEventListener("change", () => this.#refreshRankOptions());
+    // A gallery picture's path typed or pasted shows in its row's thumbnail.
+    form.addEventListener("change", event => {
+      const input = event.target.closest?.("[data-list=images] [data-field=src]");
+      const img = input?.closest("[data-list-row]")?.querySelector("img[data-show=src]");
+      if ( img ) img.src = input.value;
+    });
     form.querySelector("input[name=title], input[name=name], input[name=label]")?.focus();
   }
 
@@ -247,6 +266,13 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         rank: Number(m.rank) || 0,
         standing: Number.isFinite(m.standing) ? Math.clamp(m.standing, -100, 100) : null
       }));
+    }
+    if ( this.kind === "location" ) {
+      data.visible = !!data.visible;
+      data.theme = LOCATION_THEMES.includes(data.theme) ? data.theme : LOCATION_THEMES[0];
+      data.chips = (data.chips ?? []).filter(c => c.label || c.value)
+        .map(c => ({ id: c.id || foundry.utils.randomID(), label: c.label, value: c.value }));
+      data.images = (data.images ?? []).map(i => i.src).filter(Boolean);
     }
     if ( this.kind === "quest" ) {
       data.objectives = (data.objectives ?? []).filter(o => o.text).map(o => ({ ...o, id: o.id || foundry.utils.randomID() }));
@@ -306,6 +332,23 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       callback: path => {
         input.value = path;
         this.#showImage(path);
+      }
+    }).render({ force: true });
+  }
+
+  /** Browse for one gallery picture, into its own row. */
+  static #onBrowseRow(event, target) {
+    const row = target.closest("[data-list-row]");
+    const input = row?.querySelector("[data-field=src]");
+    if ( !input ) return;
+    const FilePicker = foundry.applications.apps.FilePicker.implementation;
+    new FilePicker({
+      type: "image",
+      current: input.value,
+      callback: path => {
+        input.value = path;
+        const img = row.querySelector("img[data-show=src]");
+        if ( img ) img.src = path;
       }
     }).render({ force: true });
   }
@@ -412,7 +455,24 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         if ( doc.documentName !== "Actor" ) return;
         this.#addMember(doc);
         break;
+      case "journal":
+        if ( !["JournalEntry", "JournalEntryPage"].includes(doc.documentName) ) return;
+        this.#setJournal(doc);
+        break;
     }
+  }
+
+  /** Link a journal entry or page, or with none, unlink it. */
+  #setJournal(doc) {
+    const field = this.element.querySelector(".wws-journal-link");
+    if ( !field ) return;
+    field.querySelector("input[name=journal]").value = doc?.uuid ?? "";
+    field.querySelector("[data-journal-name]").textContent = doc ? journalLabel(doc) : game.i18n.localize(`${L}.Locations.JournalDrop`);
+    field.classList.toggle("wws-linked", !!doc);
+  }
+
+  static #onClearJournal(event, target) {
+    this.#setJournal(null);
   }
 
   #setGiver({ giverName, giverImg, giverUuid }) {
@@ -564,6 +624,22 @@ function pinChoices(selected) {
   return store.all("pins").filter(p => maps.has(p.map) && store.isVisible("pins", p))
     .map(p => ({ id: p.id, label: `${p.label || game.i18n.localize(`${L}.Untitled`)} · ${maps.get(p.map).name}`, selected: p.id === selected }))
     .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+/** A journal entry's name, or a page's with its entry's before it. */
+function journalLabel(doc) {
+  return (doc.documentName === "JournalEntryPage") ? `${doc.parent?.name ?? ""} · ${doc.name}` : doc.name;
+}
+
+/** The name of a linked journal entry or page, if it can be found without loading anything. */
+function journalName(uuid) {
+  if ( !uuid ) return "";
+  try {
+    const doc = foundry.utils.fromUuidSync(uuid);
+    return doc ? journalLabel(doc) : uuid;
+  } catch {
+    return uuid;
+  }
 }
 
 const byTitle = (a, b) => (a.title ?? "").localeCompare(b.title ?? "");

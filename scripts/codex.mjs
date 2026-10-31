@@ -41,6 +41,7 @@ const SHOWN_IN = {
   merchants: ["merchants"],
   bestiary: ["bestiary"],
   notices: ["notices"],
+  locations: ["maps"],
   noticeRegions: ["notices"],
   time: ["journal", "factions", "merchants"]
 };
@@ -87,7 +88,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     book: {
       template: `${PATH}/templates/codex.hbs`,
-      templates: Object.values(SECTIONS).map(s => s.template),
+      templates: [...Object.values(SECTIONS).map(s => s.template), `${PATH}/templates/location-card.hbs`],
       scrollable: [".wws-list-scroll", ".wws-detail-scroll"]
     }
   };

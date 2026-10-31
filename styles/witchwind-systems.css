@@ -2062,13 +2062,13 @@
   display: none;
 }
 
-.wws-pin-card header {
+.wws-pin-card-inner header {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.wws-pin-card header h3 {
+.wws-pin-card-inner header h3 {
   flex: 1;
   margin: 0;
   border: none;
@@ -2110,7 +2110,7 @@
   font-size: 14px;
 }
 
-.wws-pin-card footer {
+.wws-pin-card-inner footer {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2118,7 +2118,7 @@
   border-top: 1px solid var(--wws-parch-rule);
 }
 
-.wws-pin-card footer .wws-hint {
+.wws-pin-card-inner footer .wws-hint {
   flex: 1;
   text-align: right;
 }
@@ -6000,5 +6000,1602 @@ ul.wws-chips {
   .wws-beast-art {
     height: 100%;
     min-height: 0;
+  }
+}
+
+/* ============================================ */
+/*  Location cards                              */
+/* ============================================ */
+
+/*
+ * A location card: a picture, a kicker over the name, tags, a rule, a few lines with a drop cap, and a footer. Each
+ * theme (wws-theme-<id>) sets the same custom properties, so the card, the gallery's text, the editor's swatches and
+ * the scene's markers all take its colours; a few themes add their own dressing, kept to the card (.wws-loc) where
+ * it shouldn't follow into the gallery.
+ */
+:where(.wws-loc, .wws-gallery-box, .wws-theme-choice, .wws-loc-marker, .wws-loc-menu button),
+.wws-theme-witchwind {
+  --loc-bg: #1c1813;
+  --loc-paint: var(--wws-grain), linear-gradient(180deg, #221c16, #16130f);
+  --loc-ink: #e8dcc4;
+  --loc-muted: #a39478;
+  --loc-accent: #c9a45c;
+  --loc-kicker: #c9a45c;
+  --loc-title: #efe3c8;
+  --loc-title-font: var(--wws-font-display);
+  --loc-title-size: 22px;
+  --loc-title-weight: 700;
+  --loc-title-case: none;
+  --loc-title-spacing: 0.03em;
+  --loc-title-style: normal;
+  --loc-title-variant: normal;
+  --loc-kicker-font: var(--wws-font-ui);
+  --loc-kicker-size: 10px;
+  --loc-kicker-case: uppercase;
+  --loc-kicker-spacing: 0.2em;
+  --loc-kicker-style: normal;
+  --loc-body-font: var(--wws-font-body);
+  --loc-body-size: 14px;
+  --loc-ui-font: var(--wws-font-ui);
+  --loc-border: rgb(143 116 66 / 80%);
+  --loc-radius: 4px;
+  --loc-shadow: inset 0 0 0 3px #120f0b, inset 0 0 0 4px rgb(143 116 66 / 35%), 0 14px 40px rgb(0 0 0 / 60%);
+  --loc-chip-bg: rgb(0 0 0 / 30%);
+  --loc-chip-border: rgb(201 164 92 / 35%);
+  --loc-chip-radius: 999px;
+  --loc-chip-key: #a39478;
+  --loc-chip-value: #efe3c8;
+  --loc-rule: rgb(201 164 92 / 40%);
+  --loc-art-filter: none;
+  --loc-art-height: 170px;
+  --loc-drop: #c9a45c;
+  --loc-drop-font: var(--wws-font-display);
+}
+
+.wws-loc {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  overflow: hidden;
+  background: var(--loc-paint);
+  color: var(--loc-ink);
+  border: 1px solid var(--loc-border);
+  border-radius: var(--loc-radius);
+  box-shadow: var(--loc-shadow);
+  font-family: var(--loc-body-font);
+  text-align: left;
+}
+
+.wws-loc-art {
+  position: relative;
+  flex: none;
+  height: var(--loc-art-height);
+  margin: 0;
+  overflow: hidden;
+  background: rgb(0 0 0 / 25%);
+}
+
+.wws-loc-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+  filter: var(--loc-art-filter);
+}
+
+/* The picture fades into the card below it. */
+.wws-loc-art::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 60%;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0%), var(--loc-bg));
+  pointer-events: none;
+}
+
+.wws-loc-head {
+  position: relative;
+  z-index: 1;
+  padding: 14px 18px 0;
+}
+
+/* The name sits over the foot of the picture, except in themes that frame it underneath. */
+.wws-loc-has-art .wws-loc-head {
+  margin-top: -54px;
+}
+
+.wws-loc-kicker {
+  margin: 0 0 3px;
+  font-family: var(--loc-kicker-font);
+  font-size: var(--loc-kicker-size);
+  font-style: var(--loc-kicker-style);
+  font-weight: 700;
+  letter-spacing: var(--loc-kicker-spacing);
+  text-transform: var(--loc-kicker-case);
+  color: var(--loc-kicker);
+}
+
+.wws-loc-title {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: var(--loc-title-font);
+  font-size: var(--loc-title-size);
+  font-style: var(--loc-title-style);
+  font-variant: var(--loc-title-variant);
+  font-weight: var(--loc-title-weight);
+  letter-spacing: var(--loc-title-spacing);
+  line-height: 1.1;
+  text-transform: var(--loc-title-case);
+  color: var(--loc-title);
+}
+
+.wws-loc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 16px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wws-loc-chips li {
+  padding: 2px 8px;
+  border: 1px solid var(--loc-chip-border);
+  border-radius: var(--loc-chip-radius);
+  background: var(--loc-chip-bg);
+  font-family: var(--loc-ui-font);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--loc-chip-value);
+}
+
+.wws-loc-k {
+  margin-right: 3px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--loc-chip-key);
+}
+
+.wws-loc-v {
+  font-weight: 700;
+}
+
+.wws-loc-rule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 18px 8px;
+}
+
+.wws-loc-rule::before,
+.wws-loc-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--loc-rule);
+}
+
+.wws-loc-rule span {
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--loc-rule);
+  transform: rotate(45deg);
+}
+
+.wws-loc-body {
+  padding: 0 18px;
+  font-family: var(--loc-body-font);
+  font-size: var(--loc-body-size);
+  line-height: 1.55;
+  color: var(--loc-ink);
+}
+
+/* On the card the text is kept short; the gallery has all of it. */
+.wws-loc .wws-loc-body {
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.wws-loc .wws-loc-body.wws-clipped {
+  mask-image: linear-gradient(180deg, #000 70%, transparent);
+}
+
+.wws-loc-body p {
+  margin: 0 0 0.6em;
+}
+
+.wws-loc-body a {
+  color: var(--loc-accent);
+}
+
+.wws-loc-body > p:first-child::first-letter {
+  float: left;
+  margin: 0.06em 0.1em 0 0;
+  font-family: var(--loc-drop-font);
+  font-size: 3.1em;
+  line-height: 0.8;
+  color: var(--loc-drop);
+}
+
+.wws-loc-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 14px 10px;
+  border-top: 1px solid var(--loc-rule);
+  font-family: var(--loc-ui-font);
+  font-size: 10.5px;
+  color: var(--loc-muted);
+}
+
+.wws-loc-caption {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+.wws-loc-dots {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 3px;
+}
+
+.wws-loc-dots i {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--loc-muted);
+  opacity: 0.55;
+}
+
+.wws-loc-dots i.on {
+  width: 14px;
+  background: var(--loc-accent);
+  opacity: 1;
+}
+
+.wws button.wws-loc-hint {
+  all: unset;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  cursor: pointer;
+  color: var(--loc-muted);
+  transition: color 140ms ease-out;
+}
+
+.wws button.wws-loc-hint:hover,
+.wws button.wws-loc-hint:focus-visible {
+  color: var(--loc-accent);
+}
+
+.wws button.wws-loc-hint i {
+  color: var(--loc-accent);
+}
+
+.wws-loc-hidden {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 60%);
+  color: #fff;
+  font-size: 11px;
+}
+
+/* The card on the scene, beside its marker. */
+.wws-loc-popup {
+  position: fixed;
+  z-index: calc(var(--z-index-window, 100) - 20);
+  animation: wws-loc-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes wws-loc-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+
+/* On the book's maps, a marker with a card shows the card as it is, with the marker's own buttons over it. */
+.wws-pin-card.wws-pin-card-location {
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.wws-pin-card-tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 55%);
+}
+
+.wws .wws-pin-card-tools button.wws-tool {
+  color: #efe3c8;
+}
+
+.wws .wws-pin-card-tools button.wws-tool:hover:not(:disabled) {
+  background: rgb(201 164 92 / 20%);
+  color: var(--wws-gold-bright);
+}
+
+/* -------------------------------------------- */
+/*  Themes                                      */
+/* -------------------------------------------- */
+
+/* Dusk: plum and ember, the name over the picture. */
+.wws-theme-dusk {
+  --loc-bg: #1d1922;
+  --loc-paint: linear-gradient(180deg, #221d27, #18151c);
+  --loc-ink: #e9e2ea;
+  --loc-muted: #9b90a3;
+  --loc-accent: #e7a75b;
+  --loc-kicker: #e7b98a;
+  --loc-title: #faf3ea;
+  --loc-title-variant: small-caps;
+  --loc-title-size: 23px;
+  --loc-title-spacing: 0.01em;
+  --loc-border: rgb(255 255 255 / 10%);
+  --loc-radius: 10px;
+  --loc-shadow: 0 16px 40px rgb(0 0 0 / 60%);
+  --loc-chip-bg: rgb(255 255 255 / 5%);
+  --loc-chip-border: rgb(255 255 255 / 16%);
+  --loc-chip-key: #9b90a3;
+  --loc-chip-value: #f1e9f1;
+  --loc-rule: rgb(255 255 255 / 14%);
+  --loc-drop: #e7a75b;
+}
+
+/* Tome: the parchment and red of a fifth-edition book. */
+.wws-theme-tome {
+  --loc-bg: #f0e2bf;
+  --loc-paint: var(--wws-paper-grain), linear-gradient(180deg, #f6ebcf, #ead9b0);
+  --loc-ink: #2b2116;
+  --loc-muted: #7a6446;
+  --loc-accent: #9b2c1b;
+  --loc-kicker: #6c5233;
+  --loc-title: #58180d;
+  --loc-title-variant: small-caps;
+  --loc-title-size: 24px;
+  --loc-title-spacing: 0.02em;
+  --loc-kicker-font: var(--wws-font-body);
+  --loc-kicker-style: italic;
+  --loc-kicker-case: none;
+  --loc-kicker-spacing: 0;
+  --loc-kicker-size: 12.5px;
+  --loc-border: #b89a64;
+  --loc-radius: 2px;
+  --loc-shadow: 0 14px 34px rgb(0 0 0 / 50%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #9b2c1b;
+  --loc-chip-value: #2b2116;
+  --loc-rule: rgb(155 44 27 / 40%);
+  --loc-drop: #9b2c1b;
+}
+
+.wws-loc.wws-theme-tome {
+  border-top: 4px solid #9b2c1b;
+}
+
+/* Holo: a starship's readout, cyan on deep blue, with bracketed corners. */
+.wws-theme-holo {
+  --loc-bg: #0b1426;
+  --loc-paint: linear-gradient(180deg, #0e1a31, #0a1222);
+  --loc-ink: #c9def5;
+  --loc-muted: #6f8fb3;
+  --loc-accent: #3fd0ff;
+  --loc-kicker: #3fd0ff;
+  --loc-title: #e9f6ff;
+  --loc-title-font: var(--wws-font-ui);
+  --loc-title-case: uppercase;
+  --loc-title-spacing: 0.14em;
+  --loc-title-weight: 500;
+  --loc-kicker-font: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --loc-kicker-spacing: 0.25em;
+  --loc-body-font: var(--wws-font-ui);
+  --loc-body-size: 13.5px;
+  --loc-border: rgb(63 208 255 / 55%);
+  --loc-radius: 2px;
+  --loc-shadow: 0 0 20px rgb(63 208 255 / 22%), inset 0 0 28px rgb(63 208 255 / 8%), 0 14px 36px rgb(0 0 0 / 60%);
+  --loc-chip-bg: rgb(63 208 255 / 6%);
+  --loc-chip-border: rgb(63 208 255 / 40%);
+  --loc-chip-radius: 0;
+  --loc-chip-key: #3fd0ff;
+  --loc-chip-value: #e9f6ff;
+  --loc-rule: rgb(63 208 255 / 35%);
+}
+
+.wws-theme-holo .wws-loc-kicker::before {
+  content: "// ";
+}
+
+.wws-loc.wws-theme-holo::before,
+.wws-loc.wws-theme-holo::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.wws-loc.wws-theme-holo::before {
+  top: 6px;
+  right: 6px;
+  border-top: 2px solid #3fd0ff;
+  border-right: 2px solid #3fd0ff;
+}
+
+.wws-loc.wws-theme-holo::after {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 2px solid #3fd0ff;
+  border-left: 2px solid #3fd0ff;
+}
+
+.wws-theme-holo .wws-loc-chips li {
+  border-width: 0 0 0 2px;
+  border-color: #3fd0ff;
+}
+
+.wws-theme-holo .wws-loc-foot {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Bound: a red banner and trait tags on parchment, in a gilt-edged frame. */
+.wws-theme-bound {
+  --loc-bg: #f2e4c4;
+  --loc-paint: var(--wws-paper-grain), linear-gradient(180deg, #f5e9cd, #ead8ae);
+  --loc-ink: #2a1f15;
+  --loc-muted: #7a6446;
+  --loc-accent: #7a1d17;
+  --loc-kicker: #f3d9a4;
+  --loc-title: #fff7e8;
+  --loc-title-font: var(--wws-font-body);
+  --loc-title-weight: 800;
+  --loc-kicker-spacing: 0.25em;
+  --loc-border: #5c1611;
+  --loc-radius: 3px;
+  --loc-shadow: inset 0 0 0 2px #c9a45c, 0 14px 34px rgb(0 0 0 / 55%);
+  --loc-chip-bg: #7a1d17;
+  --loc-chip-border: #7a1d17;
+  --loc-chip-radius: 0;
+  --loc-chip-key: #f3d9a4;
+  --loc-chip-value: #fff;
+  --loc-rule: rgb(122 29 23 / 55%);
+  --loc-drop: #7a1d17;
+}
+
+.wws-loc.wws-theme-bound {
+  border-width: 3px;
+}
+
+.wws-loc.wws-theme-bound .wws-loc-head {
+  padding: 6px 12px 8px;
+  background: linear-gradient(180deg, #8a231b, #6a1812);
+  border-block: 2px solid #c9a45c;
+  text-align: center;
+}
+
+.wws-theme-bound .wws-loc-chips {
+  justify-content: center;
+}
+
+.wws-theme-bound .wws-loc-chips li {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.wws-theme-bound .wws-loc-chips li:nth-child(3n + 1) {
+  background: #1f3a6e;
+  border-color: #1f3a6e;
+}
+
+.wws-loc.wws-theme-bound .wws-loc-title {
+  color: var(--loc-title);
+}
+
+.wws-gallery-box.wws-theme-bound .wws-loc-title {
+  color: #7a1d17;
+}
+
+.wws-gallery-box.wws-theme-bound .wws-loc-kicker {
+  color: #7a1d17;
+}
+
+/* Third Horizon: brass and ember under a desert night, everything centred. */
+.wws-theme-horizon {
+  --loc-bg: #1a1410;
+  --loc-paint: radial-gradient(ellipse at 50% 0%, #2a2018, #16110d 70%);
+  --loc-ink: #e6d7bf;
+  --loc-muted: #9a8466;
+  --loc-accent: #d98b3a;
+  --loc-kicker: #e2b47c;
+  --loc-title: #f3e2c4;
+  --loc-title-weight: 400;
+  --loc-title-case: uppercase;
+  --loc-title-spacing: 0.12em;
+  --loc-kicker-spacing: 0.22em;
+  --loc-border: rgb(217 139 58 / 45%);
+  --loc-radius: 3px;
+  --loc-shadow: 0 14px 36px rgb(0 0 0 / 60%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #d98b3a;
+  --loc-chip-value: #f3e2c4;
+  --loc-rule: rgb(217 139 58 / 55%);
+  --loc-drop: #d98b3a;
+}
+
+.wws-theme-horizon :is(.wws-loc-head, .wws-loc-kicker, .wws-loc-title) {
+  text-align: center;
+}
+
+.wws-theme-horizon .wws-loc-chips {
+  justify-content: center;
+}
+
+.wws-theme-horizon .wws-loc-chips li {
+  padding: 0 2px;
+}
+
+.wws-theme-horizon .wws-loc-chips li + li::before {
+  content: "◦";
+  margin-right: 6px;
+  color: var(--loc-accent);
+}
+
+.wws-theme-horizon .wws-loc-rule span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--loc-accent);
+  transform: none;
+}
+
+/* Woodcut: black ink on rough paper, a double frame, and a drop cap cut in a black block. */
+.wws-theme-woodcut {
+  --loc-bg: #efe9dc;
+  --loc-paint: linear-gradient(180deg, #f2ede1, #e8e1d1);
+  --loc-ink: #1b1b1b;
+  --loc-muted: #5c5650;
+  --loc-accent: #a3261b;
+  --loc-kicker: #a3261b;
+  --loc-title: #111;
+  --loc-title-variant: small-caps;
+  --loc-title-size: 23px;
+  --loc-kicker-font: var(--wws-font-body);
+  --loc-kicker-style: italic;
+  --loc-kicker-case: none;
+  --loc-kicker-spacing: 0;
+  --loc-kicker-size: 13px;
+  --loc-border: #111;
+  --loc-radius: 0;
+  --loc-shadow: inset 0 0 0 4px #efe9dc, inset 0 0 0 5px #111, 0 14px 30px rgb(0 0 0 / 50%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #a3261b;
+  --loc-chip-value: #111;
+  --loc-rule: #111;
+  --loc-art-filter: grayscale(1) contrast(1.8) brightness(1.08);
+  --loc-drop: #efe9dc;
+}
+
+.wws-loc.wws-theme-woodcut {
+  border-width: 2px;
+}
+
+.wws-theme-woodcut :is(.wws-loc-head, .wws-loc-kicker, .wws-loc-title) {
+  text-align: center;
+}
+
+.wws-theme-woodcut .wws-loc-chips {
+  justify-content: center;
+}
+
+.wws-theme-woodcut .wws-loc-k {
+  font-variant: small-caps;
+  text-transform: none;
+  font-size: 11px;
+}
+
+.wws-theme-woodcut .wws-loc-body > p:first-child::first-letter {
+  padding: 0.06em 0.14em;
+  margin-right: 0.14em;
+  background: #111;
+}
+
+/* Dossier: a manila case file, a photograph clipped to it, and a stamp across the photograph. */
+.wws-theme-dossier {
+  --loc-bg: #d9c38e;
+  --loc-paint: linear-gradient(180deg, #dcc795, #cfb57c);
+  --loc-ink: #2a2418;
+  --loc-muted: #6b5a3a;
+  --loc-accent: #8b2020;
+  --loc-kicker: #4b3f28;
+  --loc-title: #1f1a10;
+  --loc-title-font: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --loc-title-case: uppercase;
+  --loc-title-size: 20px;
+  --loc-title-spacing: 0.04em;
+  --loc-kicker-font: "Courier New", ui-monospace, monospace;
+  --loc-kicker-spacing: 0.18em;
+  --loc-body-font: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --loc-body-size: 12.5px;
+  --loc-ui-font: "Courier New", ui-monospace, monospace;
+  --loc-border: #a88d55;
+  --loc-radius: 2px;
+  --loc-shadow: 0 14px 30px rgb(0 0 0 / 50%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-radius: 0;
+  --loc-chip-key: #4b3f28;
+  --loc-chip-value: #1f1a10;
+  --loc-rule: rgb(42 36 24 / 45%);
+}
+
+.wws-loc.wws-theme-dossier {
+  overflow: visible;
+  margin-top: 11px;
+}
+
+/* The folder's tab. */
+.wws-loc.wws-theme-dossier::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  width: 96px;
+  height: 11px;
+  background: #d6bf89;
+  border: 1px solid #a88d55;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+
+.wws-theme-dossier .wws-loc-art {
+  height: 150px;
+  margin: 18px 22px 8px;
+  padding: 7px;
+  overflow: visible;
+  background: #fbf8ef;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 30%);
+  transform: rotate(-1.5deg);
+}
+
+.wws-theme-dossier .wws-loc-art img {
+  filter: grayscale(1) sepia(0.4) contrast(1.1);
+}
+
+/* The paper clip. */
+.wws-theme-dossier .wws-loc-art::after {
+  inset: -12px auto auto 18px;
+  width: 11px;
+  height: 36px;
+  border: 2px solid #8c8c8c;
+  border-radius: 6px;
+  background: none;
+}
+
+.wws-theme-dossier .wws-loc-art::before {
+  content: attr(data-stamp);
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 6px;
+  padding: 2px 7px;
+  border: 2px solid #b0262a;
+  background: rgb(255 255 255 / 30%);
+  color: #b0262a;
+  font: 700 11px / 1.2 "Courier New", ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: rotate(9deg);
+}
+
+/* Terminal: green phosphor on black, with scan lines and a blinking cursor. */
+.wws-theme-terminal {
+  --loc-bg: #070d07;
+  --loc-paint: radial-gradient(ellipse at 50% 30%, #0d1a0e, #050a05 75%);
+  --loc-ink: #7cf08a;
+  --loc-muted: #3f8f4a;
+  --loc-accent: #b8ffc0;
+  --loc-kicker: #4fd864;
+  --loc-title: #b8ffc0;
+  --loc-title-font: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  --loc-title-case: uppercase;
+  --loc-title-size: 20px;
+  --loc-title-spacing: 0.06em;
+  --loc-kicker-font: ui-monospace, Consolas, monospace;
+  --loc-kicker-spacing: 0.18em;
+  --loc-body-font: ui-monospace, Consolas, "Courier New", monospace;
+  --loc-body-size: 12.5px;
+  --loc-ui-font: ui-monospace, Consolas, monospace;
+  --loc-border: #2e6b2e;
+  --loc-radius: 2px;
+  --loc-shadow: 0 0 18px rgb(60 255 90 / 16%), inset 0 0 40px rgb(60 255 90 / 7%), 0 14px 30px rgb(0 0 0 / 60%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-radius: 0;
+  --loc-chip-key: #3f8f4a;
+  --loc-chip-value: #b8ffc0;
+  --loc-rule: rgb(79 216 100 / 45%);
+  --loc-art-filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(2.6) brightness(0.8) contrast(1.2);
+  text-shadow: 0 0 4px rgb(124 240 138 / 35%);
+}
+
+.wws-loc.wws-theme-terminal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, rgb(0 0 0 / 0%) 1px 3px);
+  pointer-events: none;
+}
+
+.wws-theme-terminal .wws-loc-title::before {
+  content: "› ";
+}
+
+.wws-theme-terminal .wws-loc-title::after {
+  content: "_";
+  animation: wws-loc-blink 1s steps(1) infinite;
+}
+
+@keyframes wws-loc-blink {
+  50% { opacity: 0; }
+}
+
+/* Frontier: a sepia photograph in a white mount, and a wanted poster's type. */
+.wws-theme-frontier {
+  --loc-bg: #e8d5a7;
+  --loc-paint: var(--wws-paper-grain), radial-gradient(ellipse at 50% 30%, #f0e0b8, #dcc492 80%);
+  --loc-ink: #2c2114;
+  --loc-muted: #6e5634;
+  --loc-accent: #7a2a14;
+  --loc-kicker: #7a2a14;
+  --loc-title: #241a0f;
+  --loc-title-font: "Rockwell", "Roboto Slab", "Courier New", serif;
+  --loc-title-case: uppercase;
+  --loc-title-weight: 800;
+  --loc-title-size: 25px;
+  --loc-title-spacing: 0.04em;
+  --loc-kicker-font: var(--wws-font-display);
+  --loc-kicker-spacing: 0.22em;
+  --loc-border: #6b4a24;
+  --loc-radius: 2px;
+  --loc-shadow: 0 14px 30px rgb(0 0 0 / 55%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #7a2a14;
+  --loc-chip-value: #2c2114;
+  --loc-rule: #3b2a17;
+  --loc-art-filter: sepia(0.8) contrast(1.05) brightness(0.98);
+  --loc-drop: #7a2a14;
+}
+
+.wws-theme-frontier :is(.wws-loc-head, .wws-loc-kicker, .wws-loc-title) {
+  text-align: center;
+}
+
+.wws-theme-frontier .wws-loc-kicker::before {
+  content: "★ ";
+}
+
+.wws-theme-frontier .wws-loc-kicker::after {
+  content: " ★";
+}
+
+.wws-theme-frontier .wws-loc-chips {
+  justify-content: center;
+}
+
+.wws-theme-frontier .wws-loc-chips li {
+  padding: 0 2px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wws-theme-frontier .wws-loc-chips li + li::before {
+  content: "·";
+  margin-right: 6px;
+}
+
+.wws-theme-frontier .wws-loc-rule::before,
+.wws-theme-frontier .wws-loc-rule::after {
+  height: 1px;
+  border-block: 1px solid #3b2a17;
+  background: none;
+}
+
+/* Neon: a night market's sign, magenta and cyan, with a hazard stripe for a rule. */
+.wws-theme-neon {
+  --loc-bg: #120d1f;
+  --loc-paint: linear-gradient(180deg, #171026, #0e0a18);
+  --loc-ink: #e9e6ff;
+  --loc-muted: #8b84b3;
+  --loc-accent: #ff2fa8;
+  --loc-kicker: #111;
+  --loc-title: #fff;
+  --loc-title-font: var(--wws-font-ui);
+  --loc-title-case: uppercase;
+  --loc-title-weight: 800;
+  --loc-title-style: italic;
+  --loc-title-size: 24px;
+  --loc-title-spacing: 0.01em;
+  --loc-kicker-spacing: 0.1em;
+  --loc-body-font: var(--wws-font-ui);
+  --loc-body-size: 13.5px;
+  --loc-border: rgb(255 47 168 / 40%);
+  --loc-radius: 2px;
+  --loc-shadow: 0 0 24px rgb(255 47 168 / 22%), 0 14px 36px rgb(0 0 0 / 60%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: #2ee6ff;
+  --loc-chip-radius: 0;
+  --loc-chip-key: #2ee6ff;
+  --loc-chip-value: #2ee6ff;
+  --loc-rule: #ff2fa8;
+}
+
+.wws-loc.wws-theme-neon {
+  border-left: 4px solid #ff2fa8;
+}
+
+.wws-theme-neon .wws-loc-kicker {
+  display: inline-block;
+  padding: 1px 7px;
+  background: #ffe600;
+  font-style: italic;
+  font-weight: 800;
+}
+
+.wws-theme-neon .wws-loc-title {
+  text-shadow: 0 0 12px rgb(255 47 168 / 75%);
+}
+
+.wws-theme-neon .wws-loc-chips li {
+  font-style: italic;
+  transform: skewX(-10deg);
+}
+
+.wws-theme-neon .wws-loc-rule {
+  height: 6px;
+  background: repeating-linear-gradient(-45deg, #ff2fa8 0 6px, rgb(255 47 168 / 0%) 6px 11px);
+}
+
+.wws-theme-neon .wws-loc-rule::before,
+.wws-theme-neon .wws-loc-rule::after,
+.wws-theme-neon .wws-loc-rule span {
+  display: none;
+}
+
+.wws-theme-neon .wws-loc-foot {
+  color: #2ee6ff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Ink & Seal: brushwork on rice paper, and a red seal stamped beside the name. */
+.wws-theme-ink {
+  --loc-bg: #f4f1ea;
+  --loc-paint: linear-gradient(180deg, #f6f3ec, #ece7dc);
+  --loc-ink: #34312c;
+  --loc-muted: #8a847a;
+  --loc-accent: #c8322a;
+  --loc-kicker: #8a847a;
+  --loc-title: #151412;
+  --loc-title-font: var(--wws-font-body);
+  --loc-title-weight: 600;
+  --loc-title-size: 25px;
+  --loc-title-spacing: 0.02em;
+  --loc-kicker-font: var(--wws-font-display);
+  --loc-kicker-spacing: 0.3em;
+  --loc-border: #d8d2c6;
+  --loc-radius: 2px;
+  --loc-shadow: 0 14px 30px rgb(0 0 0 / 40%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #c8322a;
+  --loc-chip-value: #34312c;
+  --loc-rule: rgb(52 49 44 / 25%);
+  --loc-art-filter: grayscale(1) contrast(1.1) brightness(1.05);
+}
+
+.wws-loc.wws-theme-ink .wws-loc-head {
+  padding-right: 58px;
+}
+
+.wws-loc.wws-theme-ink .wws-loc-head::after {
+  content: attr(data-initial);
+  position: absolute;
+  right: 18px;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  background: #c8322a;
+  color: #fbf3ea;
+  font-family: var(--wws-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  transform: rotate(-4deg);
+}
+
+/* Gothic: candlelit crimson on black, the name in tall capitals. */
+.wws-theme-gothic {
+  --loc-bg: #160709;
+  --loc-paint: radial-gradient(ellipse at 50% 0%, #2a0d13, #120609 70%);
+  --loc-ink: #e6d6d8;
+  --loc-muted: #9a7c80;
+  --loc-accent: #c4122e;
+  --loc-kicker: #c73c51;
+  --loc-title: #fff4f4;
+  --loc-title-case: uppercase;
+  --loc-title-spacing: 0.1em;
+  --loc-kicker-font: var(--wws-font-body);
+  --loc-kicker-style: italic;
+  --loc-kicker-case: none;
+  --loc-kicker-spacing: 0;
+  --loc-kicker-size: 13px;
+  --loc-border: rgb(196 18 46 / 45%);
+  --loc-radius: 2px;
+  --loc-shadow: 0 0 22px rgb(196 18 46 / 18%), 0 14px 36px rgb(0 0 0 / 65%);
+  --loc-chip-bg: transparent;
+  --loc-chip-border: transparent;
+  --loc-chip-key: #c4122e;
+  --loc-chip-value: #fff4f4;
+  --loc-rule: rgb(196 18 46 / 45%);
+  --loc-art-filter: saturate(0.6) sepia(0.25) hue-rotate(-20deg) brightness(0.8);
+  --loc-drop: #c4122e;
+}
+
+.wws-theme-gothic :is(.wws-loc-head, .wws-loc-kicker, .wws-loc-title) {
+  text-align: center;
+}
+
+.wws-theme-gothic .wws-loc-chips {
+  justify-content: center;
+}
+
+/* Themes that frame the picture, with the name underneath it rather than over it. */
+.wws-loc-has-art:is(.wws-theme-tome, .wws-theme-bound, .wws-theme-woodcut, .wws-theme-dossier, .wws-theme-terminal,
+  .wws-theme-frontier, .wws-theme-ink) .wws-loc-head {
+  margin-top: 0;
+}
+
+.wws-loc:is(.wws-theme-woodcut, .wws-theme-terminal, .wws-theme-frontier) .wws-loc-art {
+  margin: 12px 12px 0;
+}
+
+.wws-loc.wws-theme-woodcut .wws-loc-art {
+  border: 1px solid #111;
+}
+
+.wws-loc.wws-theme-terminal .wws-loc-art {
+  border: 1px solid #2e6b2e;
+}
+
+.wws-loc.wws-theme-frontier .wws-loc-art {
+  border: 6px solid #f6ecd2;
+  outline: 1px solid #6b4a24;
+}
+
+.wws-loc:is(.wws-theme-woodcut, .wws-theme-terminal, .wws-theme-frontier) .wws-loc-art::after {
+  display: none;
+}
+
+/* Typed records: the tags as dotted rows, a dashed rule, and no drop cap. */
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-chips {
+  display: block;
+  margin: 8px 18px 0;
+}
+
+.wws-gallery-text :is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-chips,
+:is(.wws-gallery-box.wws-theme-dossier, .wws-gallery-box.wws-theme-terminal) .wws-loc-chips {
+  margin: 12px 0 0;
+}
+
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-chips li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0;
+  border: none;
+  border-bottom: 1px dotted var(--loc-rule);
+  border-radius: 0;
+}
+
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-k::after {
+  content: ":";
+}
+
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-rule span {
+  display: none;
+}
+
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-rule::before,
+:is(.wws-theme-dossier, .wws-theme-terminal) .wws-loc-rule::after {
+  height: 0;
+  border-top: 1px dashed var(--loc-rule);
+  background: none;
+}
+
+:is(.wws-theme-holo, .wws-theme-dossier, .wws-theme-terminal, .wws-theme-neon, .wws-theme-ink) .wws-loc-body > p:first-child::first-letter {
+  float: none;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+/* -------------------------------------------- */
+/*  Markers on the scene                        */
+/* -------------------------------------------- */
+
+/*
+ * The layer over the canvas, moved with it by one transform. Each marker undoes the zoom on itself, so it stays the
+ * same size on screen however far the canvas is zoomed.
+ */
+#witchwind-locations {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.wws button.wws-loc-marker {
+  all: unset;
+  position: absolute;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--loc-accent);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #2a231b, #120f0b 75%);
+  color: var(--loc-accent);
+  font-size: 11px;
+  box-shadow: 0 0 0 2px rgb(18 15 11 / 85%), 0 4px 12px rgb(0 0 0 / 60%), 0 0 12px color-mix(in srgb, var(--loc-accent) 45%, transparent);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--wws-zoom, 1)));
+  transition: filter 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.wws button.wws-loc-marker:hover {
+  filter: brightness(1.25);
+  box-shadow: 0 0 0 2px rgb(18 15 11 / 85%), 0 4px 12px rgb(0 0 0 / 60%), 0 0 20px color-mix(in srgb, var(--loc-accent) 75%, transparent);
+}
+
+.wws button.wws-loc-marker:focus-visible {
+  outline: 2px solid var(--loc-accent);
+  outline-offset: 3px;
+}
+
+.wws button.wws-loc-marker.dragging {
+  cursor: grabbing;
+}
+
+/* A card the players can't see yet: the GM's marker for it is faint and dashed. */
+.wws button.wws-loc-marker.wws-hidden-marker {
+  border-style: dashed;
+  opacity: 0.6;
+}
+
+/* While placing: the canvas takes a crosshair, and a note says what a click does. */
+#witchwind-locations-catcher {
+  position: fixed;
+  inset: 0;
+  background: rgb(201 164 92 / 4%);
+  cursor: crosshair;
+  pointer-events: auto;
+}
+
+.wws-loc-placing-hint {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 7px 14px;
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 999px;
+  background: var(--wws-grain), rgb(27 23 18 / 95%);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 55%);
+  color: var(--wws-ink);
+  font-family: var(--wws-font-ui);
+  font-size: 13px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.wws-loc-placing-hint i {
+  color: var(--wws-gold);
+}
+
+/* The small menus: which card to place, and the GM's menu on a marker. */
+.wws-loc-menu {
+  position: fixed;
+  z-index: calc(var(--z-index-window, 100) - 4);
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 280px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 4px;
+  background: var(--wws-grain), rgb(27 23 18 / 97%);
+  border: 1px solid var(--wws-gold-dim);
+  border-radius: 3px;
+  box-shadow: var(--wws-inner-rule), 0 10px 26px rgb(0 0 0 / 60%);
+  font-family: var(--wws-font-ui);
+  animation: wws-loc-in 140ms ease-out;
+}
+
+.wws-loc-menu-title {
+  margin: 0 0 2px;
+  padding: 6px 10px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--wws-line);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--wws-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wws-gold);
+}
+
+.wws.wws-loc-menu button {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 2px;
+  color: var(--wws-ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.wws.wws-loc-menu button span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws.wws-loc-menu button i {
+  width: 14px;
+  text-align: center;
+  color: var(--wws-gold-dim);
+}
+
+.wws.wws-loc-menu button[class*="wws-theme-"] i {
+  color: var(--loc-accent);
+}
+
+.wws.wws-loc-menu button:is(:hover, :focus-visible) {
+  background: var(--wws-gold-wash);
+  color: var(--wws-ivory);
+}
+
+.wws.wws-loc-menu button.wws-bad,
+.wws.wws-loc-menu button.wws-bad i {
+  color: #e5806c;
+}
+
+/* -------------------------------------------- */
+/*  The gallery                                 */
+/* -------------------------------------------- */
+
+#witchwind-gallery {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-index-window, 100) - 5);
+}
+
+.wws-gallery-root {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 4vh 4vw;
+  animation: wws-fade-in 200ms ease-out;
+}
+
+.wws-gallery-shade {
+  position: absolute;
+  inset: 0;
+  background: rgb(6 5 4 / 78%);
+}
+
+.wws-gallery-box {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  width: min(1400px, 100%);
+  height: min(860px, 100%);
+  overflow: hidden;
+  background: #060606;
+  border: 1px solid var(--loc-border);
+  border-radius: 10px;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 70%);
+  animation: wws-rise-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wws-gallery-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 36px 40px 96px;
+  background: #050505;
+}
+
+.wws-gallery-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: none;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 70%);
+}
+
+.wws-gallery-none {
+  font-size: 64px;
+  color: #333;
+}
+
+.wws button.wws-gallery-nav {
+  all: unset;
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -38px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 60%);
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 140ms ease-out, color 140ms ease-out;
+}
+
+.wws button.wws-gallery-nav.wws-prev {
+  left: 14px;
+}
+
+.wws button.wws-gallery-nav.wws-next {
+  right: 14px;
+}
+
+.wws button.wws-gallery-nav:is(:hover, :focus-visible) {
+  border-color: var(--loc-accent);
+  color: var(--loc-accent);
+}
+
+.wws-gallery-thumbs {
+  position: absolute;
+  inset: auto 0 18px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wws .wws-gallery-thumbs button {
+  all: unset;
+  display: block;
+  width: 80px;
+  height: 52px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 3px;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 140ms ease-out, border-color 140ms ease-out;
+}
+
+.wws .wws-gallery-thumbs button:is(:hover, :focus-visible) {
+  opacity: 0.85;
+}
+
+.wws .wws-gallery-thumbs button.on {
+  border-color: var(--loc-accent);
+  opacity: 1;
+}
+
+.wws-gallery-thumbs img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+/* The text beside the pictures, in the card's theme. */
+.wws-gallery-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--loc-paint);
+  color: var(--loc-ink);
+  border-left: 1px solid var(--loc-border);
+}
+
+.wws-gallery-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 46px 30px 16px;
+}
+
+.wws-gallery-text .wws-loc-title {
+  font-size: calc(var(--loc-title-size) * 1.35);
+}
+
+.wws-gallery-text .wws-loc-chips {
+  margin: 12px 0 0;
+}
+
+.wws-gallery-text .wws-loc-rule {
+  margin: 16px 0 12px;
+}
+
+.wws-gallery-text .wws-loc-body {
+  padding: 0;
+  font-size: calc(var(--loc-body-size) + 1.5px);
+}
+
+.wws button.wws-gallery-close {
+  all: unset;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--loc-rule);
+  border-radius: 50%;
+  color: var(--loc-ink);
+  cursor: pointer;
+}
+
+.wws button.wws-gallery-close:is(:hover, :focus-visible) {
+  border-color: var(--loc-accent);
+  color: var(--loc-accent);
+}
+
+.wws-gallery-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 30px 24px;
+}
+
+.wws .wws-gallery-actions button {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--loc-rule);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--loc-ink) 6%, transparent);
+  color: var(--loc-ink);
+  font-family: var(--loc-ui-font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 140ms ease-out;
+}
+
+.wws .wws-gallery-actions button:is(:hover, :focus-visible) {
+  border-color: var(--loc-accent);
+}
+
+.wws .wws-gallery-actions button:only-child {
+  grid-column: 1 / -1;
+}
+
+.wws-gallery-actions button i {
+  color: var(--loc-accent);
+}
+
+@media (max-width: 900px) {
+  .wws-gallery-box {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 55%) minmax(0, 45%);
+  }
+
+  .wws-gallery-text {
+    border-left: none;
+    border-top: 1px solid var(--loc-border);
+  }
+}
+
+/* -------------------------------------------- */
+/*  The location editor                         */
+/* -------------------------------------------- */
+
+/* Each theme as a swatch in its own colours, with its name's type. */
+.wws-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 8px;
+}
+
+.wws-theme-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.wws-theme-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wws-theme-swatch {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 52px;
+  padding: 6px 8px;
+  overflow: hidden;
+  background: var(--loc-paint);
+  border: 1px solid var(--loc-border);
+  border-radius: min(var(--loc-radius), 6px);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
+}
+
+.wws-theme-swatch b {
+  font-family: var(--loc-title-font);
+  font-size: 20px;
+  font-style: var(--loc-title-style);
+  font-weight: var(--loc-title-weight);
+  line-height: 1;
+  color: var(--loc-title);
+}
+
+.wws-theme-bound .wws-theme-swatch b {
+  color: #7a1d17;
+}
+
+.wws-theme-swatch i {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--loc-accent);
+}
+
+.wws-theme-name {
+  font-size: 11px;
+  text-align: center;
+  color: var(--wws-ink-muted);
+}
+
+.wws-theme-choice input:checked + .wws-theme-swatch {
+  outline: 2px solid var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws-theme-choice input:focus-visible + .wws-theme-swatch {
+  outline: 2px dashed var(--wws-gold);
+  outline-offset: 2px;
+}
+
+.wws-theme-choice:has(input:checked) .wws-theme-name {
+  color: var(--wws-gold);
+}
+
+.wws-picture-row img {
+  flex: none;
+  width: 40px;
+  height: 28px;
+  object-fit: cover;
+  border: 1px solid var(--wws-line);
+  border-radius: 2px;
+  background: var(--wws-dark);
+}
+
+.wws-picture-row img[src=""] {
+  visibility: hidden;
+}
+
+/* The linked journal: a slot to drop an entry or page on. */
+.wws-journal-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--wws-line-strong);
+  border-radius: 3px;
+  color: var(--wws-ink-muted);
+}
+
+.wws-journal-link span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wws-journal-link i {
+  color: var(--wws-gold-dim);
+}
+
+.wws-journal-link.wws-linked {
+  border-style: solid;
+  border-color: var(--wws-gold-dim);
+  color: var(--wws-ink);
+}
+
+.wws-journal-link.wws-drop-over {
+  border-color: var(--wws-gold);
+  background: var(--wws-gold-wash);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wws-loc-popup,
+  .wws-loc-menu,
+  .wws-loc *,
+  .wws-gallery-root,
+  .wws-gallery-box,
+  .wws-gallery-box * {
+    animation: none !important;
+    transition: none !important;
   }
 }

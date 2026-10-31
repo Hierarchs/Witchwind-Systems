@@ -1,0 +1,56 @@
+<div class="wws-gallery-root">
+  <div class="wws-gallery-shade" data-action="galleryClose"></div>
+  <div class="wws-gallery-box wws-theme-{{theme}}" role="dialog" aria-modal="true" aria-label="{{title}}">
+    <section class="wws-gallery-stage">
+      {{#if current}}
+      <img class="wws-gallery-image" src="{{current}}" alt="{{title}}">
+      {{else}}
+      <i class="fa-solid fa-image wws-gallery-none" inert></i>
+      {{/if}}
+      {{#if many}}
+      <button type="button" class="wws-gallery-nav wws-prev" data-action="galleryPrev" aria-label="{{localize "WITCHWIND_SYSTEMS.Locations.Previous"}}">
+        <i class="fa-solid fa-chevron-left" inert></i>
+      </button>
+      <button type="button" class="wws-gallery-nav wws-next" data-action="galleryNext" aria-label="{{localize "WITCHWIND_SYSTEMS.Locations.Next"}}">
+        <i class="fa-solid fa-chevron-right" inert></i>
+      </button>
+      <ol class="wws-gallery-thumbs" aria-label="{{position}}">
+        {{#each thumbs}}
+        <li>
+          <button type="button" class="{{#if on}}on{{/if}}" data-action="galleryPick" data-index="{{index}}" aria-pressed="{{#if on}}true{{else}}false{{/if}}">
+            <img src="{{src}}" alt="">
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+      {{/if}}
+    </section>
+
+    <aside class="wws-gallery-text">
+      <button type="button" class="wws-gallery-close" data-action="galleryClose" aria-label="{{localize "WITCHWIND_SYSTEMS.Close"}}">
+        <i class="fa-solid fa-xmark" inert></i>
+      </button>
+      <div class="wws-gallery-scroll">
+        {{#if kicker}}<p class="wws-loc-kicker">{{kicker}}</p>{{/if}}
+        <h2 class="wws-loc-title">{{title}}</h2>
+        {{#if chips.length}}
+        <ul class="wws-loc-chips">
+          {{#each chips}}<li>{{#if label}}<span class="wws-loc-k">{{label}}</span> {{/if}}<span class="wws-loc-v">{{value}}</span></li>{{/each}}
+        </ul>
+        {{/if}}
+        <div class="wws-loc-rule" aria-hidden="true"><span></span></div>
+        {{#if body}}<div class="wws-loc-body">{{{body}}}</div>{{/if}}
+      </div>
+      {{#if (or hasJournal isGM)}}
+      <footer class="wws-gallery-actions">
+        {{#if hasJournal}}
+        <button type="button" data-action="galleryJournal"><i class="fa-solid fa-book-open" inert></i> {{localize "WITCHWIND_SYSTEMS.Locations.OpenJournal"}}</button>
+        {{/if}}
+        {{#if isGM}}
+        <button type="button" data-action="galleryShow"><i class="fa-solid fa-eye" inert></i> {{localize "WITCHWIND_SYSTEMS.ShowToPlayers"}}</button>
+        {{/if}}
+      </footer>
+      {{/if}}
+    </aside>
+  </div>
+</div>

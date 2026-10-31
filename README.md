@@ -38,6 +38,14 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 - **Show on map.** A quest with a linked marker gets a button that opens its map, centered on the marker.
 - **Find and filter.** Search markers by name and notes (matches glow, the rest fade; Enter jumps to the first), and open the legend to hide or show each kind of marker.
 
+### Location cards
+
+- **A place, written up once.** A card has a picture, a line above its name, tags such as Region or Use, a few lines of text with a drop cap, a footnote, more pictures for its gallery, and a linked journal entry or page. There are thirteen themes to choose from: Witchwind, Dusk, Tome, Holo, Bound, Third Horizon, Woodcut, Dossier, Terminal, Frontier, Neon, Ink & Seal and Gothic.
+- **On the scene.** As GM, turn on **Place a location card** in the token controls and click the canvas where the card goes, then pick an existing card or write a new one. Its marker stays on the spot as the map pans and zooms. Click a marker for its card; double-click for the gallery. Drag a marker to move it, and right-click it to edit the card, show it to the players, hide it, take it off the scene or delete it. Where each marker stands is kept with the scene.
+- **On the book's maps.** Give a marker a location card in its editor, and opening the marker shows that card.
+- **The gallery.** Every picture large, with arrows, thumbnails and the arrow keys, beside the card's full text. **Open journal** opens the linked entry, and the GM's **Show to players** opens the gallery on every screen, revealing the card if it was hidden.
+- **Who can see it.** A card is hidden until the GM reveals it, and can be limited to chosen players; its markers follow it.
+
 ### Standing
 
 The Standing tab has two modes, **Factions** and **Renown**, on tabs above the list.

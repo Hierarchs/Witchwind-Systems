@@ -51,6 +51,17 @@
     </div>
   </div>
 
+  {{#if locations.length}}
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Locations.LocationCard"}}</label>
+    <select name="location">
+      <option value="">{{localize "WITCHWIND_SYSTEMS.None"}}</option>
+      {{#each locations}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{title}}</option>{{/each}}
+    </select>
+  </div>
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Locations.PinHint"}}</p>
+  {{/if}}
+
   {{> "modules/witchwind-systems/templates/editors/visibility.hbs"}}
   <p class="hint">{{#if isGM}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHintGM"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Editor.SharedPinHint"}}{{/if}}</p>
 </div>

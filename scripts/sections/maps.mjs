@@ -3,6 +3,7 @@ import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
 import { uploadImage, canBrowse } from "../uploads.mjs";
 import { loc, authorOf, confirmDelete, showToPlayers, viewerNames, byName } from "../helpers.mjs";
+import { locationView, LocationGallery, markClipped } from "../locations.mjs";
 
 const MIN_ZOOM = 0.05;
 const MAX_ZOOM = 4;
@@ -66,7 +67,7 @@ export default {
       showLegend: !!app.mapLegend && (legend.length > 0),
       search: app.search.maps ?? "",
       matchCount: search ? pins.filter(p => p.match).length : null,
-      card: open ? pinCard(open, quests) : null,
+      card: open ? await pinCard(open, quests) : null,
       labels: app.mapLabels,
       placing: app.placing,
       canPlace: !!map && store.canCreate("pins"),
@@ -128,6 +129,10 @@ export default {
   },
 
   actions: {
+    locationGallery(event, target) {
+      LocationGallery.open(target.dataset.id);
+    },
+
     mapSelect(event, target) {
       this.selected.maps = target.dataset.id;
       this.openPin = null;
@@ -259,11 +264,14 @@ async function createMap(img, filename) {
 
 const iconKey = pin => (pin.icon in PIN_ICONS ? pin.icon : "location");
 
-function pinCard(pin, quests) {
+/** A marker's card. A marker linked to a location card shows that card instead, in its theme. */
+async function pinCard(pin, quests) {
   const quest = quests.get(pin.quest);
   const faction = store.get("factions", pin.faction);
+  const place = store.get("locations", pin.location);
   return {
     ...pin,
+    location: (place && store.isVisible("locations", place)) ? await locationView(place) : null,
     label: pin.label || loc("Untitled"),
     author: authorOf(pin.author),
     quest: quest ? { id: quest.id, title: quest.title } : null,
@@ -409,6 +417,7 @@ class MapViewer {
     this.card.style.left = `${left}px`;
     this.card.style.top = `${top}px`;
     this.card.hidden = false;
+    markClipped(this.card);
   }
 
   #onWheel(event) {
@@ -484,6 +493,9 @@ class MapViewer {
   }
 
   #onDoubleClick(event) {
+    // A location card opens its gallery; anywhere else on the map places a marker.
+    const place = event.target.closest(".wws-loc[data-location]");
+    if ( place ) return LocationGallery.open(place.dataset.location);
     if ( event.target.closest(".wws-pin, .wws-pin-card, .wws-map-tools, .wws-legend") ) return;
     if ( !store.canCreate("pins") ) return;
     this.#newPin(this.#toMap(event));

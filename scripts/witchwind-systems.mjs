@@ -3,6 +3,7 @@ import * as store from "./store.mjs";
 import Codex, { enabledSections, sectionSetting } from "./codex.mjs";
 import Tracker from "./tracker.mjs";
 import Party, { PARTY_SCALE } from "./party.mjs";
+import { registerLocations, LocationGallery, isPlacing, setPlacing } from "./locations.mjs";
 import { registerSocket, listen } from "./socket.mjs";
 import { registerUploads } from "./uploads.mjs";
 import { initBanners, announce, onWorldTime } from "./banner.mjs";
@@ -210,7 +211,7 @@ Hooks.once("init", () => {
   const bookKey = fn => () => {
     if ( !Codex.existing?.rendered ) return false;
     const framed = Array.from(foundry.applications.instances.values()).some(app => app.hasFrame && app.rendered);
-    if ( framed || Object.keys(ui.windows ?? {}).length ) return false;
+    if ( framed || Object.keys(ui.windows ?? {}).length || LocationGallery.isOpen ) return false;
     fn(Codex.existing);
     return true;
   };
@@ -261,6 +262,17 @@ Hooks.on("getSceneControlButtons", controls => {
     active: game.settings.get(MODULE_ID, "party"),
     onChange: (event, active) => game.settings.set(MODULE_ID, "party", active)
   };
+
+  // For the GM, a switch to place location cards on the scene: click the canvas where one goes.
+  if ( game.user.isGM ) tokens.tools.witchwindLocation = {
+    name: "witchwindLocation",
+    title: `${L}.Locations.Place`,
+    icon: "fa-solid fa-map-location-dot",
+    order: Object.keys(tokens.tools).length,
+    toggle: true,
+    active: isPlacing(),
+    onChange: (event, active) => setPlacing(active, { fromControls: true })
+  };
 });
 
 // And one at the top of the Journal tab, which works even with no scene open.
@@ -304,6 +316,7 @@ Hooks.once("ready", () => {
   Tracker.refresh();
   Party.register();
   Party.refresh();
+  registerLocations();
   registerSheet();
   registerNoticeBoard();
 

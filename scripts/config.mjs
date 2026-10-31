@@ -33,6 +33,13 @@ export const NOTICE_DIFFICULTIES = [
   { id: "deadly", color: "#8a2a1a" }
 ];
 
+/**
+ * The looks a location card can take, after the games each suits; Witchwind's own leather and gold first, as the
+ * default. Each is a class (wws-theme-<id>) that sets the card's colours, type and dressing.
+ */
+export const LOCATION_THEMES = ["witchwind", "dusk", "tome", "holo", "bound", "horizon", "woodcut", "dossier", "terminal",
+  "frontier", "neon", "ink", "gothic"];
+
 export function difficultyOf(id) {
   return NOTICE_DIFFICULTIES.find(d => d.id === id) ?? NOTICE_DIFFICULTIES[1];
 }
