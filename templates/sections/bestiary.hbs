@@ -62,34 +62,6 @@
     {{/if}}
   </section>
 
-  {{!-- Middle: the creature itself, and what it's vulnerable to --}}
-  <section class="wws-beast-stage">
-    {{#with page.creature as |c|}}
-    <figure class="wws-beast-art">
-      {{#if c.art}}<img src="{{c.art}}" alt="{{c.name}}">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}
-    </figure>
-    <div class="wws-beast-weak">
-      <h3 class="wws-beast-weak-head">
-        <span>{{localize "WITCHWIND_SYSTEMS.Bestiary.VulnerableTo"}}</span>
-      </h3>
-      {{#if c.vulnerable.known}}
-      {{#if c.vulnerable.items.length}}
-      <ul class="wws-beast-weak-icons">
-        {{#each c.vulnerable.items}}
-        <li style="--wws-i: {{@index}};" data-tooltip="{{label}}">{{#if img}}<img src="{{img}}" alt="{{label}}">{{else}}<i class="{{icon}}" aria-label="{{label}}"></i>{{/if}}</li>
-        {{/each}}
-      </ul>
-      {{else}}
-      <p class="wws-beast-weak-none">{{localize "WITCHWIND_SYSTEMS.Bestiary.NoneKnown"}}</p>
-      {{/if}}
-      {{#if c.vulnerable.hiddenFromPlayers}}<p class="wws-beast-weak-note">{{localize "WITCHWIND_SYSTEMS.Bestiary.HiddenTag"}}</p>{{/if}}
-      {{else}}
-      <p class="wws-beast-weak-none"><i class="fa-solid fa-lock" inert></i> {{localize "WITCHWIND_SYSTEMS.Bestiary.NotYetKnown"}}</p>
-      {{/if}}
-    </div>
-    {{/with}}
-  </section>
-
   {{!-- Right: the creature's page in the book --}}
   <section class="wws-page wws-page-detail wws-beast-book">
     <div class="wws-detail-scroll">
@@ -117,12 +89,26 @@
         {{/if}}
 
         <header class="wws-beast-title">
-          <h1 class="wws-entry-title">{{c.name}}</h1>
-          <p class="wws-byline">
-            {{#if c.typeLabel}}{{c.typeLabel}}{{/if}}{{#if c.sizeLabel}}{{#if c.typeLabel}} · {{/if}}{{c.sizeLabel}}{{/if}}{{#if (or c.typeLabel c.sizeLabel)}} · {{/if}}
-            {{#if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}
-          </p>
+          <div class="wws-beast-name">
+            <h1 class="wws-entry-title">{{c.name}}</h1>
+            <p class="wws-byline">
+              {{#if c.typeLabel}}{{c.typeLabel}}{{/if}}{{#if c.sizeLabel}}{{#if c.typeLabel}} · {{/if}}{{c.sizeLabel}}{{/if}}{{#if (or c.typeLabel c.sizeLabel)}} · {{/if}}
+              {{#if c.encounteredCount}}{{localize "WITCHWIND_SYSTEMS.Bestiary.Times" count=c.encounteredCount}}{{else}}{{localize "WITCHWIND_SYSTEMS.Bestiary.NotYet"}}{{/if}}
+            </p>
+          </div>
+          {{#if c.vulnerable.length}}
+          <div class="wws-beast-weak">
+            <span class="wws-beast-weak-head">{{localize "WITCHWIND_SYSTEMS.Bestiary.VulnerableTo"}}</span>
+            <ul class="wws-beast-weak-icons">
+              {{#each c.vulnerable}}
+              <li style="--wws-i: {{@index}};" data-tooltip="{{label}}">{{#if img}}<img src="{{img}}" alt="{{label}}">{{else}}<i class="{{icon}}" aria-label="{{label}}"></i>{{/if}}</li>
+              {{/each}}
+            </ul>
+          </div>
+          {{/if}}
         </header>
+
+        {{#if c.art}}<figure class="wws-beast-art"><img src="{{c.art}}" alt="{{c.name}}"></figure>{{/if}}
 
         {{!-- The lore: the book's own words about the creature, written out first. --}}
         {{#with c.story as |story|}}

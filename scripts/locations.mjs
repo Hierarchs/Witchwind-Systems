@@ -17,6 +17,9 @@ export const CARD_TEMPLATE = `${PATH}/templates/location-card.hbs`;
 /** A press on a marker that moves less than this many pixels is a click, not a drag. */
 const DRAG_THRESHOLD = 4;
 
+/** Text shorter than this many letters gets no drop cap: a big letter beside a line or two looks lost. */
+const DROP_CAP_LENGTH = 90;
+
 const themeOf = location => (LOCATION_THEMES.includes(location?.theme) ? location.theme : LOCATION_THEMES[0]);
 
 /** Everything the card and the gallery show of a location. */
@@ -31,6 +34,7 @@ export async function locationView(location) {
     kicker: location.kicker ?? "",
     chips: (location.chips ?? []).filter(c => c.label || c.value),
     body: await enrich(location.body ?? ""),
+    drop: (location.body ?? "").replace(/<[^>]*>/g, "").trim().length >= DROP_CAP_LENGTH,
     caption: location.caption ?? "",
     images,
     cover: images[0] ?? "",

@@ -39,7 +39,7 @@
         </ul>
         {{/if}}
         <div class="wws-loc-rule" aria-hidden="true"><span></span></div>
-        {{#if body}}<div class="wws-loc-body">{{{body}}}</div>{{/if}}
+        {{#if body}}<div class="wws-loc-body{{#if drop}} wws-loc-drop{{/if}}">{{{body}}}</div>{{/if}}
       </div>
       {{#if (or hasJournal isGM)}}
       <footer class="wws-gallery-actions">

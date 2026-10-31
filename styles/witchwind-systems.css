@@ -5595,13 +5595,13 @@ ul.wws-chips {
 /* ============================================ */
 
 /*
- * Three panels on dark leather, as the Witcher 3 lays out its bestiary: the creatures grouped by kind on the left,
- * the creature itself in the middle over what it's vulnerable to, and its page of the book on the right, in the
- * book's own parchment. Witchwind's gold runs through the rules, the selection and the headings.
+ * Two panels on dark leather, after the Witcher 3's bestiary: the creatures grouped by kind on the left, and the
+ * chosen creature's page of the book on the right, in the book's own parchment, with what it's vulnerable to by its
+ * name. Witchwind's gold runs through the rules, the selection and the headings.
  */
 .wws-spread.wws-bestiary {
-  grid-template-columns: minmax(220px, 0.8fr) minmax(240px, 1fr) minmax(320px, 1.25fr);
-  grid-template-areas: "list stage book";
+  grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.38fr);
+  grid-template-areas: "list book";
   background: var(--wws-grain), radial-gradient(ellipse at 50% 40%, #2a231b 0%, #16130f 62%, #0f0d0a 100%);
   color: var(--wws-ink);
   box-shadow: var(--wws-inner-rule), 0 6px 18px rgb(0 0 0 / 55%);
@@ -5776,134 +5776,74 @@ ul.wws-chips {
   color: var(--wws-ink-faint);
 }
 
-/* The stage: the creature large on the dark, lit softly from behind, over what it's vulnerable to. */
-.wws-beast-stage {
-  grid-area: stage;
+/* What the creature is vulnerable to, by its name: small gold-rimmed icons under a caption. */
+.wws-beast-weak {
+  flex: none;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  min-height: 0;
-  padding: 22px 14px 18px;
+  align-items: flex-end;
+  gap: 4px;
 }
 
-.wws-beast-art {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  min-height: 160px;
-  margin: 0;
-  background: radial-gradient(closest-side, rgb(201 164 92 / 16%), rgb(201 164 92 / 0%) 72%);
-}
-
-.wws-beast-art img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border: none;
-  filter: drop-shadow(0 12px 18px rgb(0 0 0 / 70%));
-}
-
-.wws-beast-art > i {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 96px;
-  color: rgb(201 164 92 / 22%);
-}
-
-.wws-beast-weak {
-  width: min(100%, 320px);
-  text-align: center;
-}
-
-/* "Vulnerable against", between two gold rules. */
 .wws-beast-weak-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 8px;
-  border: none;
   font-family: var(--wws-font-display);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--wws-ivory);
-}
-
-.wws-beast-weak-head::before,
-.wws-beast-weak-head::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgb(143 116 66 / 0%), var(--wws-gold-dim));
-}
-
-.wws-beast-weak-head::after {
-  background: linear-gradient(90deg, var(--wws-gold-dim), rgb(143 116 66 / 0%));
+  color: var(--wws-parch-muted);
 }
 
 .wws-beast-weak-icons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 5px;
   margin: 0;
-  padding: 6px 0 10px;
+  padding: 0;
   list-style: none;
-  border-bottom: 1px solid var(--wws-gold-dim);
 }
 
 .wws-beast-weak-icons li {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--wws-gold-dim);
   background: linear-gradient(180deg, #2a231b, #16130f);
-  box-shadow: inset 0 0 0 2px #120f0b, 0 3px 8px rgb(0 0 0 / 50%);
+  box-shadow: inset 0 0 0 1px #120f0b, 0 2px 5px rgb(60 40 20 / 35%);
 }
 
 .wws-beast-weak-icons img {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   border: none;
 }
 
 .wws-beast-weak-icons i {
-  font-size: 20px;
+  font-size: 14px;
   color: var(--wws-gold);
 }
 
-.wws-beast-weak-none,
-.wws-beast-weak-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin: 0;
-  font-family: var(--wws-font-body);
-  font-size: 14px;
-  font-style: italic;
-  color: var(--wws-ink-muted);
+/* The creature's picture at the head of its page, when the lore doesn't bring its own. */
+.wws-beast-art {
+  margin: 0 0 14px;
+  text-align: center;
 }
 
-.wws-beast-weak-note {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--wws-ink-faint);
+.wws-beast-art img {
+  display: inline-block;
+  max-width: 100%;
+  max-height: 320px;
+  border: 1px solid var(--wws-parch-rule);
+  box-shadow: 0 4px 12px rgb(60 40 20 / 30%);
 }
 
 /* The book: the creature's page in parchment, set into the dark like the open book in the Witcher. */
 .wws-spread.wws-bestiary > .wws-beast-book {
   grid-area: book;
-  margin: 14px 14px 14px 0;
+  margin: 14px;
   background: var(--wws-paper);
   color: var(--wws-parch-ink);
   border: 1px solid var(--wws-gold-dim);
@@ -5912,9 +5852,17 @@ ul.wws-chips {
 }
 
 .wws-beast-title {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
   margin: 0 0 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--wws-parch-rule);
+}
+
+.wws-beast-name {
+  flex: 1;
+  min-width: 0;
 }
 
 .wws-beast-title .wws-entry-title {
@@ -5976,31 +5924,6 @@ ul.wws-chips {
 #witchwind-codex:is([data-animate="open"], [data-animate="section"], [data-animate="entry"]) .wws-beast-weak-icons li {
   animation: wws-pop-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
   animation-delay: calc(200ms + var(--wws-i, 0) * 70ms);
-}
-
-/* Narrower screens: the list down the left, the creature over its page on the right. */
-@media (max-width: 1180px) {
-  .wws-spread.wws-bestiary {
-    grid-template-columns: minmax(200px, 0.75fr) minmax(0, 1.5fr);
-    grid-template-rows: minmax(200px, 40%) minmax(0, 1fr);
-    grid-template-areas:
-      "list stage"
-      "list book";
-  }
-
-  .wws-spread.wws-bestiary > .wws-beast-book {
-    margin: 0 14px 14px;
-  }
-
-  .wws-beast-stage {
-    flex-direction: row;
-    padding: 14px;
-  }
-
-  .wws-beast-art {
-    height: 100%;
-    min-height: 0;
-  }
 }
 
 /* ============================================ */
@@ -6213,11 +6136,12 @@ ul.wws-chips {
   color: var(--loc-accent);
 }
 
-.wws-loc-body > p:first-child::first-letter {
+/* A drop cap two lines deep, only on text long enough to wrap around it. */
+.wws-loc-drop > p:first-child::first-letter {
   float: left;
-  margin: 0.06em 0.1em 0 0;
+  margin: 0.1em 0.12em 0 0;
   font-family: var(--loc-drop-font);
-  font-size: 3.1em;
+  font-size: 2.3em;
   line-height: 0.8;
   color: var(--loc-drop);
 }
@@ -6623,7 +6547,7 @@ ul.wws-chips {
   font-size: 11px;
 }
 
-.wws-theme-woodcut .wws-loc-body > p:first-child::first-letter {
+.wws-theme-woodcut .wws-loc-drop > p:first-child::first-letter {
   padding: 0.06em 0.14em;
   margin-right: 0.14em;
   background: #111;
@@ -7047,7 +6971,7 @@ ul.wws-chips {
   background: none;
 }
 
-:is(.wws-theme-holo, .wws-theme-dossier, .wws-theme-terminal, .wws-theme-neon, .wws-theme-ink) .wws-loc-body > p:first-child::first-letter {
+:is(.wws-theme-holo, .wws-theme-dossier, .wws-theme-terminal, .wws-theme-neon, .wws-theme-ink) .wws-loc-drop > p:first-child::first-letter {
   float: none;
   margin: 0;
   font-family: inherit;

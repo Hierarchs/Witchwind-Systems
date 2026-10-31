@@ -393,21 +393,17 @@ async function detail(c) {
       html: show && isText ? await enrich(textFor(c, fact.key)) : ""
     };
   }));
-  // The lore is the book's main text, written out above the rest. What the creature is vulnerable to stands under its
-  // picture, as in the Witcher; it's part of the resistances fact, and shown only when that is.
+  // The lore is the book's main text, written out above the rest, under the creature's picture unless the lore brings
+  // its own. What it's vulnerable to stands by its name as icons, as in the Witcher; it's part of the resistances fact,
+  // and shown only when that is.
+  const story = facts.find(f => f.key === "lore");
   const resist = facts.find(f => f.key === "resistances");
-  const vulnerable = {
-    known: resist.known || isGM,
-    hiddenFromPlayers: resist.hiddenFromPlayers,
-    items: (resist.known || isGM) ? damageIcons(c.vulnerabilities) : []
-  };
   // Only what the page prints: the facts carry everything else, and each one is filled in only when it may be seen.
   return {
-    story: facts.find(f => f.key === "lore"),
-    vulnerable,
+    story,
+    vulnerable: (resist.known || isGM) ? damageIcons(c.vulnerabilities) : [],
     id: c.id,
-    img: c.img,
-    art: c.art || c.img || "",
+    art: /<img\b/i.test(story.html) ? "" : (c.art || c.img || ""),
     name: c.name || loc("Untitled"),
     hidden: !c.visible,
     encounteredCount: encounters.length,
