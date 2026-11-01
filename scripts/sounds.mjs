@@ -51,6 +51,22 @@ export function registerSounds() {
     range: { min: 0, max: 1, step: 0.05 },
     default: 0.6
   });
+
+  // Whether the empty boxes from before the module brought its own sounds have been filled; see fillEmptySounds.
+  game.settings.register(MODULE_ID, "soundsFilled", { scope: "world", config: false, type: Boolean, default: false });
+}
+
+/**
+ * Before 0.11.0 each sound's default was an empty box, and saving the settings stored it, so those worlds kept the
+ * silence after the module began bringing its own sounds: a stored value outlasts a new default. Once per world, the
+ * active GM fills the empty boxes with the module's sounds; after that, an emptied box is silence again.
+ */
+export async function fillEmptySounds() {
+  if ( !game.user.isActiveGM || game.settings.get(MODULE_ID, "soundsFilled") ) return;
+  for ( const [key, setting] of Object.entries(SOUNDS) ) {
+    if ( !game.settings.get(MODULE_ID, setting) ) await game.settings.set(MODULE_ID, setting, DEFAULTS[key]);
+  }
+  await game.settings.set(MODULE_ID, "soundsFilled", true);
 }
 
 /** Play one of the sounds on this client only: "open", "close", "page" (either page turn) or "quest". */

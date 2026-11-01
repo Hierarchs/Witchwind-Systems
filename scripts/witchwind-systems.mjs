@@ -10,7 +10,7 @@ import { initBanners, announce, onWorldTime } from "./banner.mjs";
 import { registerSheet } from "./sheet.mjs";
 import { registerNoticeBoard } from "./sections/notices.mjs";
 import { restockDue } from "./sections/merchants.mjs";
-import { registerSounds, playSound } from "./sounds.mjs";
+import { registerSounds, fillEmptySounds, playSound } from "./sounds.mjs";
 import { registerCalendar, newDay } from "./calendar.mjs";
 import { registerRewards } from "./rewards.mjs";
 import { registerKnowledge } from "./knowledge.mjs";
@@ -441,6 +441,7 @@ Hooks.once("ready", () => {
   registerEncounters();
   registerSceneTitles();
   registerTurnOrder();
+  fillEmptySounds();
 
   // As the world's clock moves, held-back letters arrive and merchants restock.
   Hooks.on("updateWorldTime", () => {
