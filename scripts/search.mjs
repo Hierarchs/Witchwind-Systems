@@ -230,6 +230,12 @@ function entries() {
     add("event", { title: e.title, detail: "", text: plainText(e.description ?? ""), icon: e.icon || SECTION_ICONS.calendar,
       open: () => book().open("calendar", e.id) });
   }
+  // Trophies, but not a secret one a player hasn't earned yet, nor one the GM has switched off.
+  if ( on.has("chronicle") ) for ( const t of store.all("trophies") ) {
+    if ( !game.user.isGM && ((t.enabled === false) || (t.secret && !t.earned?.length)) ) continue;
+    add("trophy", { title: t.name, detail: loc(`Trophies.Tiers.${t.tier ?? "bronze"}`), text: t.description ?? "",
+      icon: t.icon || SECTION_ICONS.chronicle, img: t.img, open: () => book().open("chronicle", t.id) });
+  }
   for ( const l of visible("locations") ) {
     add("location", { title: l.title, detail: l.kicker ?? "", text: plainText(l.body), icon: "fa-solid fa-map-location-dot",
       img: l.img, open: () => LocationGallery.open(l.id) });

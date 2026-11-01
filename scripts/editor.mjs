@@ -1,5 +1,6 @@
 import { MODULE_ID, PATH, L, PIN_ICONS, PIN_COLORS, QUEST_KINDS, QUEST_STATUSES, NOTE_KINDS, LETTER_KINDS, NOTICE_DIFFICULTIES, DEFAULT_RANKS, LOCATION_THEMES,
-  CURRENCIES, MOON_PHASES, EVENT_ICONS, KNOWLEDGE_SKILL_IDS } from "./config.mjs";
+  CURRENCIES, MOON_PHASES, EVENT_ICONS, KNOWLEDGE_SKILL_IDS, STANDING_TIERS, TROPHY_RULES, TROPHY_TIERS, TROPHY_ICONS, TROPHY_EACH,
+  EARLIER_COUNTS } from "./config.mjs";
 import * as store from "./store.mjs";
 import { uploadImage, canUpload, canBrowse, readTextFile } from "./uploads.mjs";
 import { worldNow, worldDate, secondsPerDay, daysUntil, partyCharacters } from "./helpers.mjs";
@@ -8,7 +9,7 @@ import { dayOf, dateOf, dayFromDate, daysInMonth, months, moonPhase, offsetFor }
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /** Width of each kind of editor. */
-const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680, event: 540, moons: 660, sceneTitle: 500 };
+const WIDTHS = { quest: 720, faction: 720, note: 640, map: 460, pin: 460, entry: 480, groups: 440, letter: 640, title: 520, merchant: 760, creature: 640, notice: 640, regions: 440, location: 680, event: 540, moons: 660, sceneTitle: 500, trophy: 580, records: 500 };
 
 /** Icons a title can carry. */
 const TITLE_ICONS = ["fa-solid fa-crown", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-shield-halved",
@@ -31,7 +32,7 @@ const VISIBILITY = {
 };
 
 /** Where each kind of editor puts the pictures it uploads, inside the module's storage. */
-const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants", creature: "bestiary", location: "locations" };
+const FOLDERS = { quest: "quests", faction: "factions", note: "notes", map: "maps", letter: "letters", merchant: "merchants", creature: "bestiary", location: "locations", trophy: "trophies" };
 
 /**
  * One small form window for writing or changing any entry: a quest, note, map, marker, faction or quest log entry.
@@ -126,6 +127,23 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
         break;
       case "sceneTitle":
         context.sceneName = this.extra.sceneName ?? "";
+        break;
+      case "trophy": {
+        const rule = TROPHY_RULES.includes(entry.rule) ? entry.rule : "kills";
+        context.rules = TROPHY_RULES.map(id => ({ id, label: `${L}.Trophies.Rules.${id}`, selected: id === rule }));
+        context.kinds = (this.extra.kinds ?? []).map(k => ({ ...k, selected: k.id === ((rule === "killsOf" && entry.param) || "dragon") }));
+        context.standings = STANDING_TIERS.filter(s => s.min > 0).map(s => ({
+          id: s.id, label: `${L}.Factions.Tiers.${s.id}`, selected: s.id === ((rule === "standing" && entry.param) || "revered")
+        }));
+        context.eachRules = TROPHY_EACH.join(" ");
+        context.tiers = TROPHY_TIERS.map(id => ({ id, label: `${L}.Trophies.Tiers.${id}`, checked: (entry.tier ?? "bronze") === id }));
+        context.icons = TROPHY_ICONS.map(value => ({ value, checked: (entry.icon ?? TROPHY_ICONS[0]) === value }));
+        context.enabled = entry.enabled !== false;
+        break;
+      }
+      case "records":
+        context.date = dateContext(hasDay(entry.began) ? dateOf(Number(entry.began)) : null, true);
+        context.earlier = EARLIER_COUNTS.map(key => ({ key, label: `${L}.Chronicle.Stats.${key}`, value: entry.earlier?.[key] ?? 0 }));
         break;
       case "event":
         context.date = dateContext(Number.isFinite(entry.month) ? { year: entry.year ?? dateOf(dayOf())?.year, month: entry.month, day: entry.day } : null, true);
@@ -241,6 +259,15 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       if ( out ) out.value = event.target.value;
     });
     form.querySelector("textarea[name=ranks]")?.addEventListener("change", () => this.#refreshRankOptions());
+    // Fields that only matter for some choices of what unlocks a trophy show only for those.
+    const rule = form.querySelector("select[name=rule]");
+    if ( rule ) {
+      const follow = () => {
+        for ( const el of form.querySelectorAll("[data-for-rules]") ) el.hidden = !el.dataset.forRules.split(" ").includes(rule.value);
+      };
+      rule.addEventListener("change", follow);
+      follow();
+    }
     // A gallery picture's path typed or pasted shows in its row's thumbnail.
     form.addEventListener("change", event => {
       const input = event.target.closest?.("[data-list=images] [data-field=src]");
@@ -329,6 +356,22 @@ export class EntryEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       data.year = year;
       data.yearly = !!data.yearly;
       data.visible = !!data.visible;
+    }
+    if ( this.kind === "trophy" ) {
+      data.rule = TROPHY_RULES.includes(data.rule) ? data.rule : "manual";
+      data.param = (data.rule === "killsOf") ? data.kind : ((data.rule === "standing") ? data.standingTier : "");
+      delete data.kind;
+      delete data.standingTier;
+      data.count = Math.max((data.rule === "killCR") ? 0 : 1, Math.round(Number(data.count) || 0));
+      data.tier = TROPHY_TIERS.includes(data.tier) ? data.tier : "bronze";
+      data.each = !!data.each && TROPHY_EACH.includes(data.rule);
+      data.secret = !!data.secret;
+      data.enabled = !!data.enabled;
+    }
+    if ( this.kind === "records" ) {
+      data.began = readDate(data, "began-");
+      data.earlier = Object.fromEntries(EARLIER_COUNTS.map(key => [key, Math.max(0, Math.round(Number(data[`earlier-${key}`]) || 0))]));
+      for ( const key of EARLIER_COUNTS ) delete data[`earlier-${key}`];
     }
     if ( this.kind === "moons" ) {
       // A moon keeps its place in its cycle unless its phase today or its length was changed.

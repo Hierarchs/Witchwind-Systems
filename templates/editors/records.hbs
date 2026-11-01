@@ -1,0 +1,31 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  {{> "modules/witchwind-systems/templates/editors/date.hbs" date=date prefix="began-" required=true label="WITCHWIND_SYSTEMS.Chronicle.Began"}}
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Chronicle.BeganHint"}}</p>
+
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Chronicle.Stats.sessions"}}</label>
+    <input type="number" name="sessions" value="{{entry.sessions}}" min="0" step="1">
+  </div>
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Chronicle.Stats.gold"}}</label>
+    <input type="number" name="gold" value="{{entry.gold}}" min="0" step="0.01">
+  </div>
+  <p class="hint">{{localize "WITCHWIND_SYSTEMS.Chronicle.CountedHint"}}</p>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Chronicle.Earlier"}}</legend>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Chronicle.EarlierHint"}}</p>
+    {{#each earlier}}
+    <div class="form-group">
+      <label>{{localize label}}</label>
+      <input type="number" name="earlier-{{key}}" value="{{value}}" min="0" step="1">
+    </div>
+    {{/each}}
+  </fieldset>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-book-open" inert></i> {{localize "WITCHWIND_SYSTEMS.Save"}}</button>
+</footer>
+</div>

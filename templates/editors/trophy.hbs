@@ -1,0 +1,79 @@
+<div class="wws-editor-inner">
+<div class="wws-editor-body">
+  <div class="form-group">
+    <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Name"}}</label>
+    <input type="text" name="name" value="{{entry.name}}" required placeholder="{{localize "WITCHWIND_SYSTEMS.Trophies.NamePlaceholder"}}">
+  </div>
+  <div class="form-group stacked">
+    <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Description"}}</label>
+    <textarea name="description" rows="2" placeholder="{{localize "WITCHWIND_SYSTEMS.Trophies.DescriptionPlaceholder"}}">{{entry.description}}</textarea>
+  </div>
+
+  {{!-- What unlocks it: the fields shown follow the choice (see data-for-rules). --}}
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Trophies.Unlocks"}}</legend>
+    <div class="form-group">
+      <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Rule"}}</label>
+      <select name="rule">{{#each rules}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}</select>
+    </div>
+    <div class="form-group" data-for-rules="killsOf">
+      <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Kind"}}</label>
+      <select name="kind">{{#each kinds}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+    </div>
+    <div class="form-group" data-for-rules="standing">
+      <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Standing"}}</label>
+      <select name="standingTier">{{#each standings}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}</select>
+    </div>
+    <div class="form-group" data-for-rules="kills killsOf killCR battles crits fumbles quests places creatures gold days sessions">
+      <label>{{localize "WITCHWIND_SYSTEMS.Trophies.Count"}}</label>
+      <input type="number" name="count" value="{{entry.count}}" min="0" step="1">
+    </div>
+    <label class="wws-toggle" data-for-rules="{{eachRules}}">
+      <input type="checkbox" name="each" {{#if entry.each}}checked{{/if}}>
+      <span>{{localize "WITCHWIND_SYSTEMS.Trophies.EachLabel"}}</span>
+    </label>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Trophies.RuleHint"}}</p>
+  </fieldset>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Trophies.Tier"}}</legend>
+    <div class="wws-tier-row">
+      {{#each tiers}}
+      <label class="wws-tier-choice">
+        <input type="radio" name="tier" value="{{id}}" {{#if checked}}checked{{/if}}>
+        <span class="wws-medal wws-medal-{{id}}"><i class="fa-solid fa-trophy" inert></i></span>
+        <span>{{localize label}}</span>
+      </label>
+      {{/each}}
+    </div>
+  </fieldset>
+
+  <fieldset class="wws-choices">
+    <legend>{{localize "WITCHWIND_SYSTEMS.Maps.Icon"}}</legend>
+    <div class="wws-icon-grid">
+      {{#each icons}}
+      <label class="wws-icon-choice"><input type="radio" name="icon" value="{{value}}" {{#if checked}}checked{{/if}} aria-label="{{value}}"><i class="{{value}}" inert></i></label>
+      {{/each}}
+    </div>
+  </fieldset>
+
+  <details class="wws-editor-more"{{#if entry.img}} open{{/if}}>
+    <summary>{{localize "WITCHWIND_SYSTEMS.Trophies.Picture"}}</summary>
+    <p class="hint">{{localize "WITCHWIND_SYSTEMS.Trophies.PictureHint"}}</p>
+    {{> "modules/witchwind-systems/templates/editors/image.hbs"}}
+  </details>
+
+  <label class="wws-toggle">
+    <input type="checkbox" name="secret" {{#if entry.secret}}checked{{/if}}>
+    <span>{{localize "WITCHWIND_SYSTEMS.Trophies.SecretLabel"}}</span>
+  </label>
+  <label class="wws-toggle">
+    <input type="checkbox" name="enabled" {{#if enabled}}checked{{/if}}>
+    <span>{{localize "WITCHWIND_SYSTEMS.Trophies.EnabledLabel"}}</span>
+  </label>
+</div>
+
+<footer class="wws-editor-footer">
+  <button type="submit"><i class="fa-solid fa-trophy" inert></i> {{#if isNew}}{{localize "WITCHWIND_SYSTEMS.Trophies.Create"}}{{else}}{{localize "WITCHWIND_SYSTEMS.Save"}}{{/if}}</button>
+</footer>
+</div>

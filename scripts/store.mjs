@@ -9,7 +9,8 @@ import { MODULE_ID, QUEST_KINDS } from "./config.mjs";
  */
 
 /** Collections the GM keeps in world settings. */
-export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary", "notices", "locations", "events"];
+export const WORLD_KINDS = ["quests", "maps", "factions", "letters", "titles", "merchants", "bestiary", "notices", "locations", "events",
+  "trophies"];
 
 /** Collections each user keeps on their own User document. */
 export const USER_KINDS = ["notes", "pins"];
@@ -54,6 +55,15 @@ export function registerData() {
     type: Array,
     default: [],
     onChange: (value, options, userId) => emit("moons", userId)
+  });
+
+  // The chronicle's own record: sessions, gold earned, rolls, places arrived at and earlier counts (see chronicle.mjs).
+  game.settings.register(MODULE_ID, "chronicle", {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
+    onChange: (value, options, userId) => emit("chronicle", userId)
   });
 
   // The GM's own quest groups, in order. Empty means the four defaults.
@@ -299,6 +309,20 @@ export function moons() {
 
 export function setMoons(moons) {
   return game.settings.set(MODULE_ID, "moons", moons);
+}
+
+/** The chronicle's record, as a private copy. */
+export function chronicle() {
+  return foundry.utils.deepClone(game.settings.get(MODULE_ID, "chronicle") ?? {});
+}
+
+/** Change the chronicle's record, one change after another. A change that returns false writes nothing. */
+export function updateChronicle(mutate) {
+  return serial(async () => {
+    const data = chronicle();
+    if ( mutate(data) === false ) return;
+    await game.settings.set(MODULE_ID, "chronicle", data);
+  });
 }
 
 /** The quest groups in order, each { id, name }; a blank name shows the default group's translated name. */

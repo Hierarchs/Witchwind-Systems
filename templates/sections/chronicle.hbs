@@ -1,0 +1,258 @@
+<div class="wws-spread wws-chronicle-tab" data-mode="{{page.mode}}">
+
+  {{!-- Left page: the trophies, or the campaign's numbers, under a tab for each mode --}}
+  <section class="wws-page wws-page-list">
+    <header class="wws-page-head">
+      <h2>{{localize "WITCHWIND_SYSTEMS.Sections.chronicle"}}</h2>
+      {{#if page.canEdit}}
+      {{#if page.isRecords}}
+      <button type="button" class="wws-ink" data-action="recordsEdit">
+        <i class="fa-solid fa-pen-to-square" inert></i> {{localize "WITCHWIND_SYSTEMS.Chronicle.EditRecords"}}
+      </button>
+      {{else}}
+      <button type="button" class="wws-ink" data-action="trophyNew">
+        <i class="fa-solid fa-plus" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.New"}}
+      </button>
+      {{/if}}
+      {{/if}}
+    </header>
+
+    <nav class="wws-modes" aria-label="{{localize "WITCHWIND_SYSTEMS.Sections.chronicle"}}">
+      {{#each page.modes}}
+      <button type="button" class="wws-mode{{#if active}} active{{/if}}" data-action="chronicleMode" data-filter="{{filter}}"
+              data-tooltip="{{hint}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+        <i class="{{icon}}" inert></i> {{localize label}}{{#if count}} <span class="wws-count">{{count}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </nav>
+
+    {{#if page.isRecords}}
+    <div class="wws-list-scroll wws-records">
+      <ol class="wws-stats">
+        {{#each page.headline}}
+        <li class="wws-stat">
+          <span class="wws-stat-icon"><i class="{{icon}}" inert></i></span>
+          <span class="wws-stat-text">
+            <span class="wws-stat-label">{{label}}</span>
+            {{#if sub}}<span class="wws-stat-sub">{{sub}}</span>{{/if}}
+          </span>
+          <strong class="wws-stat-value">{{value}}</strong>
+        </li>
+        {{/each}}
+      </ol>
+      <ul class="wws-stat-grid">
+        {{#each page.minor}}
+        <li><i class="{{icon}}" inert></i><strong>{{value}}</strong><span>{{label}}</span></li>
+        {{/each}}
+      </ul>
+      {{#if page.earlier}}<p class="hint wws-records-hint">{{localize "WITCHWIND_SYSTEMS.Chronicle.EarlierNote"}}</p>{{/if}}
+    </div>
+    {{else}}
+    <div class="wws-trophy-summary">
+      <span>{{localize "WITCHWIND_SYSTEMS.Trophies.Summary" earned=page.earned total=page.total}}</span>
+      <span class="wws-progress"><span style="--wws-progress: {{page.earnedPercent}}%;"></span></span>
+    </div>
+    <div class="wws-list-scroll">
+      {{#if page.empty}}<p class="wws-empty">{{localize "WITCHWIND_SYSTEMS.Trophies.Empty"}}</p>{{/if}}
+      <ol class="wws-list wws-trophy-list">
+        {{#each page.rows}}
+        <li>
+          <button type="button" class="wws-row wws-trophy-row{{#if selected}} selected{{/if}}{{#unless isEarned}} wws-locked{{/unless}}{{#if off}} wws-off{{/if}}"
+                  data-action="trophySelect" data-id="{{id}}">
+            <span class="wws-medal wws-medal-{{tier}}{{#unless isEarned}} wws-medal-locked{{/unless}}">
+              {{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}
+            </span>
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{name}}</span>
+              {{#if sub}}<span class="wws-row-sub">{{sub}}</span>{{/if}}
+              {{#if progress}}<span class="wws-progress wws-progress-thin"><span style="--wws-progress: {{progress.percent}}%;"></span></span>{{/if}}
+            </span>
+            {{#if off}}
+            <i class="fa-solid fa-power-off wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Trophies.Off"></i>
+            {{else if secret}}{{#if @root.isGM}}
+            <i class="fa-solid fa-user-secret wws-row-mark" data-tooltip="WITCHWIND_SYSTEMS.Trophies.SecretMark"></i>
+            {{/if}}{{/if}}
+            {{#if isEarned}}<i class="fa-solid fa-circle-check wws-trophy-check" inert></i>{{/if}}
+          </button>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+    {{/if}}
+  </section>
+
+  {{!-- Right page: the chosen trophy, or the stories behind the numbers --}}
+  <section class="wws-page wws-page-detail">
+    <div class="wws-detail-scroll">
+      {{#if page.isRecords}}
+      <article class="wws-entry wws-records-page">
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Chronicle.MostSlain"}}</h3>
+        {{#if page.slain.length}}
+        <ol class="wws-places wws-slain">
+          {{#each page.slain}}
+          <li>
+            <button type="button" class="wws-place" data-action="chronicleCreature" data-id="{{id}}">
+              <span class="wws-emblem">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="fa-solid fa-dragon" inert></i>{{/if}}</span>
+              <span class="wws-row-text"><span class="wws-row-title">{{name}}</span></span>
+              <span class="wws-slain-count"><i class="fa-solid fa-skull" inert></i> {{count}}</span>
+            </button>
+          </li>
+          {{/each}}
+        </ol>
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Chronicle.NoneSlain"}}</p>
+        {{/if}}
+
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Chronicle.TheParty"}}</h3>
+        {{#if page.party.length}}
+        <table class="wws-party-table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="wws-sr">{{localize "WITCHWIND_SYSTEMS.Renown.Character"}}</span></th>
+              <th scope="col" data-tooltip="WITCHWIND_SYSTEMS.Chronicle.Stats.crits"><i class="fa-solid fa-dice-d20" inert></i><span class="wws-sr">{{localize "WITCHWIND_SYSTEMS.Chronicle.Stats.crits"}}</span></th>
+              <th scope="col" data-tooltip="WITCHWIND_SYSTEMS.Chronicle.Stats.fumbles"><i class="fa-solid fa-face-dizzy" inert></i><span class="wws-sr">{{localize "WITCHWIND_SYSTEMS.Chronicle.Stats.fumbles"}}</span></th>
+              <th scope="col" data-tooltip="WITCHWIND_SYSTEMS.Chronicle.Stats.trophies"><i class="fa-solid fa-trophy" inert></i><span class="wws-sr">{{localize "WITCHWIND_SYSTEMS.Chronicle.Stats.trophies"}}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each page.party}}
+            <tr>
+              <th scope="row">
+                <button type="button" class="wws-place" data-action="chronicleSheet" data-uuid="{{uuid}}">
+                  <img class="wws-thumb" src="{{img}}" alt=""> <span class="wws-row-title">{{name}}</span>
+                </button>
+              </th>
+              <td>{{crits}}</td>
+              <td>{{fumbles}}</td>
+              <td>{{trophies}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Chronicle.NoParty"}}</p>
+        {{/if}}
+
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Chronicle.PlacesFound"}}</h3>
+        {{#if page.places.length}}
+        <ul class="wws-found">
+          {{#each page.places}}
+          <li><i class="fa-solid fa-location-dot" inert></i> <span class="wws-found-name">{{name}}</span>{{#if dateLabel}} <small>{{dateLabel}}</small>{{/if}}</li>
+          {{/each}}
+        </ul>
+        {{#if page.morePlaces}}<p class="hint">{{localize "WITCHWIND_SYSTEMS.Chronicle.MorePlaces" count=page.morePlaces}}</p>{{/if}}
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Chronicle.NoPlaces"}}</p>
+        {{/if}}
+
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Chronicle.Sessions"}}</h3>
+        {{#if page.sessions.length}}
+        <ol class="wws-sessions">
+          {{#each page.sessions}}
+          <li>
+            <strong>{{localize "WITCHWIND_SYSTEMS.Chronicle.SessionN" n=number}}</strong>
+            <span>{{date}}</span>
+            <small>{{world}}</small>
+          </li>
+          {{/each}}
+        </ol>
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Chronicle.NoSessions"}}</p>
+        {{/if}}
+      </article>
+      {{else}}
+      {{#with page.trophy as |trophy|}}
+      <article class="wws-entry wws-trophy-page{{#unless trophy.isEarned}} wws-locked{{/unless}}">
+        {{#if trophy.off}}
+        <p class="wws-ribbon"><i class="fa-solid fa-power-off" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.OffRibbon"}}</p>
+        {{else if trophy.secret}}{{#if @root.isGM}}
+        <p class="wws-ribbon"><i class="fa-solid fa-user-secret" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.SecretRibbon"}}</p>
+        {{/if}}{{/if}}
+
+        <header class="wws-trophy-head">
+          <span class="wws-medal wws-medal-large wws-medal-{{trophy.tier}}{{#unless trophy.isEarned}} wws-medal-locked{{/unless}}">
+            {{#if trophy.img}}<img src="{{trophy.img}}" alt="">{{else}}<i class="{{trophy.icon}}" inert></i>{{/if}}
+          </span>
+          <h1 class="wws-entry-title">{{trophy.name}}</h1>
+          <p class="wws-trophy-tier">{{localize trophy.tierLabel}}{{#if trophy.each}} · {{localize "WITCHWIND_SYSTEMS.Trophies.EachShort"}}{{/if}}</p>
+          {{#if trophy.description}}<p class="wws-trophy-description">{{trophy.description}}</p>{{/if}}
+        </header>
+
+        {{#if @root.isGM}}
+        <div class="wws-gm-bar">
+          <span class="wws-gm-label">{{localize "WITCHWIND_SYSTEMS.GM"}}</span>
+          <button type="button" class="wws-tool" data-action="trophyEdit" data-id="{{trophy.id}}" data-tooltip="WITCHWIND_SYSTEMS.Edit">
+            <i class="fa-solid fa-pen-to-square" inert></i>
+          </button>
+          {{#if trophy.canAward}}
+          <button type="button" class="wws-button" data-action="trophyAward" data-id="{{trophy.id}}">
+            <i class="fa-solid fa-trophy" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.Award"}}
+          </button>
+          {{/if}}
+          {{#if trophy.isEarned}}
+          <button type="button" class="wws-button" data-action="trophyRevoke" data-id="{{trophy.id}}">
+            <i class="fa-solid fa-rotate-left" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.Revoke"}}
+          </button>
+          {{/if}}
+          <button type="button" class="wws-tool" data-action="trophyToggle" data-id="{{trophy.id}}"
+                  data-tooltip="{{#if trophy.off}}WITCHWIND_SYSTEMS.Trophies.TurnOn{{else}}WITCHWIND_SYSTEMS.Trophies.TurnOff{{/if}}">
+            <i class="fa-solid fa-power-off" inert></i>
+          </button>
+          <button type="button" class="wws-tool wws-bad" data-action="trophyDelete" data-id="{{trophy.id}}" data-tooltip="WITCHWIND_SYSTEMS.Delete.Title">
+            <i class="fa-solid fa-trash" inert></i>
+          </button>
+        </div>
+        <p class="wws-trophy-rule" data-tooltip="WITCHWIND_SYSTEMS.Trophies.UnlocksWhen"><i class="fa-solid fa-key" inert></i>
+          <span class="wws-sr">{{localize "WITCHWIND_SYSTEMS.Trophies.UnlocksWhen"}}</span> {{trophy.rule}}</p>
+        {{/if}}
+
+        {{#if trophy.each}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Trophies.ByCharacter"}}</h3>
+        <ul class="wws-trophy-people">
+          {{#each trophy.characters}}
+          <li class="{{#if earned}}wws-has{{/if}}">
+            <img class="wws-thumb" src="{{img}}" alt="">
+            <span class="wws-row-text">
+              <span class="wws-row-title">{{name}}</span>
+              {{#if earned}}
+              <span class="wws-row-sub"><i class="fa-solid fa-circle-check" inert></i> {{dateLabel}}{{#if session}} · {{localize "WITCHWIND_SYSTEMS.Chronicle.SessionN" n=session}}{{/if}}</span>
+              {{else if progress}}
+              <span class="wws-row-sub">{{progress.label}}</span>
+              <span class="wws-progress wws-progress-thin"><span style="--wws-progress: {{progress.percent}}%;"></span></span>
+              {{else}}
+              <span class="wws-row-sub">{{localize "WITCHWIND_SYSTEMS.Trophies.NotYet"}}</span>
+              {{/if}}
+            </span>
+            {{#if earned}}{{#if @root.isGM}}
+            <button type="button" class="wws-tool wws-mini" data-action="trophyRevoke" data-id="{{trophy.id}}" data-uuid="{{uuid}}"
+                    data-tooltip="WITCHWIND_SYSTEMS.Trophies.RevokeOne"><i class="fa-solid fa-rotate-left" inert></i></button>
+            {{/if}}{{/if}}
+          </li>
+          {{else}}
+          <li><p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Chronicle.NoParty"}}</p></li>
+          {{/each}}
+        </ul>
+        {{else if trophy.party}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Trophies.Earned"}}</h3>
+        <p class="wws-trophy-earned">
+          <i class="fa-solid fa-circle-check" inert></i>
+          <span><strong>{{trophy.party.name}}</strong> · {{trophy.party.dateLabel}}{{#if trophy.party.session}} · {{localize "WITCHWIND_SYSTEMS.Chronicle.SessionN" n=trophy.party.session}}{{/if}}</span>
+        </p>
+        {{else if trophy.progress}}
+        <h3 class="wws-rule-head">{{localize "WITCHWIND_SYSTEMS.Trophies.Progress.Title"}}</h3>
+        <div class="wws-trophy-progress">
+          <span class="wws-progress"><span style="--wws-progress: {{trophy.progress.percent}}%;"></span></span>
+          <p>{{trophy.progress.label}}</p>
+        </div>
+        {{else if trophy.masked}}
+        {{else}}
+        <p class="wws-empty wws-empty-small">{{localize "WITCHWIND_SYSTEMS.Trophies.ByTheGM"}}</p>
+        {{/if}}
+      </article>
+      {{else}}
+      <p class="wws-empty wws-empty-page"><i class="fa-solid fa-trophy" inert></i> {{localize "WITCHWIND_SYSTEMS.Trophies.Empty"}}</p>
+      {{/with}}
+      {{/if}}
+    </div>
+  </section>
+</div>

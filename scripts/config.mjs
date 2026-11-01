@@ -5,7 +5,7 @@ export const PATH = `modules/${MODULE_ID}`;
 export const L = "WITCHWIND_SYSTEMS";
 
 /** The four sections, in the order of the tabs along the bottom of the window. */
-export const SECTION_IDS = ["quests", "journal", "calendar", "bestiary", "notices", "maps", "factions", "merchants"];
+export const SECTION_IDS = ["quests", "journal", "calendar", "bestiary", "notices", "maps", "factions", "merchants", "chronicle"];
 
 export const SECTION_ICONS = {
   quests: "fa-solid fa-scroll-old",
@@ -15,7 +15,8 @@ export const SECTION_ICONS = {
   notices: "fa-solid fa-thumbtack",
   maps: "fa-solid fa-map",
   factions: "fa-solid fa-chess-rook",
-  merchants: "fa-solid fa-scale-balanced"
+  merchants: "fa-solid fa-scale-balanced",
+  chronicle: "fa-solid fa-trophy"
 };
 
 /*
@@ -221,6 +222,34 @@ export const CURRENCIES = ["pp", "gp", "ep", "sp", "cp"];
 /** A moon's eight phases, from new round to new again. */
 export const MOON_PHASES = ["new", "waxingCrescent", "firstQuarter", "waxingGibbous", "full", "waningGibbous", "lastQuarter",
   "waningCrescent"];
+
+/* -------------------------------------------- */
+/*  Trophies                                    */
+/* -------------------------------------------- */
+
+/** A trophy's metal, the plainest first. */
+export const TROPHY_TIERS = ["bronze", "silver", "gold"];
+
+/**
+ * What unlocks a trophy: one of the chronicle's counts reaching the trophy's number, or the GM's own award. Rolls are
+ * counted for each character, so trophies for them (and the GM's own) can be earned by each character in turn; the
+ * rest are the party's, earned once.
+ */
+export const TROPHY_RULES = ["kills", "killsOf", "killCR", "battles", "crits", "fumbles", "quests", "places", "creatures", "gold",
+  "days", "sessions", "standing", "manual"];
+
+export const TROPHY_EACH = ["crits", "fumbles", "manual"];
+
+/** The marks a trophy can carry. */
+export const TROPHY_ICONS = ["fa-solid fa-trophy", "fa-solid fa-medal", "fa-solid fa-award", "fa-solid fa-crown", "fa-solid fa-star",
+  "fa-solid fa-droplet", "fa-solid fa-skull", "fa-solid fa-skull-crossbones", "fa-solid fa-dragon", "fa-solid fa-ghost",
+  "fa-solid fa-mountain", "fa-solid fa-dice-d20", "fa-solid fa-bullseye", "fa-solid fa-face-dizzy", "fa-solid fa-shield-halved",
+  "fa-solid fa-hand-fist", "fa-solid fa-scroll", "fa-solid fa-signs-post", "fa-solid fa-map-location-dot", "fa-solid fa-paw",
+  "fa-solid fa-coins", "fa-solid fa-gem", "fa-solid fa-hourglass-half", "fa-solid fa-fire", "fa-solid fa-heart",
+  "fa-solid fa-book-skull", "fa-solid fa-flag", "fa-solid fa-chess-king"];
+
+/** The chronicle's counts the GM can start from, for what happened before the book kept count. */
+export const EARLIER_COUNTS = ["kills", "battles", "quests", "places", "creatures"];
 
 /** The marks a calendar event can carry. */
 export const EVENT_ICONS = ["fa-solid fa-star", "fa-solid fa-champagne-glasses", "fa-solid fa-place-of-worship",

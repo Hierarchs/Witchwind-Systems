@@ -1,9 +1,9 @@
 import { MODULE_ID, PATH, L } from "./config.mjs";
 
 /*
- * Sound effects: the book opening and closing, a page turning on each new tab or entry, and a fanfare for quest
- * banners. The module brings its own; the GM can choose others (any audio on the server) or clear one to silence it,
- * and each player can turn them down or off.
+ * Sound effects: the book opening and closing, a page turning on each new tab or entry, a fanfare for quest
+ * banners and a chime for each trophy unlocked. The module brings its own; the GM can choose others (any audio on
+ * the server) or clear one to silence it, and each player can turn them down or off.
  */
 
 /** Each sound's world setting, holding a file path. */
@@ -12,7 +12,8 @@ const SOUNDS = {
   close: "soundClose",
   page: "soundPage",
   page2: "soundPage2",
-  quest: "soundQuest"
+  quest: "soundQuest",
+  achievement: "soundAchievement"
 };
 
 /** The sounds that come with the module, played until the GM chooses others. */
@@ -21,7 +22,8 @@ const DEFAULTS = {
   close: `${PATH}/sounds/book-close.wav`,
   page: `${PATH}/sounds/page-1.wav`,
   page2: `${PATH}/sounds/page-2.wav`,
-  quest: `${PATH}/sounds/quest.mp3`
+  quest: `${PATH}/sounds/quest.mp3`,
+  achievement: `${PATH}/sounds/achievement.wav`
 };
 
 /** Page turns closer together than this are skipped, so flicking through a list doesn't stutter. */
@@ -69,7 +71,7 @@ export async function fillEmptySounds() {
   await game.settings.set(MODULE_ID, "soundsFilled", true);
 }
 
-/** Play one of the sounds on this client only: "open", "close", "page" (either page turn) or "quest". */
+/** Play one of the sounds on this client only: "open", "close", "page" (either page turn), "quest" or "achievement". */
 export function playSound(key) {
   const volume = game.settings.get(MODULE_ID, "soundVolume");
   if ( !volume ) return;

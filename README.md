@@ -6,12 +6,12 @@ Press **J** to open it (or **M** for the map), click the book among the token to
 
 - **Big screens.** On 1440p and 4K screens the whole menu scales up together and fills the screen, and the map takes the full width.
 - **Animations.** The book fades in with its tab bar dropping into place and the pages rising; list entries file in on each tab and filter, a newly chosen entry rises onto the page, markers pop onto the map, and the open tab's gold rule draws out from its middle. A ticked objective's diamond fills with a pop of gold, a quest's new status stamps onto the page, a faction's standing marker slides to its new place, a promoted member's portrait glows, unfolded steps drop into place, and new quests and objectives slide into the tracker. Re-renders caused by someone else's change play nothing, so the page never flickers while you read. All of it switches off if your system asks for reduced motion.
-- **Sounds.** The book plays a sound as it opens and closes, and turns a page on each new tab or entry, on each picture in a location's gallery, and with the banners and pop-ups for letters, notices, the bestiary, titles and factions. Quests started, updated, completed or failed sound a fanfare. The module brings its own sounds; to use others, choose any audio file on your Foundry server under **Configure Settings > Witchwind Systems**, or clear one for silence. In a world from before 0.11.0, where the boxes were saved empty, the module fills them with its own sounds the first time a GM loads it after the update. Each player sets their own volume, or turns it to zero.
+- **Sounds.** The book plays a sound as it opens and closes, and turns a page on each new tab or entry, on each picture in a location's gallery, and with the banners and pop-ups for letters, notices, the bestiary, titles and factions. Quests started, updated, completed or failed sound a fanfare, and a trophy unlocking a chime. The module brings its own sounds; to use others, choose any audio file on your Foundry server under **Configure Settings > Witchwind Systems**, or clear one for silence. In a world from before 0.11.0, where the boxes were saved empty, the module fills them with its own sounds the first time a GM loads it after the update. Each player sets their own volume, or turns it to zero.
 - **Keyboard.** Up and Down move through the list, Left and Right change tab, Esc closes. While the book is open they don't pan the map underneath.
 
 ### Quick search
 
-Press **Ctrl+K** (**Cmd+K** on a Mac) anywhere, or click the search button in the book's top bar, and type. Every quest, note, letter, person, creature, map, marker, faction, merchant, notice, location card and calendar event you can see is listed as you type, best match first, with the words you typed marked. **Up** and **Down** choose, **Enter** opens it in the book (a location card opens its gallery), and **Esc** closes. With nothing typed, it lists the book's tabs. People are the members of factions you know of (not the players' own characters) and the people who gave you quests; each opens the faction or the quest they're known from. Nothing hidden from you is listed.
+Press **Ctrl+K** (**Cmd+K** on a Mac) anywhere, or click the search button in the book's top bar, and type. Every quest, note, letter, person, creature, map, marker, faction, merchant, notice, location card, calendar event and trophy you can see is listed as you type, best match first, with the words you typed marked. **Up** and **Down** choose, **Enter** opens it in the book (a location card opens its gallery), and **Esc** closes. With nothing typed, it lists the book's tabs. People are the members of factions you know of (not the players' own characters) and the people who gave you quests; each opens the faction or the quest they're known from. Nothing hidden from you is listed.
 
 ### Scene title cards
 
@@ -28,6 +28,27 @@ In a fight, the combatants run across the top of the screen in initiative order,
 - **Arrows.** Under the round, the GM has arrows to go back a turn or on to the next, so the combat tracker needn't be opened for it; a player whose turn it is has one to end it. While the pointer is over the bar, the bar holds still, so the arrows stay under it from one click to the next.
 - **Click** a portrait to look at its token (and take control of it if it's yours); **double-click** it for its sheet. Pointing at one lights its token.
 - When the turn passes, the portraits slide to their new places. Each player can turn the bar off or change its size in the settings.
+
+### Chronicle
+
+The Chronicle tab holds the party's trophies and the campaign in numbers.
+
+#### Trophies
+
+Achievements, in bronze, silver and gold, that unlock by themselves as the party gets there: the first foe slain, twenty-five, a hundred, a dragon, a foe of challenge 10 or more, ten battles, a first critical hit, a first quest, places found, a thousand gold earned, a hundred days in the world, ten sessions, a faction's reverence, and more. When one unlocks, **Achievement Unlocked** rises near the foot of every screen with the trophy's medallion, its name and who earned it, to a chime of its own. Click it to open the trophy.
+
+- **The case.** Earned trophies come first, with when and by whom; the rest follow, closest first, each with how far the party has to go ("7 of 25 foes slain").
+- **Each character's own.** Trophies for rolls (critical hits, fumbles) are earned by each character in turn, and their page shows how far along everyone is.
+- **Secrets.** A secret trophy shows players only a question mark until it's earned.
+- **Your own.** As GM, **New trophy** makes one: a name and a line, a metal, an icon or a picture, and what unlocks it, either one of the counts above or **Awarded by the GM**, for what only you can judge ("Saved the Village"). On a trophy's page, **Award** hands it out (to the characters you tick, for one each character earns), **Take back** removes it (it then stays locked, whatever the counts say, until awarded again), and it can be switched off or deleted.
+- The first time a GM loads the world after the update, the book sets up its twenty trophies and quietly unlocks what the party has already done.
+
+#### Records
+
+Sessions played, days in the world, foes slain, gold earned and places found, with battles fought, quests completed, creatures discovered, critical hits, fumbles and trophies earned beneath. The facing page lists the creatures slain most, each character's critical hits, fumbles and trophies, the places found and the latest sessions.
+
+- **Counted as you play.** A session starts when a player joins after a few hours with nobody playing. Gold earned is the party's purses growing: coin passed between them doesn't count, and spending takes nothing off. A place is found when a location card is revealed or the party arrives at a scene with a title card (turn a battle map's card off and it won't count). Foes slain and battles come from the bestiary's combat log, and critical hits and fumbles from the party's attack rolls.
+- **Joining a campaign late.** As GM, **Edit records** sets the day the campaign began, the sessions and gold so far, and what happened before the book kept count. Trophies count those too.
 
 ### Quests
 
@@ -153,14 +174,14 @@ Every quest, map, faction, note and marker can be shown to all players or only s
 
 Under **Configure Settings > Witchwind Systems > Backups and Imports** (GM only):
 
-- **Download backup** saves every quest, note, map, marker and faction, with your quest groups, as one file.
+- **Download backup** saves every quest, note, map, marker, faction and trophy, with your quest groups and the chronicle's records, as one file.
 - **Restore** loads one, replacing what's there or adding to it. Notes and markers go back to whoever wrote them, or to you if they aren't in this world.
 - **Import from the Journal** turns each journal entry in a folder into a quest: the first page becomes its details, each further page a step, and checklist items its objectives. Folders named Completed or Failed set the status. This works with Simple Quest's folders.
 
 ## Requirements
 
 - Foundry VTT v14
-- Any system. Rewards read dnd5e's item rarity for their frames when it's there. Handing out experience and coins, knowledge checks and combat logging are made for dnd5e.
+- Any system. Rewards read dnd5e's item rarity for their frames when it's there. Handing out experience and coins, knowledge checks, combat logging, and counting critical hits and gold earned are made for dnd5e.
 
 ## Installing
 
@@ -178,7 +199,7 @@ Under **Configure Settings > Witchwind Systems**:
 
 | Setting | What it does |
 |---|---|
-| Quests, Journal, Calendar, Bestiary, Notice board, Maps, Standing and Merchants tabs | Switch each section on or off for the whole world. Use only what your table needs. |
+| Quests, Journal, Calendar, Bestiary, Notice board, Maps, Standing, Merchants and Chronicle tabs | Switch each section on or off for the whole world. Use only what your table needs. |
 | Renown on character sheets | The Renown card in dnd5e sheets' sidebars. Each player's own choice. |
 | Players can write in the journal | Lets players add notes, and edit or delete their own. |
 | Players can place map markers | Lets players place markers, and move or delete their own. |
@@ -187,6 +208,7 @@ Under **Configure Settings > Witchwind Systems**:
 | Knowledge checks teach | Only the player who rolled, or the whole party. |
 | Knowledge check DC | The base DC, plus each creature's challenge rating. 10 to start. |
 | Log fights in the bestiary | Adds the creatures the party fights, logs the encounters and counts the slain. |
+| Trophies | Trophies unlock by themselves, with a pop-up and a sound on every screen. Off, only the GM awards them. |
 | Show the quest tracker | Each player's own choice. |
 | Party frame | The party's portraits, names and hit points at the left of the screen. Each player's own choice. |
 | Party frame size | How large the party frame is; − and + on the frame change it too. Each player's own choice. |
@@ -197,7 +219,7 @@ Under **Configure Settings > Witchwind Systems**:
 | Scene title cards | Every scene, only scenes given a title card, or none. |
 | Show scene title cards | Each player's own choice. |
 | Quest pop-ups | Oblivion's box for quests added, completed or failed; off shows a banner instead. Each player's own choice. |
-| Sounds: book opens, closes, page turns (two), quest updates | The module's own sounds, or audio files on your server chosen by the GM. Empty plays nothing. |
+| Sounds: book opens, closes, page turns (two), quest updates, trophy unlocked | The module's own sounds, or audio files on your server chosen by the GM. Empty plays nothing. |
 | Sound volume | Each player's own volume; zero turns the sounds off. |
 | Backups and Imports | Download, restore or import from the Journal (GM only). |
 
@@ -207,11 +229,13 @@ Keys are under **Configure Controls > Witchwind Systems**: J opens or closes the
 
 ```js
 const api = game.modules.get("witchwind-systems").api;
-api.open("quests");              // or "journal", "calendar", "maps", "factions"; add an entry's id to open it
+api.open("quests");              // or "journal", "calendar", "maps", "factions", "chronicle"; add an entry's id to open it
 api.toggle();
 api.newDay();                    // GM only: the clock moves on by one day
 api.search();                    // open or close the quick search
 api.showSceneTitle();            // GM only: show the viewed scene's title card to everyone (or pass a scene's id)
+api.chronicle();                 // the campaign's numbers: { sessions, days, kills, gold, places, battles, quests, ... }
+api.awardTrophy(id);             // GM only: award a trophy (pass characters' uuids for one each character earns)
 api.announce({ label: "Quest Started", title: "The Hollow Crown", detail: "Speak to Captain Holt" });
 api.notice({ label: "Quest Added", title: "The Hollow Crown", detail: "Grave robbers took the crown." });
 ```

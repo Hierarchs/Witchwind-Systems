@@ -243,13 +243,13 @@ export function partyMembers() {
  * The name over the frame: the one the GM gave it, otherwise the primary party's name, otherwise "Party". With
  * custom false, the default it would fall back to.
  */
-function partyName(custom=true) {
+export function partyName(custom=true) {
   const given = custom ? String(game.settings.get(MODULE_ID, "partyName") ?? "").trim() : "";
   return given || primaryParty()?.name || loc("Party.Title");
 }
 
 /** dnd5e's primary party, if the system has one and it's set. */
-function primaryParty() {
+export function primaryParty() {
   try {
     return game.actors.party ?? game.settings.get("dnd5e", "primaryParty")?.actor ?? null;
   } catch {

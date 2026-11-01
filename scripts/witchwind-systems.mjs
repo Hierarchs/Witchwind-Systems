@@ -18,6 +18,8 @@ import { registerEncounters } from "./encounters.mjs";
 import QuickSearch, { openSearch } from "./search.mjs";
 import { registerSceneTitles, showToEveryone, editTitle } from "./scene-titles.mjs";
 import { registerTurnOrder, draw as drawTurnOrder } from "./turn-order.mjs";
+import { registerChronicle, tally } from "./chronicle.mjs";
+import { registerTrophies, award as awardTrophy } from "./trophies.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
 import { SECTION_KINDS, resolveKind } from "./helpers.mjs";
@@ -134,6 +136,17 @@ Hooks.once("init", () => {
     type: Boolean,
     default: true
   });
+
+  register("achievements", {
+    name: `${L}.Settings.Achievements.Name`,
+    hint: `${L}.Settings.Achievements.Hint`,
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+  // Whether the book's own trophies have been set up in this world.
+  register("trophiesSeeded", { scope: "world", config: false, type: Boolean, default: false });
 
   // Client: each player's own tracker and window.
   register("tracker", {
@@ -276,7 +289,8 @@ Hooks.once("init", () => {
   register("lastSection", { scope: "client", config: false, type: String, default: "quests" });
 
   // J opens the book where you left it, as in the Elder Scrolls games; M opens it at the map.
-  const keys = { toggle: "KeyJ", quests: null, journal: null, calendar: null, bestiary: null, notices: null, maps: "KeyM", factions: null, merchants: null };
+  const keys = { toggle: "KeyJ", quests: null, journal: null, calendar: null, bestiary: null, notices: null, maps: "KeyM", factions: null, merchants: null,
+    chronicle: null };
   for ( const [action, key] of Object.entries(keys) ) {
     game.keybindings.register(MODULE_ID, action, {
       name: `${L}.Keys.${action}`,
@@ -441,6 +455,8 @@ Hooks.once("ready", () => {
   registerEncounters();
   registerSceneTitles();
   registerTurnOrder();
+  registerChronicle();
+  registerTrophies();
   fillEmptySounds();
 
   // As the world's clock moves, held-back letters arrive and merchants restock.
@@ -469,6 +485,10 @@ Hooks.once("ready", () => {
     showSceneTitle: sceneId => showToEveryone(sceneId ? game.scenes.get(sceneId) : undefined),
     /** Write a scene's title card, in the editor. GM only. */
     editSceneTitle: sceneId => editTitle(game.scenes.get(sceneId ?? globalThis.canvas?.scene?.id)),
+    /** The chronicle's numbers: sessions, days, kills, gold, places and the rest. */
+    chronicle: () => tally(),
+    /** Award a trophy by its id, to the party or (for one each character earns) to characters by uuid. GM only. */
+    awardTrophy: (id, uuids) => awardTrophy(id, uuids),
     store
   };
 });

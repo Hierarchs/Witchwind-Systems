@@ -9,6 +9,7 @@ import factions from "./sections/factions.mjs";
 import bestiary from "./sections/bestiary.mjs";
 import notices from "./sections/notices.mjs";
 import merchants from "./sections/merchants.mjs";
+import chronicle from "./sections/chronicle.mjs";
 import { openSearch } from "./search.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -17,7 +18,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * Each section is a self-contained module: its template, the context it prepares, its actions and anything it wires up
  * after rendering. Adding a fifth means writing one more of these and listing it here.
  */
-export const SECTIONS = { quests, journal, calendar, bestiary, notices, maps, factions, merchants };
+export const SECTIONS = { quests, journal, calendar, bestiary, notices, maps, factions, merchants, chronicle };
 
 /** The world setting that switches a section on or off: showQuests, showJournal, showMaps, showFactions. */
 export function sectionSetting(id) {
@@ -31,23 +32,25 @@ export function enabledSections() {
 
 /** Which sections show each collection, so a change only re-renders the book when the open section uses it. */
 const SHOWN_IN = {
-  quests: ["quests", "maps", "factions", "calendar"],
+  quests: ["quests", "maps", "factions", "calendar", "chronicle"],
   notes: ["journal"],
   pins: ["maps", "quests"],
   maps: ["maps", "quests"],
-  factions: ["factions", "quests", "maps", "merchants"],
+  factions: ["factions", "quests", "maps", "merchants", "chronicle"],
   tracked: ["quests", "maps"],
   letters: ["journal", "calendar"],
   readLetters: ["journal"],
   titles: ["factions"],
   merchants: ["merchants"],
-  bestiary: ["bestiary"],
+  bestiary: ["bestiary", "chronicle"],
   notices: ["notices"],
-  locations: ["maps"],
+  locations: ["maps", "chronicle"],
   noticeRegions: ["notices"],
   events: ["calendar"],
   moons: ["calendar"],
-  time: ["journal", "factions", "merchants", "calendar", "quests"]
+  trophies: ["chronicle"],
+  chronicle: ["chronicle"],
+  time: ["journal", "factions", "merchants", "calendar", "quests", "chronicle"]
 };
 
 /** How long the book takes to fade away, in milliseconds. */
@@ -213,6 +216,7 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
       this.filters.journal = store.get("letters", id) ? "letters" : "all";
       this.search.journal = "";
     }
+    if ( section === "chronicle" ) this.filters.chronicle = "trophies";
   }
 
   /* -------------------------------------------- */

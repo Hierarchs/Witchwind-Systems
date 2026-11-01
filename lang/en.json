@@ -30,7 +30,8 @@
       "merchants": "Merchants",
       "bestiary": "Bestiary",
       "notices": "Notices",
-      "calendar": "Calendar"
+      "calendar": "Calendar",
+      "chronicle": "Chronicle"
     },
     "Settings": {
       "Sections": {
@@ -69,6 +70,10 @@
         "calendar": {
           "Name": "Calendar tab",
           "Hint": "Show the Calendar tab, with the world’s holidays, events, moons and quest deadlines, for everyone in this world."
+        },
+        "chronicle": {
+          "Name": "Chronicle tab",
+          "Hint": "Show the Chronicle tab, with the party’s trophies and the campaign’s records, for everyone in this world."
         }
       },
       "PlayerNotes": {
@@ -111,6 +116,10 @@
         "Volume": {
           "Name": "Sound volume",
           "Hint": "How loud the book and quest sounds are for you. Set it to zero to turn them off. This only changes your own sound."
+        },
+        "achievement": {
+          "Name": "Sound: trophy unlocked",
+          "Hint": "Played with the pop-up when a trophy unlocks."
         }
       },
       "QuestPopups": {
@@ -189,6 +198,10 @@
       "SceneTitlesShow": {
         "Name": "Show scene title cards",
         "Hint": "Turn this off to never see scene title cards on this screen. Each player’s own choice."
+      },
+      "Achievements": {
+        "Name": "Trophies",
+        "Hint": "Unlock trophies (achievements) as the party earns them, each with a pop-up and a sound on every screen. Off, nothing unlocks by itself, though the GM can still award them."
       }
     },
     "Keys": {
@@ -208,7 +221,8 @@
       "notices": "Open the notice board",
       "party": "Show or hide the party frame",
       "calendar": "Open the calendar",
-      "search": "Search the book"
+      "search": "Search the book",
+      "chronicle": "Open the chronicle"
     },
     "Errors": {
       "NoGM": "A GM needs to be connected to upload pictures for you.",
@@ -970,7 +984,8 @@
         "notice": "Notice",
         "event": "Event",
         "location": "Location",
-        "person": "Person"
+        "person": "Person",
+        "trophy": "Trophy"
       }
     },
     "SceneTitles": {
@@ -994,6 +1009,210 @@
       "Previous": "Previous turn",
       "Next": "Next turn",
       "End": "End your turn"
+    },
+    "Chronicle": {
+      "Title": "The Chronicle",
+      "Modes": {
+        "trophies": "Trophies",
+        "trophiesHint": "The party’s achievements: what they’ve earned, and how close they are to the rest",
+        "records": "Records",
+        "recordsHint": "The campaign in numbers: sessions, days, foes slain, gold earned and places found"
+      },
+      "Stats": {
+        "sessions": "Sessions played",
+        "days": "Days in the world",
+        "kills": "Foes slain",
+        "gold": "Gold earned",
+        "places": "Places found",
+        "battles": "Battles fought",
+        "quests": "Quests completed",
+        "creatures": "Creatures discovered",
+        "crits": "Critical hits",
+        "fumbles": "Fumbles",
+        "trophies": "Trophies earned"
+      },
+      "LastPlayed": "Last played {date}",
+      "Since": "Since {date}",
+      "GoldPieces": "Gold pieces, from every purse",
+      "MostSlain": "Most Slain",
+      "NoneSlain": "Nothing slain yet.",
+      "TheParty": "The Party",
+      "NoParty": "No characters in the party yet.",
+      "PlacesFound": "Places Found",
+      "NoPlaces": "No places found yet. Revealing a location card, or the party arriving at a scene with a title card, finds one.",
+      "MorePlaces": "And {count} more.",
+      "Sessions": "Sessions",
+      "NoSessions": "No sessions yet. One starts when a player joins the GM after a few hours with nobody playing.",
+      "SessionN": "Session {n}",
+      "EditRecords": "Edit records",
+      "EarlierNote": "Counts include what the GM set down from before the book kept count.",
+      "Began": "The days are counted from",
+      "BeganHint": "The day in the world’s calendar the campaign began. Days in the world are counted from here.",
+      "CountedHint": "Both are counted as you play: a session each time a player joins after a few hours with nobody playing, and gold whenever the party’s purses grow. Change them here to start from where your campaign stands.",
+      "Earlier": "Before the book",
+      "EarlierHint": "What happened before the book kept count, added to what it counts. Trophies count these too."
+    },
+    "Trophies": {
+      "Unlocked": "Achievement Unlocked",
+      "Summary": "{earned} of {total} earned",
+      "Empty": "No trophies yet.",
+      "New": "New trophy",
+      "Edit": "Edit {name}",
+      "Create": "Create trophy",
+      "Award": "Award",
+      "AwardTo": "Who earns {name}?",
+      "AllHaveIt": "Every character in the party has this trophy.",
+      "Revoke": "Take back",
+      "RevokeOne": "Take this character’s back",
+      "TurnOff": "Switch off: it won’t unlock, and players won’t see it",
+      "TurnOn": "Switch on",
+      "Off": "Switched off",
+      "OffRibbon": "Switched off: it won’t unlock, and players don’t see it",
+      "Secret": "Secret Trophy",
+      "SecretHint": "Keep playing to find out what earns it.",
+      "SecretMark": "Secret: players see a question mark until it’s earned",
+      "SecretRibbon": "Secret: players see a question mark until it’s earned",
+      "Earned": "Earned",
+      "ByCharacter": "Each Character",
+      "EachShort": "each character earns it",
+      "NotYet": "Not yet",
+      "ByTheGM": "Awarded by the GM.",
+      "Name": "Name",
+      "NamePlaceholder": "Dragonslayer",
+      "Description": "Description",
+      "DescriptionPlaceholder": "What the players see it’s for: “Slay a dragon.”",
+      "Unlocks": "Unlocks",
+      "Rule": "When",
+      "Kind": "Kind of creature",
+      "Standing": "Standing",
+      "Count": "How many",
+      "EachLabel": "Each character earns it on their own",
+      "RuleHint": "Rolls are counted for each character, so a trophy for them can be earned by each in turn. “Awarded by the GM” never unlocks by itself.",
+      "Tier": "Metal",
+      "Picture": "A picture instead of the icon",
+      "PictureHint": "Shown in the medallion in place of the icon.",
+      "SecretLabel": "Secret: players see a question mark until it’s earned",
+      "EnabledLabel": "Switched on",
+      "Tiers": {
+        "bronze": "Bronze trophy",
+        "silver": "Silver trophy",
+        "gold": "Gold trophy"
+      },
+      "Rules": {
+        "kills": "Foes slain",
+        "killsOf": "Foes of one kind slain",
+        "killCR": "A foe of this challenge or more slain",
+        "battles": "Battles fought",
+        "crits": "Critical hits",
+        "fumbles": "Fumbles (a 1 on an attack)",
+        "quests": "Quests completed",
+        "places": "Places found",
+        "creatures": "Creatures discovered",
+        "gold": "Gold earned",
+        "days": "Days in the world",
+        "sessions": "Sessions played",
+        "standing": "Standing with a faction",
+        "manual": "Awarded by the GM"
+      },
+      "Progress": {
+        "Title": "Progress",
+        "kills": "{value} of {target} foes slain",
+        "killsOf": "{value} of {target} slain ({kind})",
+        "killCR": "Toughest foe slain: challenge {value} of {target}",
+        "battles": "{value} of {target} battles fought",
+        "crits": "{value} of {target} critical hits",
+        "fumbles": "{value} of {target} fumbles",
+        "quests": "{value} of {target} quests completed",
+        "places": "{value} of {target} places found",
+        "creatures": "{value} of {target} creatures discovered",
+        "gold": "{value} of {target} gold earned",
+        "days": "{value} of {target} days",
+        "sessions": "{value} of {target} sessions",
+        "standing": "Best standing {value} of {target}"
+      },
+      "Defaults": {
+        "firstBlood": {
+          "Name": "First Blood",
+          "Description": "Slay your first foe."
+        },
+        "seasoned": {
+          "Name": "Seasoned",
+          "Description": "Slay twenty-five foes."
+        },
+        "hundred": {
+          "Name": "The Hundred",
+          "Description": "Slay a hundred foes."
+        },
+        "firstCritical": {
+          "Name": "First Critical",
+          "Description": "Land a critical hit."
+        },
+        "deadeye": {
+          "Name": "Deadeye",
+          "Description": "Land ten critical hits."
+        },
+        "butterfingers": {
+          "Name": "Butterfingers",
+          "Description": "Roll a 1 on an attack."
+        },
+        "dragonslayer": {
+          "Name": "Dragonslayer",
+          "Description": "Slay a dragon."
+        },
+        "gravewarden": {
+          "Name": "Gravewarden",
+          "Description": "Put ten undead back in the ground."
+        },
+        "againstTheOdds": {
+          "Name": "Against the Odds",
+          "Description": "Slay a foe of challenge 10 or more."
+        },
+        "battleHardened": {
+          "Name": "Battle-Hardened",
+          "Description": "Fight ten battles."
+        },
+        "firstQuest": {
+          "Name": "First Steps",
+          "Description": "Complete a quest."
+        },
+        "heroForHire": {
+          "Name": "Hero for Hire",
+          "Description": "Complete ten quests."
+        },
+        "wanderer": {
+          "Name": "Wanderer",
+          "Description": "Find three places."
+        },
+        "wellTravelled": {
+          "Name": "Well Travelled",
+          "Description": "Find fifteen places."
+        },
+        "naturalist": {
+          "Name": "Naturalist",
+          "Description": "Discover ten kinds of creature."
+        },
+        "moneybags": {
+          "Name": "Moneybags",
+          "Description": "Earn a thousand gold."
+        },
+        "hoard": {
+          "Name": "A Dragon’s Hoard",
+          "Description": "Earn ten thousand gold."
+        },
+        "longRoad": {
+          "Name": "The Long Road",
+          "Description": "A hundred days pass in the world."
+        },
+        "oldFriends": {
+          "Name": "Old Friends",
+          "Description": "Play ten sessions together."
+        },
+        "revered": {
+          "Name": "Revered",
+          "Description": "Be revered by a faction."
+        }
+      },
+      "UnlocksWhen": "What unlocks it (players don’t see this)"
     }
   }
 }
