@@ -8630,13 +8630,74 @@ ul.wws-chips {
   font-size: calc(13px * var(--wws-turns-scale, 1));
   font-family: var(--wws-font-ui);
   color: var(--wws-ink);
-  transform: translateX(-50%);
+  translate: -50% 0;
   pointer-events: none;
   animation: wws-turns-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+/* While the pointer is over the bar its left end holds still (the script sets where), so the arrows stay put. */
+#witchwind-turns.wws-pinned {
+  translate: none;
+}
+
 @keyframes wws-turns-in {
-  from { opacity: 0; transform: translate(-50%, -1.2em); }
+  from { opacity: 0; transform: translateY(-1.2em); }
+}
+
+/* The round's medallion, with the arrows that move the turn beneath it. */
+.wws-turns-head {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.wws-turns-steps {
+  display: flex;
+  gap: 0.3em;
+  pointer-events: auto;
+}
+
+.wws button.wws-turns-step {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.7em;
+  height: 1.7em;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  line-height: 1;
+  border: 1px solid rgb(143 116 66 / 80%);
+  border-radius: 50%;
+  background: var(--wws-grain), radial-gradient(circle, rgb(42 35 27 / 92%), rgb(15 13 10 / 85%));
+  box-shadow: inset 0 0 0 1px rgb(201 164 92 / 22%), 0 2px 6px rgb(0 0 0 / 50%);
+  color: var(--wws-gold);
+  cursor: pointer;
+  transition: color 150ms, border-color 150ms, box-shadow 150ms, transform 150ms;
+}
+
+.wws button.wws-turns-step i {
+  margin: 0;
+  font-size: 0.72em;
+}
+
+.wws button.wws-turns-step:is(:hover, :focus-visible):not(:disabled) {
+  border-color: var(--wws-gold-bright);
+  color: var(--wws-gold-bright);
+  box-shadow: inset 0 0 0 1px rgb(201 164 92 / 35%), 0 0 8px rgb(201 164 92 / 45%), 0 2px 6px rgb(0 0 0 / 50%);
+  outline: none;
+}
+
+.wws button.wws-turns-step:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.wws button.wws-turns-step:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .wws-turns-round {

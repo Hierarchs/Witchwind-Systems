@@ -990,7 +990,10 @@
       "Round": "Round",
       "Unknown": "Unknown",
       "Initiative": "Initiative {n}",
-      "YourTurn": "Your Turn"
+      "YourTurn": "Your Turn",
+      "Previous": "Previous turn",
+      "Next": "Next turn",
+      "End": "End your turn"
     }
   }
 }

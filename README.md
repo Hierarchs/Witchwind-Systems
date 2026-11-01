@@ -25,6 +25,7 @@ In a fight, the combatants run across the top of the screen in initiative order,
 - **Hit points.** A thin bar under each portrait, green to amber to red, glides to its new length when hit points change. Players see it for their own characters and wherever the token's bars are shown to everyone; the GM sees them all.
 - **What players see.** Hidden combatants aren't shown to them, and a name the token keeps hidden reads "Unknown". The fallen grey out under a skull.
 - **Your Turn.** When a player's character's turn comes, "Your Turn" crosses their screen for a moment.
+- **Arrows.** Under the round, the GM has arrows to go back a turn or on to the next, so the combat tracker needn't be opened for it; a player whose turn it is has one to end it. While the pointer is over the bar, the bar holds still, so the arrows stay under it from one click to the next.
 - **Click** a portrait to look at its token (and take control of it if it's yours); **double-click** it for its sheet. Pointing at one lights its token.
 - When the turn passes, the portraits slide to their new places. Each player can turn the bar off or change its size in the settings.
 

@@ -8,7 +8,8 @@ import { PARTY_SCALE } from "./party.mjs";
  * the colour of its side, and a thin bar under it shows its hit points to those who may see them, as its token's bars
  * would. The one whose turn it is stands larger in gold with its name beneath; the fallen grey out; where the next
  * round begins, a diamond with its number. When the turn passes, the portraits slide to their new places. A player
- * whose turn comes sees "Your Turn". Click a portrait to look at its token, double-click it for its sheet.
+ * whose turn comes sees "Your Turn". Click a portrait to look at its token, double-click it for its sheet. Arrows under
+ * the round move the turn back or on for the GM, and end a player's own turn.
  */
 
 /** The most portraits shown; the rest are counted. */
@@ -77,6 +78,8 @@ export function draw() {
     bar.addEventListener("dblclick", onDoubleClick);
     bar.addEventListener("pointerover", event => hover(event, true));
     bar.addEventListener("pointerout", event => hover(event, false));
+    bar.addEventListener("pointerenter", pin);
+    bar.addEventListener("pointerleave", unpin);
     document.body.append(bar);
   }
   const scale = Math.clamp(Number(game.settings.get(MODULE_ID, "turnOrderScale")) || 1, PARTY_SCALE.min, PARTY_SCALE.max);
@@ -158,8 +161,47 @@ function html(combat, items, more) {
       ${(item.current && item.name) ? `<span class="wws-turn-name">${esc(item.name)}</span>` : ""}
     </li>`;
   }).join("");
-  return `<div class="wws-turns-round"><span>${esc(loc("Turns.Round"))}</span><strong>${combat.round ?? 1}</strong></div>
+  return `<div class="wws-turns-head">
+      <div class="wws-turns-round"><span>${esc(loc("Turns.Round"))}</span><strong>${combat.round ?? 1}</strong></div>
+      ${steps(combat)}
+    </div>
     <ol class="wws-turns-list">${cards}${more ? `<li class="wws-turns-more">+${more}</li>` : ""}</ol>`;
+}
+
+/**
+ * The arrows under the round, as the combat tracker's: back a turn and on a turn for the GM, and on for a player whose
+ * turn it is, to end it. Back is off on the fight's first turn, which has nothing before it.
+ */
+function steps(combat) {
+  const esc = foundry.utils.escapeHTML;
+  const button = (step, icon, label, disabled=false) => `<button type="button" class="wws-turns-step" data-step="${step}"
+    data-tooltip="${esc(label)}" data-tooltip-direction="DOWN" aria-label="${esc(label)}"${disabled ? " disabled" : ""}>
+    <i class="fa-solid ${icon}" inert></i></button>`;
+  let buttons = "";
+  if ( game.user.isGM ) {
+    const first = ((combat.round ?? 1) <= 1) && !combat.turn;
+    buttons = button("previous", "fa-chevron-left", loc("Turns.Previous"), first) + button("next", "fa-chevron-right", loc("Turns.Next"));
+  }
+  else if ( combat.combatant?.isOwner ) buttons = button("next", "fa-chevron-right", loc("Turns.End"));
+  return buttons ? `<div class="wws-turns-steps">${buttons}</div>` : "";
+}
+
+let stepping = false;
+
+/** Move the fight back a turn or on one; a second click while the first is on its way is ignored. */
+async function step(direction) {
+  const combat = game.combat;
+  if ( !combat?.started || stepping ) return;
+  if ( !game.user.isGM && ((direction !== "next") || !combat.combatant?.isOwner) ) return;
+  stepping = true;
+  try {
+    if ( direction === "previous" ) await combat.previousTurn();
+    else await combat.nextTurn();
+  } catch(err) {
+    console.warn(`${MODULE_ID} | Couldn't change the turn`, err);
+  } finally {
+    stepping = false;
+  }
 }
 
 /* -------------------------------------------- */
@@ -169,8 +211,10 @@ const combatantOf = el => {
   return id ? game.combat?.combatants.get(id) : null;
 };
 
-/** Look at a combatant's token, and take control of it if it's yours. */
+/** An arrow moves the turn; a portrait looks at its combatant's token, and takes control of it if it's yours. */
 function onClick(event) {
+  const arrow = event.target.closest?.("button[data-step]");
+  if ( arrow ) return step(arrow.dataset.step);
   const c = combatantOf(event.target);
   const token = c?.token?.object;
   if ( !token?.visible || !globalThis.canvas?.ready ) return;
@@ -193,6 +237,27 @@ function hover(event, on) {
     if ( on ) token._onHoverIn?.(event, { hoverOutOthers: true });
     else token._onHoverOut?.(event);
   } catch {}
+}
+
+/**
+ * The bar is centred, so it moves as it grows or shrinks with each turn. While the pointer is over it, its left end
+ * holds still instead, so the arrows stay under the pointer for the next click; when the pointer leaves, it glides
+ * back to the middle.
+ */
+function pin() {
+  if ( !bar || bar.classList.contains("wws-pinned") ) return;
+  bar.style.left = `${bar.getBoundingClientRect().left}px`;
+  bar.classList.add("wws-pinned");
+}
+
+function unpin() {
+  if ( !bar?.classList.contains("wws-pinned") ) return;
+  const was = bar.getBoundingClientRect().left;
+  bar.style.left = "";
+  bar.classList.remove("wws-pinned");
+  const dx = was - bar.getBoundingClientRect().left;
+  if ( (Math.abs(dx) < 1) || window.matchMedia("(prefers-reduced-motion: reduce)").matches ) return;
+  bar.animate([{ translate: `calc(-50% + ${dx}px) 0` }, { translate: "-50% 0" }], { duration: 260, easing: "ease-out" });
 }
 
 /** "Your Turn", across the screen, for a player whose character's turn has come. */
