@@ -37,17 +37,21 @@ export async function showToPlayers(section, id) {
   ui.notifications.info(loc("ShownToPlayers"));
 }
 
-/** How many enriched texts and plain-text extracts are remembered. */
-const MEMO_SIZE = 400;
+/**
+ * How many enriched texts and plain-text extracts are remembered. Extracts are many more: the quick search reads every
+ * entry's text at once, and a memory shorter than the world would parse every text again each time it opens.
+ */
+const ENRICHED_KEPT = 400;
+const EXTRACTS_KEPT = 2500;
 
-/** Remember a function's results by their string argument, forgetting the oldest past MEMO_SIZE. */
-function memo(fn) {
+/** Remember a function's results by their string argument, forgetting the oldest past a size. */
+function memo(fn, size) {
   const results = new Map();
   return text => {
     if ( results.has(text) ) return results.get(text);
     const result = fn(text);
     results.set(text, result);
-    if ( results.size > MEMO_SIZE ) results.delete(results.keys().next().value);
+    if ( results.size > size ) results.delete(results.keys().next().value);
     return result;
   };
 }
@@ -60,7 +64,7 @@ const enrichOnce = memo(html => {
   const TextEditor = foundry.applications.ux.TextEditor.implementation;
   const cleaned = foundry.utils.cleanHTML(html);
   return TextEditor.enrichHTML(cleaned, { secrets: game.user.isGM }).catch(() => cleaned);
-});
+}, ENRICHED_KEPT);
 
 export async function enrich(html) {
   return html ? enrichOnce(html) : "";
@@ -78,7 +82,7 @@ const parser = new DOMParser();
 const plainTextOnce = memo(html => {
   const text = parser.parseFromString(html, "text/html").body.textContent ?? "";
   return text.replace(/\s+/g, " ").trim();
-});
+}, EXTRACTS_KEPT);
 
 export function plainText(html) {
   return html ? plainTextOnce(html) : "";
@@ -119,9 +123,27 @@ function ordinal(n) {
   return `${n}${suffixes[(v - 20) % 10] ?? suffixes[v] ?? suffixes[0]}`;
 }
 
+/*
+ * Dates and numbers in the user's language. Each formatter is made once and kept: toLocaleDateString and toLocaleString
+ * with options make a new one on every call, which costs a list of hundreds of dates many milliseconds.
+ */
+const formatters = new Map();
+
+function formatter(key, make) {
+  const id = `${game.i18n.lang}|${key}`;
+  if ( !formatters.has(id) ) formatters.set(id, make(game.i18n.lang));
+  return formatters.get(id);
+}
+
 export function formatDate(ms) {
   if ( !ms ) return "";
-  return new Date(ms).toLocaleDateString(game.i18n.lang, { day: "numeric", month: "short", year: "numeric" });
+  return formatter("date", lang => new Intl.DateTimeFormat(lang, { day: "numeric", month: "short", year: "numeric" })).format(ms);
+}
+
+/** A number as the user writes it: "1,502", or "2.5" with up to two places (or as many as asked). */
+export function formatNumber(n, digits=2) {
+  return formatter(`number${digits}`, lang => new Intl.NumberFormat(lang, { maximumFractionDigits: digits }))
+    .format(Number(n) || 0);
 }
 
 export function loc(key, data) {

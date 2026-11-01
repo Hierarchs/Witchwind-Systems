@@ -1,6 +1,7 @@
 import { MODULE_ID, TROPHY_RULES, TROPHY_EACH, TROPHY_TIERS, KNOWLEDGE_SKILLS } from "./config.mjs";
 import * as store from "./store.mjs";
 import { tally, tierStart } from "./chronicle.mjs";
+import { dayOf } from "./calendar.mjs";
 import { worldNow, docSync, loc } from "./helpers.mjs";
 import { partyName } from "./party.mjs";
 import { playSound } from "./sounds.mjs";
@@ -52,7 +53,13 @@ export function registerTrophies() {
   store.onChange(kind => {
     if ( WATCHED.includes(kind) ) check();
   });
-  Hooks.on("updateWorldTime", check);
+  // Of the counts, only the days move with the clock: look again when the day turns, not on every tick.
+  let day = dayOf();
+  Hooks.on("updateWorldTime", () => {
+    if ( dayOf() === day ) return;
+    day = dayOf();
+    check();
+  });
   // The first time, what the party has already done is unlocked quietly, rather than a pop-up for each.
   return seed().then(seeded => checkTrophies({ quiet: seeded }));
 }

@@ -28,13 +28,14 @@ export default {
     const filter = [...filters, LETTERS].includes(app.filters.journal) ? app.filters.journal : "all";
     const mode = (filter === LETTERS) ? LETTERS : "notes";
     const search = (app.search.journal ?? "").trim().toLowerCase();
-    const matches = text => !search || text.toLowerCase().includes(search);
+    // The text of each entry is only read out when there's something to search for.
+    const matches = text => !search || text().toLowerCase().includes(search);
 
     const noteShown = n => (filter === "all") || ((filter === "mine") ? (n.author === game.user.id) : (kindOf(n) === filter));
     const items = (mode === LETTERS
-      ? letters.filter(l => matches(`${l.title} ${l.sender ?? ""} ${plainText(l.body)}`))
+      ? letters.filter(l => matches(() => `${l.title} ${l.sender ?? ""} ${plainText(l.body)}`))
         .map(l => ({ type: "letter", id: l.id, time: sentOn(l), l }))
-      : notes.filter(noteShown).filter(n => matches(`${n.title} ${plainText(n.body)}`))
+      : notes.filter(noteShown).filter(n => matches(() => `${n.title} ${plainText(n.body)}`))
         .map(n => ({ type: "note", id: n.id, time: n.updated ?? 0, n }))
     ).sort((a, b) => b.time - a.time);
 

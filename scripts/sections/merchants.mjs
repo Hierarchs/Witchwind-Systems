@@ -1,7 +1,8 @@
 import { PATH, L, STANDING_PRICES, standingTier } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
-import { enrich, asHTML, loc, confirmDelete, openSheet, showToPlayers, viewerNames, worldDate, worldNow, secondsPerDay, byName } from "../helpers.mjs";
+import { enrich, asHTML, loc, confirmDelete, openSheet, showToPlayers, viewerNames, worldDate, worldNow, secondsPerDay, byName,
+  formatNumber } from "../helpers.mjs";
 
 /*
  * Merchants: who sells what, for how much, and how many are left. Players browse; the GM edits stock or marks a
@@ -98,7 +99,7 @@ async function detail(merchant) {
   const faction = store.get("factions", merchant.faction);
   const days = Number(merchant.restockDays) || 0;
   const markup = markupOf(merchant, faction);
-  const price = n => `${Number(n ?? 0).toLocaleString(game.i18n.lang, { maximumFractionDigits: 2 })} ${currency}`;
+  const price = n => `${formatNumber(n)} ${currency}`;
   return {
     ...merchant,
     name: merchant.name || loc("Untitled"),

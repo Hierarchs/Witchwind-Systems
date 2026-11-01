@@ -1,7 +1,7 @@
 import { PATH, L, TROPHY_ICONS, STANDING_TIERS, EARLIER_COUNTS } from "../config.mjs";
 import * as store from "../store.mjs";
 import { openEditor } from "../editor.mjs";
-import { loc, confirmDelete, openSheet, worldDate, formatDate, docSync } from "../helpers.mjs";
+import { loc, confirmDelete, openSheet, worldDate, formatDate, formatNumber, docSync } from "../helpers.mjs";
 import { tally } from "../chronicle.mjs";
 import { progressOf, award, revoke, earnerName, tierOf, isEach, kindLabel, creatureKinds } from "../trophies.mjs";
 import { partyMembers } from "../party.mjs";
@@ -133,7 +133,7 @@ export default {
 /*  Trophies                                    */
 /* -------------------------------------------- */
 
-const fmt = n => Number(n ?? 0).toLocaleString(game.i18n.lang, { maximumFractionDigits: 2 });
+const fmt = n => formatNumber(n);
 const signed = n => (n > 0 ? `+${n}` : String(n));
 
 /** The trophies this user sees: every one for the GM, those switched on for players. */

@@ -27,8 +27,9 @@ export function initBanners() {
   seen = snapshot();
   store.onChange((kind, userId) => {
     if ( !["quests", "factions", "letters", "titles", "bestiary", "notices"].includes(kind) ) return;
+    // Only the collection that changed can look different now.
     const before = seen;
-    seen = snapshot();
+    seen = { ...seen, [kind]: visibleOf(kind) };
     // Whoever made the change already knows about it.
     if ( (userId === game.user.id) || !game.settings.get(MODULE_ID, "announce") ) return;
     if ( kind === "letters" ) return letterArrivals(before.letters, seen.letters);
@@ -41,11 +42,11 @@ export function initBanners() {
   });
 }
 
-/** The world’s clock moved: letters held back for this day arrive. */
+/** The world’s clock moved past a letter held back for then: it arrives. Only letters change with the clock. */
 export function onWorldTime() {
-  const before = seen;
-  seen = snapshot();
-  if ( game.settings.get(MODULE_ID, "announce") ) letterArrivals(before.letters, seen.letters);
+  const before = seen.letters;
+  seen = { ...seen, letters: visibleOf("letters") };
+  if ( game.settings.get(MODULE_ID, "announce") ) letterArrivals(before, seen.letters);
 }
 
 /** A notice newly pinned up on the board for this player. */
@@ -155,12 +156,13 @@ function next() {
 
 /* -------------------------------------------- */
 
+/** What this user can see of a collection, by id. */
+function visibleOf(kind) {
+  return new Map(store.all(kind).filter(e => store.isVisible(kind, e)).map(e => [e.id, e]));
+}
+
 function snapshot() {
-  const visible = kind => new Map(store.all(kind).filter(e => store.isVisible(kind, e)).map(e => [e.id, e]));
-  return {
-    quests: visible("quests"), factions: visible("factions"), letters: visible("letters"), titles: visible("titles"),
-    bestiary: visible("bestiary"), notices: visible("notices")
-  };
+  return Object.fromEntries(["quests", "factions", "letters", "titles", "bestiary", "notices"].map(kind => [kind, visibleOf(kind)]));
 }
 
 const t = key => game.i18n.localize(`${L}.Banners.${key}`);

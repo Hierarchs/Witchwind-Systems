@@ -60,7 +60,7 @@
           <button type="button" class="wws-row wws-trophy-row{{#if selected}} selected{{/if}}{{#unless isEarned}} wws-locked{{/unless}}{{#if off}} wws-off{{/if}}"
                   data-action="trophySelect" data-id="{{id}}">
             <span class="wws-medal wws-medal-{{tier}}{{#unless isEarned}} wws-medal-locked{{/unless}}">
-              {{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}
+              {{#if img}}<img src="{{img}}" alt="" loading="lazy">{{else}}<i class="{{icon}}" inert></i>{{/if}}
             </span>
             <span class="wws-row-text">
               <span class="wws-row-title">{{name}}</span>

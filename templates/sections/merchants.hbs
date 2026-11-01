@@ -12,7 +12,7 @@
         {{#each page.rows}}
         <li>
           <button type="button" class="wws-row{{#if selected}} selected{{/if}}" data-action="merchantSelect" data-id="{{id}}">
-            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="">{{else}}<i class="fa-solid fa-scale-balanced wws-row-icon" inert></i>{{/if}}
+            {{#if img}}<img class="wws-thumb" src="{{img}}" alt="" loading="lazy">{{else}}<i class="fa-solid fa-scale-balanced wws-row-icon" inert></i>{{/if}}
             <span class="wws-row-text">
               <span class="wws-row-title">{{name}}</span>
               {{#if location}}<span class="wws-row-sub">{{location}}</span>{{/if}}

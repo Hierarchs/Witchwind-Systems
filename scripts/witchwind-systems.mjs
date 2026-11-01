@@ -10,8 +10,8 @@ import { initBanners, announce, onWorldTime } from "./banner.mjs";
 import { registerSheet } from "./sheet.mjs";
 import { registerNoticeBoard } from "./sections/notices.mjs";
 import { restockDue } from "./sections/merchants.mjs";
-import { registerSounds, fillEmptySounds, playSound } from "./sounds.mjs";
-import { registerCalendar, newDay } from "./calendar.mjs";
+import { registerSounds, fillEmptySounds, preloadSounds, playSound } from "./sounds.mjs";
+import { registerCalendar, newDay, dayOf } from "./calendar.mjs";
 import { registerRewards } from "./rewards.mjs";
 import { registerKnowledge } from "./knowledge.mjs";
 import { registerEncounters } from "./encounters.mjs";
@@ -22,7 +22,7 @@ import { registerChronicle, tally } from "./chronicle.mjs";
 import { registerTrophies, award as awardTrophy } from "./trophies.mjs";
 import { showNotice } from "./notice.mjs";
 import DataManager from "./data.mjs";
-import { SECTION_KINDS, resolveKind } from "./helpers.mjs";
+import { SECTION_KINDS, resolveKind, worldNow } from "./helpers.mjs";
 
 /* -------------------------------------------- */
 /*  Settings and keys                           */
@@ -458,11 +458,22 @@ Hooks.once("ready", () => {
   registerChronicle();
   registerTrophies();
   fillEmptySounds();
+  preloadSounds();
 
-  // As the world's clock moves, held-back letters arrive and merchants restock.
+  // As the world's clock moves, held-back letters arrive and merchants restock. The book shows the world's time by the
+  // day, so it's redrawn when the day turns or a letter arrives (or is taken back, if the clock goes back), not on
+  // every tick of a clock that runs by the second or the combat round.
+  let clock = { day: dayOf(), time: worldNow() };
   Hooks.on("updateWorldTime", () => {
-    onWorldTime();
-    Codex.refresh("time");
+    const time = worldNow();
+    const day = dayOf(time);
+    const from = Math.min(time, clock.time);
+    const to = Math.max(time, clock.time);
+    const letters = store.all("letters").some(l => (l.arrival > from) && (l.arrival <= to));
+    const turned = day !== clock.day;
+    clock = { day, time };
+    if ( letters ) onWorldTime();
+    if ( turned || letters ) Codex.refresh("time");
     restockDue();
   });
 

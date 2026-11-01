@@ -799,6 +799,16 @@
   outline-offset: -2px;
 }
 
+/*
+ * A book list's rows out of sight aren't laid out or painted until they scroll near, so a list of hundreds draws about
+ * as quickly as a short one. Meanwhile each stands at a guessed height; after a redraw the book puts the list back by
+ * its rows rather than by pixels (Codex#keepListPlace), so a wrong guess never moves what's in view.
+ */
+#witchwind-codex .wws-list > li {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 48px;
+}
+
 .wws-row-text {
   flex: 1;
   min-width: 0;

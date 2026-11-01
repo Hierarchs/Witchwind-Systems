@@ -21,6 +21,12 @@ const SLIDE = 380;
 /** How long "Your Turn" stays, in milliseconds (the stylesheet's animation runs as long). */
 const YOUR_TURN = 2400;
 
+/**
+ * What of a token the bar shows: its name and side, whether its name and bars are shown, its picture, and (for a token
+ * not linked to its actor) its own hit points.
+ */
+const TOKEN_SHOWN = ["name", "displayName", "displayBars", "disposition", "hidden", "texture", "delta", "actorData"];
+
 let bar = null;
 
 /** Each combatant's hit points as last drawn, so a change glides from there. */
@@ -39,8 +45,10 @@ export function registerTurnOrder() {
     if ( !bar || !game.combat?.combatants.some(c => c.actor === actor || c.actorId === actor.id) ) return;
     if ( (changes.system?.attributes?.hp !== undefined) || ("name" in changes) || ("img" in changes) ) refresh();
   });
-  Hooks.on("updateToken", token => {
-    if ( bar && game.combat?.combatants.some(c => c.tokenId === token.id) ) refresh();
+  // Only what the bar shows of a token, not its moving about the scene, which happens all through a fight.
+  Hooks.on("updateToken", (token, changes) => {
+    if ( !bar || !TOKEN_SHOWN.some(key => key in changes) ) return;
+    if ( game.combat?.combatants.some(c => c.tokenId === token.id) ) refresh();
   });
   draw();
 }

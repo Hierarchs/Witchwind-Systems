@@ -282,7 +282,7 @@ export class LocationGallery extends HandlebarsApplicationMixin(ApplicationV2) {
  * pan or a zoom is one transform on the layer, and each marker keeps its size on screen. Where each marker stands is
  * kept in the scene's flags, as [{ id, location, x, y }] in the scene's pixels; the card itself is a world entry.
  */
-const scene = { layer: null, catcher: null, view: { left: 0, top: 0 }, placing: false };
+const scene = { layer: null, catcher: null, view: { left: 0, top: 0 }, zoom: null, placing: false };
 
 /** The markers on a scene. */
 function placements(doc=globalThis.canvas?.scene) {
@@ -324,16 +324,24 @@ function ensureLayer() {
   if ( board ) board.after(layer);
   else document.body.prepend(layer);
   scene.layer = layer;
+  scene.zoom = null;
   return layer;
 }
 
-/** Move the layer with the canvas: one transform, and the zoom for the markers to keep their size. */
+/**
+ * Move the layer with the canvas: one transform, and the zoom for the markers to keep their size. This runs on every
+ * frame of a pan, so a scene without markers does nothing, and the zoom (which restyles every marker) is only set when
+ * it changes.
+ */
 function alignLayer() {
   const layer = scene.layer;
-  if ( !layer?.isConnected || !globalThis.canvas?.ready ) return;
+  if ( !layer?.isConnected || !layer.childElementCount || !globalThis.canvas?.ready ) return;
   const { s, tx, ty } = stageTransform();
   layer.style.transform = `translate(${scene.view.left + tx}px, ${scene.view.top + ty}px) scale(${s})`;
-  layer.style.setProperty("--wws-zoom", s);
+  if ( s !== scene.zoom ) {
+    scene.zoom = s;
+    layer.style.setProperty("--wws-zoom", s);
+  }
   if ( popup.el ) placeCard();
 }
 

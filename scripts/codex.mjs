@@ -249,6 +249,34 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     if ( active?.matches?.("input[data-focus-key]") && this.element.contains(active) ) {
       this.#focus = { key: active.dataset.focusKey, start: active.selectionStart, end: active.selectionEnd };
     } else this.#focus = null;
+    this.#listPlace = this.#readListPlace();
+  }
+
+  /** Where the open list stood before a redraw: its first row in sight, and how far below the list's top it sat. */
+  #listPlace = null;
+
+  #readListPlace() {
+    const scroller = this.element?.querySelector(".wws-page-list .wws-list-scroll");
+    if ( !scroller?.scrollTop ) return null;
+    const top = scroller.getBoundingClientRect().top;
+    for ( const row of scroller.querySelectorAll(".wws-list > li [data-id]") ) {
+      const rect = row.getBoundingClientRect();
+      if ( rect.bottom > top ) return { section: this.section, id: row.dataset.id, offset: rect.top - top };
+    }
+    return null;
+  }
+
+  /**
+   * Put the list back where it stood, by that row. Core restores the scroll by pixels, which would land elsewhere when
+   * rows out of sight (laid out at a guessed height) above it aren't the height guessed.
+   */
+  #keepListPlace(place) {
+    if ( !place || (place.section !== this.section) ) return;
+    const scroller = this.element.querySelector(".wws-page-list .wws-list-scroll");
+    const row = scroller?.querySelector(`.wws-list > li [data-id="${CSS.escape(place.id)}"]`);
+    if ( !row ) return;
+    const drift = (row.getBoundingClientRect().top - scroller.getBoundingClientRect().top) - place.offset;
+    if ( Math.abs(drift) >= 1 ) scroller.scrollTop += drift;
   }
 
   /** @override */
@@ -265,6 +293,9 @@ export default class Codex extends HandlebarsApplicationMixin(ApplicationV2) {
     const el = this.element;
     el.dataset.section = this.section ?? "";
     const animation = el.dataset.animate = this.#animationFor(options);
+    // A list that files in anew starts from its top; otherwise it stays where it was.
+    if ( !["open", "section", "list"].includes(animation) ) this.#keepListPlace(this.#listPlace);
+    this.#listPlace = null;
     SECTIONS[this.section]?.onRender?.(this, el);
 
     // The book opens with its own sound and turns a page for each new tab or entry.

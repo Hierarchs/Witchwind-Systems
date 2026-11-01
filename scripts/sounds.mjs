@@ -29,6 +29,9 @@ const DEFAULTS = {
 /** Page turns closer together than this are skipped, so flicking through a list doesn't stutter. */
 const PAGE_GAP = 140;
 
+/** How long after the world is ready the book's sounds are loaded, in milliseconds, to keep out of its way. */
+const PRELOAD_DELAY = 5000;
+
 let lastPage = 0;
 
 export function registerSounds() {
@@ -69,6 +72,21 @@ export async function fillEmptySounds() {
     if ( !game.settings.get(MODULE_ID, setting) ) await game.settings.set(MODULE_ID, setting, DEFAULTS[key]);
   }
   await game.settings.set(MODULE_ID, "soundsFilled", true);
+}
+
+/**
+ * Load the book's own sounds (opening, closing and the page turns) a little after the world is ready, so the first
+ * page turned doesn't wait on its file. They're small; the fanfare and the chime load the first time they play.
+ */
+export function preloadSounds() {
+  const helper = foundry.audio?.AudioHelper;
+  if ( !helper?.preloadSound || !game.settings.get(MODULE_ID, "soundVolume") ) return;
+  setTimeout(() => {
+    for ( const key of ["open", "close", "page", "page2"] ) {
+      const src = game.settings.get(MODULE_ID, SOUNDS[key]);
+      if ( src ) Promise.resolve().then(() => helper.preloadSound(src)).catch(() => {});
+    }
+  }, PRELOAD_DELAY);
 }
 
 /** Play one of the sounds on this client only: "open", "close", "page" (either page turn), "quest" or "achievement". */
